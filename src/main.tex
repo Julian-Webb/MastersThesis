@@ -1,4 +1,6 @@
 \documentclass[11pt, oneside,openany]{scrbook}
+\usepackage{amsopn}
+\usepackage{amstext}
 
 % -----------------------
 % Load settings
@@ -16,9 +18,7 @@
 
 \begin{document}
     \maketitle
-
     \input{chapters/0_abstract}
-
     \tableofcontents
     \listoffigures
     \printglossary[type=\acronymtype, title=List of Abbreviations]
@@ -35,7 +35,7 @@
     % -----------------------
     % Bibliography
     % -----------------------
-    % \printbibliography
+     \printbibliography
 
     % -----------------------
     % Appendices

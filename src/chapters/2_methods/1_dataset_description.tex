@@ -1,9 +1,10 @@
-\section{Dataset Description}
-Data from two different datasets called ``Ultra2'' (U) and ``Competition'' (C) are used. Patients are referred to with the initial letter of their dataset, followed by their ID, e.g., U01.
+\section{Dataset Description}\label{sec:dataset-description}
+Data from two different datasets called ``Ultra2'' (U) and ``Competition'' (C) are used.
+Patients are referred to with the initial letter of their dataset, followed by their ID, e.g., U01.
 
-% todo where does this data come from
+% todo where does this data come from?
 
-Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files. 
+Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files.
 The seizure's starts, and in some cases the type and end, were contained in the annotations.
 
 
@@ -13,25 +14,26 @@ The seizure's starts, and in some cases the type and end, were contained in the 
 % which patients were there
 % how patients are called
 
-\subsection{Ethics Votum}
+\subsection{Ethics Votum}\label{subsec:ethics-votum}
 
-\subsection{Device Description}
+\subsection{Device Description}\label{subsec:device-description}
 
-\subsection{Origin of Seizure Annotations}
+\subsection{Origin of Seizure Annotations}\label{subsec:origin-of-seizure-annotations}
 
-\subsection{Inclusion Criteria}
-For a patient to be included in this study, generally speaking, they needed to have enough \gls{eeg} data and seizures. 
-These were necessary, so the models have enough examples to learn features which can be used to forecast seizures, and for the evaluation to carry statistical weight.
+\subsection{Inclusion Criteria}\label{subsec:inclusion-criteria}
+For a patient to be included in this study, generally speaking, they needed to have enough \gls{eeg} data and seizures.
+These were necessary, so the models have enough examples to learn features which can be used to forecast seizures and for the evaluation to carry statistical weight.
 
-% todo might need to adjust this if i change the term "valid" seizure.
-Patients needed to have at least 10 valid seizures. 
-In this context, a seizure is considered valid if no other seizure occurs within its preictal interval. 
+% todo might need to adjust this if I change the term valid seizure.
+Patients needed to have at least 10 valid seizures.
+In this context, a seizure is considered valid if no other seizure occurs within its preictal interval.
 
-Regarding the recording duration, there are two separate concepts. 
-First, there's the total monitoring timespan, which is the duration from the start of the first recording to the end of the last. 
-However, data isn't recorded all the time, since the device is regularly taken off for a while. 
+Regarding the recording duration, there are two separate concepts.
+First, there is the total monitoring timespan, which is the duration from the start of the first recording to the end of the last.
+However, data is not recorded all the time, since the device is regularly taken off for a while.
 So secondly, the total duration of all available recordings is taking into account.
-Based on these, we want to quantify for how much of the monitoring timespan data is available. We define this so-called \textbf{recording coverage} as:
+Based on these, we want to quantify how much of the monitoring timespan data is available.
+We define this so-called \textbf{recording coverage} as:
 
 \[\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}\]
 
