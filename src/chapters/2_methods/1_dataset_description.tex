@@ -1,0 +1,44 @@
+\section{Dataset Description}
+Data from two different datasets called ``Ultra2'' (U) and ``Competition'' (C) are used. Patients are referred to with the initial letter of their dataset, followed by their ID, e.g., U01.
+
+% todo where does this data come from
+
+Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files. 
+The seizure's starts, and in some cases the type and end, were contained in the annotations.
+
+
+% todo
+% number of channel, type of channel (distal, proximal)
+% explain visits
+% which patients were there
+% how patients are called
+
+\subsection{Ethics Votum}
+
+\subsection{Device Description}
+
+\subsection{Origin of Seizure Annotations}
+
+\subsection{Inclusion Criteria}
+For a patient to be included in this study, generally speaking, they needed to have enough \gls{eeg} data and seizures. 
+These were necessary, so the models have enough examples to learn features which can be used to forecast seizures, and for the evaluation to carry statistical weight.
+
+% todo might need to adjust this if i change the term "valid" seizure.
+Patients needed to have at least 10 valid seizures. 
+In this context, a seizure is considered valid if no other seizure occurs within its preictal interval. 
+
+Regarding the recording duration, there are two separate concepts. 
+First, there's the total monitoring timespan, which is the duration from the start of the first recording to the end of the last. 
+However, data isn't recorded all the time, since the device is regularly taken off for a while. 
+So secondly, the total duration of all available recordings is taking into account.
+Based on these, we want to quantify for how much of the monitoring timespan data is available. We define this so-called \textbf{recording coverage} as:
+
+\[\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}\]
+
+% maybe put this in the table
+Patient U02 was excluded based on having a recording coverage of only \SI{35}{\percent}.
+
+% todo who was excluded based on what.
+% todo table with patient's info
+
+

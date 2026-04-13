@@ -1,0 +1,44 @@
+\documentclass[11pt, oneside,openany]{scrbook}
+
+% -----------------------
+% Load settings
+% -----------------------
+\input{settings/packages}
+\input{settings/variables}
+\input{settings/config}
+\input{settings/glossaries}
+\input{settings/formatting}
+
+
+\title{Master's Thesis raw}
+\author{Julian Webb}
+\date{March 2026}
+
+\begin{document}
+    \maketitle
+
+    \input{chapters/0_abstract}
+
+    \tableofcontents
+    \listoffigures
+    \printglossary[type=\acronymtype, title=List of Abbreviations]
+
+    % -----------------------
+    % Chapters
+    % -----------------------
+    \input{chapters/1_introduction}
+    \input{chapters/2_methods}
+    \input{chapters/3_results}
+    \input{chapters/4_discussion}
+    \input{chapters/5_conclusion}
+
+    % -----------------------
+    % Bibliography
+    % -----------------------
+    % \printbibliography
+
+    % -----------------------
+    % Appendices
+    % -----------------------
+
+\end{document}

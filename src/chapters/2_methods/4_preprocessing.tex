@@ -1,0 +1,91 @@
+\section{Preprocessing}
+
+\subsection{Timestamp Localization}
+\Gls{edf} files store their start as a naive timestamp, i.e., without information about their time zone. \Gls{dst} caused the timestamps to have different UTC offsets within a patient. To rectify this, the timestamps for a patient were all converted to that patient's standard time — referred to as their ``main'' time zone — based on their locale.
+
+The challenge when doing this is that the time shift backwards in autumn creates ambiguous times during the hour that occurs twice. These timestamps` UTC offset can't be inferred without an ordered sequence of timestamps in which the time jumps back by one hour at some point. 
+
+In order to achieve this for the competition patient's files, the files were sorted by the sequence of recording, and then the file's start and ends were put in order in the format \textit{file1 start, file1 end, file2 start, file2 end, etc}. This allowed the detection of where the end of the previous file was later than the start of the current file, which indicated a time shift backwards, i.e., the shift from \gls{dst} to standard time. This allowed for finding the border of which files were in daylight saving time and their appropriate conversion to standard time. 
+
+For Ultra2 patients, the \gls{edf} files contained additional information about their time zone, which was used for conversion.
+
+
+\subsection{EEG Artifact Removal}
+There are two types of artifacts that occur frequently in the \gls{eeg} data. 
+Their amplitude is very extreme compared to the rest of the signal, thus, they would disrupt multiple parts of the further processing, such as model training and cycle extraction, making it important to remove them.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{artifact_examples}
+    \caption[Typical \gls{eeg} Artifacts]{Typical \gls{eeg} Artifacts. Removed intervals are shown in red. Left: A short artifact where the signal is clipped for a single sample. Right: A longer artifact where the clipping is followed by rapid oscillation and a \gls{dc} drift.}
+    \label{fig:artifact_examples}
+\end{figure}
+
+As shown in \cref{fig:artifact_examples}, artifacts usually occur in both channels. 
+The signal hits its minimum possible amplitude of \SI{-1374.21}{\micro\volt}. 
+
+In the first type of artifact, it just clips for one or more samples \Cref{fig:artifact_examples} left).
+In the second type of artifact, the clipping is followed by rapid oscillation, then a \gls{dc} drift before stabilization back to the clean signal (\Cref{fig:artifact_examples} right). 
+
+To filter out these artifacts, first, all signals are scanned for clipped intervals where there are samples that are within \SI{0.1}{\micro\volt} of the most extreme possible values on either channel. 
+After the end of each clipped interval, the variance is calculated in a two-second window overlapping with a \SI{0.5}{\sec} step. 
+As long as consecutive window's variances are above a threshold, they keep getting removed. 
+The high-variance check captures the oscillations as well as the \gls{dc} drift. 
+Multiple variance thresholds were tested and a threshold of \SI{20000}{\micro\volt} was determined to reliably catch these artifacts without removing valid data. Care was taken not to remove too much high-variance signal, as this often occurs during seizures, which are of particular importance to the analysis.
+The detected invalid intervals were then padded with \SI{0.25}{\sec} on both sides to ensure that the adjacent data, which might also have been contaminated, are removed.
+Finally, intervals were merged if they were less than a segment's length apart, since that is the shortest window used here.
+
+This resulted in a set of invalid recording intervals, which were excluded from the further analysis, as well as a set of valid intervals, which were included.
+
+\subsection{Windowing}
+% todo might need to adjust this if I change segment types for valid/all seizures
+For downstream parts of the pipeline, we create two types of window in the recordings: short \textit{``segments''} and longer \textit{``clips''}. In this paper, these terms carry the specific meanings that are defined in this section.
+
+\subsubsection{Segment Duration}
+Segments are the shortest windows that are used. Based on ..., % todo insert reference
+they are approximately \SI{15}{\sec} in length. 
+However, the \gls{eeg} data here has an unusual sampling frequency of \SI{207.0310546581987}{\hertz}, which for a \SI{15}{\sec} segment would result in a fractional number of samples. 
+To avoid this, the exact segment duration was changed to the closest duration that resulted in an integer number of samples which resulted in a duration of \SI{14.99775}{\sec} with exactly \SI{3105}{samples}.
+
+The timespan from the start of the first valid interval to the end of the last is completely filled with contiguous, non-overlapping segments, resulting in an aligned series of segments without gaps.
+Segments that are fully contained in valid intervals are labeled as ``existing'' and segments that are only partially or not contained are considered non-existing and aren't further considered. 
+
+Segment's receive a ``type'' which indicates their position relative to close seizures. This type is determined based on the end of a segment, as predictions are issued at the end of clips, which are based on the end of segments.
+
+\subsubsection{Interval Types}
+For seizure prediction to be useful, it is necessary to have a certain minimum intervention interval between the warning time, when the prediction is issued, and the seizure's start. This would enable the administration of an inhibitory drug or the patient to take cautionary action. On the other hand, for a warning to be useful, the seizure must occur within a certain time frame after the intervention time has passed. The window in which the seizure is expected to occur after the intervention time is called the \gls{sph}. The equivalent to the \gls{sph} when looking backwards in time from a seizure, rather than forwards in time from a prediction, is called the preictal interval. It's the window before a seizure where a warning should be issued (\cref{fig:interval_types}).
+
+Additionally, it's important to take into account that around the seizure, even beyond the preictal interval, the signal properties might be changed. The period before the preictal interval is labeled as ``inter-pre''. Similar to the preictal interval, an interval after a seizure is called ``postictal'' and the period after that is called ``inter-post''. Periods that don't fall within any of these intervals are labeled as ``interictal''. 
+
+\input{tables/interval_durations}
+
+The exact durations of the intervals calculated as a multiple of the duration of a segment, again due to the unusual sampling rate (\cref{tab:interval_durations}). This facilitates analysis by letting each interval have a whole number of segments.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{interval_types.pdf}
+    \caption[Intervals Around Seizures]{The intervals around a seizure with their approximate time points.}
+    \label{fig:interval_types}
+\end{figure}
+
+
+
+
+\subsubsection{Clips}
+
+
+
+
+
+
+
+% todo contents:
+
+% segemnts (length, type)
+% lengths of all intervals (exact vs. approx), based on segments
+
+\subsection{Dataset Partitioning}
+
+
+\subsection{Feature Extraction}
+

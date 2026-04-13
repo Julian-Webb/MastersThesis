@@ -1,0 +1,29 @@
+\section{Dataset Cleaning}
+The initial datasets had many formatting inconsistencies and erroneous data.
+This section will outline which issues were found and how they were dealt with.
+
+\subsection{Seizure Annotations}
+The annotations of the Ultra2 dataset were initially stored as raw text files, generally with one file per combination of patient and visit.  % TODO explain visits somewhere
+
+These files suffered from inconsistent formatting and naming, typos, and files being placed in the wrong patient's directory. In order to systematically work with the files, these issues were rectified, and they were converted to a \gls{csv} format for clearer structure, and combined into a single file per patient.
+
+Patient U03 had seizure annotations during a period which was no longer available, as the data was lost during the study. These annotations were removed. 
+
+\subsection{Electroencephalographic Recordings}
+
+For some of the \gls{eeg} files, the following systematic issues were identified:
+\begin{enumerate}
+    \item \label{itm:corrupted} The file was corrupted.
+    \item \label{itm:unknown} The file was labeled as ``unknown implant'' and contained only artifacts.
+    \item \label{itm:startdate} The file reported a start date in the early 2000s, i.e., before the start of the study.
+    \item \label{itm:dup_different_pdir} Duplicate copies of a patient's files were found in another patient's directory.
+    \item \label{itm:dup_same_pdir} Duplicate copies were present within a patient's directory.
+    \item \label{itm:dup_start} Multiple files shared the same start timestamp within a patient's directory.
+\end{enumerate}
+
+Files with issues \ref{itm:corrupted}--\ref{itm:startdate} were removed. 
+For files with issues \ref{itm:dup_different_pdir} and \ref{itm:dup_same_pdir}, only a single copy in the correct directory was retained. 
+For files with issue \ref{itm:dup_start}, the longest file was retained; if multiple files had the same length, one was selected at random.
+
+Additionally, it was verified that all \gls{edf} files have the same sampling frequency, the same channel names in the same order, and all annotated seizures were within recordings.
+

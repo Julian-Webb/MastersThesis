@@ -1,0 +1,6 @@
+out/
+!out/main.pdf
+
+.idea/
+.DS_Store
+
