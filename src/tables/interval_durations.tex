@@ -1,26 +1,21 @@
-\begin{table}[!htbp]
-  \centering
-  \setlength{\tabcolsep}{10pt}
-  \renewcommand{\arraystretch}{1.15}
-  \rowcolors{2}{gray!10}{white} % Alternating row colors
+\setlength{\tabcolsep}{10pt}
+\renewcommand{\arraystretch}{1.15}
+\rowcolors{2}{gray!10}{white} % Alternating row colors
 
-  \begin{tabular}{l r r r}
+\begin{tabular}{l r r r}
     \rowcolor{gray!25}
     \textbf{Interval} &
     \makecell[c]{\textbf{Approximate}\\\textbf{duration [h]}} &
-    \makecell[c]{\textbf{Segments}\\\textbf{contained}} & 
+    \makecell[c]{\textbf{Segments}\\\textbf{contained}} &
     \makecell[c]{\textbf{Exact}\\\textbf{duration [h]}} \\
     \hline
-    segment      & 0:00:15 &   1 & 0:00:14.99775 \\
-    clip         & 0:10:00 &  40 & 0:09:59.91000 \\
-    inter-pre   & 2:55:00 & 700 & 2:54:58.42500 \\
-    preictal / SPH    & 1:00:00 & 240 & 0:59:59.46000 \\
-    intervention & 0:05:00 &  20 & 0:04:59.95500 \\
-    postictal    & 1:00:00 & 240 & 0:59:59.46000 \\
-    inter-post  & 3:00:00 & 720 & 2:59:58.38000 \\
+    segment             & 0:00:15 &   1 & 0:00:14.99775 \\
+    clip                & 0:10:00 &  40 & 0:09:59.91000 \\
+    inter-pre           & 2:55:00 & 700 & 2:54:58.42500 \\
+    preictal / SPH      & 1:00:00 & 240 & 0:59:59.46000 \\
+    intervention        & 0:05:00 &  20 & 0:04:59.95500 \\
+    postictal           & 1:00:00 & 240 & 0:59:59.46000 \\
+    inter-post          & 3:00:00 & 720 & 2:59:58.38000 \\
     \hline
-  \end{tabular}
+\end{tabular}
 
-  \caption[Interval Durations]{The approximate and exact durations, as a multiples of segments, of the defined intervals.}
-  \label{tab:interval_durations}
-\end{table}

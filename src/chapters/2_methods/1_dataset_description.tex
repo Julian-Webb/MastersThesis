@@ -1,6 +1,6 @@
 \section{Dataset Description}\label{sec:dataset-description}
-Data from two different datasets called ``Ultra2'' (U) and ``Competition'' (C) are used.
-Patients are referred to with the initial letter of their dataset, followed by their ID, e.g., U01.
+Data from two different datasets called ``Ultra2'' and ``Competition'' are used.
+Patients are referred to with the initial letter of their dataset, followed by their ID number, e.g., U17 or C03.
 
 % todo where does this data come from?
 
@@ -23,10 +23,10 @@ The seizure's starts, and in some cases the type and end, were contained in the 
 \subsection{Inclusion Criteria}\label{subsec:inclusion-criteria}
 For a patient to be included in this study, generally speaking, they needed to have enough \gls{eeg} data and seizures.
 These were necessary, so the models have enough examples to learn features which can be used to forecast seizures and for the evaluation to carry statistical weight.
+Only patients who had completed the U002 study at the point of writing and thus whose entire \gls{eeg} data was available were considered. % todo correct study name?
 
-% todo might need to adjust this if I change the term valid seizure.
 Patients needed to have at least 10 valid seizures.
-In this context, a seizure is considered valid if no other seizure occurs within its preictal interval.
+In this context, a seizure is considered valid if no other seizure occurs within its preictal interval (\cref{subsubsec:interval_types}), i.e., a seizure must occur at least $\sim$\SI{65}{\min} after the previous seizure.
 
 Regarding the recording duration, there are two separate concepts.
 First, there is the total monitoring timespan, which is the duration from the start of the first recording to the end of the last.
@@ -37,10 +37,20 @@ We define this so-called \textbf{recording coverage} as:
 
 \[\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}\]
 
-% maybe put this in the table
-Patient U02 was excluded based on having a recording coverage of only \SI{35}{\percent}.
+Patients with a recording coverage less than \SI{60}{\percent} were excluded.
+No patients needed to be excluded on the basis of the total recorded duration, as no patients with little \gls{eeg} data had enough seizures.
 
-% todo who was excluded based on what.
-% todo table with patient's info
+\Cref{tab:patient_inclusion} shows which patients were included and why.
+
+\begin{table}[btf]
+    \centering
+    \setlength{\tabcolsep}{10pt}
+    \renewcommand{\arraystretch}{1.15}
+    \rowcolors{2}{gray!10}{white} % Alternating row colors
+    \input{tables/patient_inclusion}
+    \caption[Patient Inclusion]{Patient Inclusion: shows which inclusion criteria were met for which patients. Next to the valid seizures ($\geq 10$) and recording coverage ($\geq\SI{60}{\percent}$) conditions is denoted whether they were met.}
+    \label{tab:patient_inclusion}
+\end{table}
+
 
 
