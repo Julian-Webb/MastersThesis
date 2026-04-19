@@ -3,7 +3,7 @@
 
 
 \section{Model Evaluation} \label{sec:model-evaluation}
-After training, it was important to evaluate the performance of the models, as conclusions about the propensity of seizures could only be drawn from the \glspl{fp}, if the models were decent at predicting seizures.
+After training, it was important to evaluate the performance of the models on the valid clips, as conclusions about the propensity of seizures could only be drawn from the \glspl{fp}, if the models were decent at predicting seizures.
 \glspl{fp} from a random or worse-than-chance classifier would not carry the intended meaning.
 
 For the ensemble, the input features were scaled again using the z-score normalizer, which was previously fit on the train data.
@@ -11,8 +11,11 @@ Then, the models were used to issue scores (0--1) for all existing segments, whi
 The segment scores were then averaged per clip to get the clip scores.
 These, rather than segment scores, are used for the further evaluations.
 
-We used two types of metrics used to evaluate the performance: clip-based metrics and \glspl{ebm}.
-Here, clip-based metrics refer to the standard measures used to evaluate models in machine learning, which use the confusion matrix of \glspl{tp}, \glspl{fp}, \glspl{fn}, and \glspl{tn} to compute metrics, such as precision, sensitivity, accuracy, and the \gls{roc auc}.
+We used two types of metrics to evaluate the performance: clip-based metrics and \glspl{ebm}.
+
+Here, clip-based metrics refer to the standard measures used to evaluate models in machine learning on samples (clips), which use the confusion matrix of \glspl{tp}, \glspl{fp}, \glspl{fn}, and \glspl{tn} to compute metrics, such as precision, sensitivity, accuracy, and the \gls{roc auc}.
+The Hanley McNeil test was performed to test for statistically significant improvement of the \gls{roc auc} compared to a random classifier.
+
 On the other hand, \glspl{ebm} are specific to time-series data and seizure prediction and quantify more clinically relevant properties.
 Here, the (relative) \gls{tifw} \parencite{mormann_seizure_2007, eberlein_machine_2025} and the (relative) number of seizures predicted were used.
 
