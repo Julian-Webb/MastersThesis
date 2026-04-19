@@ -14,14 +14,14 @@ These, rather than segment scores, are used for the further evaluations.
 We used two types of metrics to evaluate the performance: clip-based metrics and \glspl{ebm}.
 
 Here, clip-based metrics refer to the standard measures used to evaluate models in machine learning on samples (clips), which use the confusion matrix of \glspl{tp}, \glspl{fp}, \glspl{fn}, and \glspl{tn} to compute metrics, such as precision, sensitivity, accuracy, and the \gls{roc auc}.
-The Hanley McNeil test was performed to test for statistically significant improvement of the \gls{roc auc} compared to a random classifier.
+The Hanley McNeil test \parencite{hanley_method_1983} was performed to test for statistically significant improvement of the \gls{roc auc} compared to a random classifier.
 
 On the other hand, \glspl{ebm} are specific to time-series data and seizure prediction and quantify more clinically relevant properties.
 Here, the (relative) \gls{tifw} \parencite{mormann_seizure_2007, eberlein_machine_2025} and the (relative) number of seizures predicted were used.
 
 \subsection{Time in False Warning} \label{subsec:tifw}
 Relative \gls{tifw} is the \gls{eb} equivalent to the \gls{fpr}, i.e., the inverse of specificity.
-That is to say it is minimized if non-preictal (false) samples are correctly classified as such.
+That is to say it is minimized when non-preictal (false) samples are correctly classified as such.
 However, when a prediction is issued from a $\sim$\SI{10}{\minute} clip, it is not issued for the timespan of that clip, but for that clip's \gls{sph}, i.e., the timespan $\sim$\num{5}--\SI{65}{\minute} after the clip's end.
 This means that summing the duration of \gls{fp} clips is not sufficient to calculate the \gls{tifw}.
 The clip's \glspl{sph} and overlaps thereof must be taken into account.
