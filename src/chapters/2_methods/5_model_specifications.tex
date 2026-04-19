@@ -1,5 +1,5 @@
 \section{Model Architectures}\label{sec:model-architectures}
-In this project, a \gls{cnn} and an ensemble of \glspl{fb-mlp} were trained to predict seizures.
+In this project, a \gls{cnn} and an ensemble of \glspl{fb-mlp} were trained per patient to predict seizures.
 This section will discuss their exact specifications.
 
 \subsection{Convolutional Neural Network}\label{subsec:cnn-architecture}
@@ -21,7 +21,7 @@ Ultimately, the sample dimension (height) is reduced to 1 with 32 features per \
 Only then are the per-channel features combined (flattened).
 These pass through two final dense layers to create the output logit, which is then bounded between 0 and 1 with the sigmoid function, to create the final output.
 
-\begin{figure}[hbtp]
+\begin{figure}[bpt]
     \centering
     \includegraphics{conv_blocks}
     \includegraphics[width=\textwidth]{CNN_architecture}
