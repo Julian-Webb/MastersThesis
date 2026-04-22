@@ -1,0 +1,24 @@
+%! Author = julian
+%! Date = 19.04.26
+
+\section{Cycle Extraction} \label{sec:cycle-extraction}
+% todo introduction
+
+\subsection{Gap Filling} \label{subsec:gap-filling}
+% todo what part of the cycle extaction proceudre
+Cycle extraction requires gap-free data, so gaps are filled before processing.
+This is done on the segment level because more data are available there than at the clip level.
+Otherwise, segment data from invalid clips would be lost.
+
+The gap-filling procedure preserves the original segment timeline while imputing only short missing intervals ($<\SI{14}{\day}$) in the extracted feature series.
+Long gaps ($\geq\SI{14}{\day}$) are treated as structural recording interruptions and are therefore not imputed.
+Instead, they are used to split the data into independent continuous chunks, ensuring that donor values are never drawn across major recording breaks.
+
+Within each fillable gap, imputation is performed independently per feature column by local donor sampling.
+For a gap of length $L$, donor candidates are taken from neighboring segments before and after the gap within a window of size $W=\max(L, N_{\min})$, where $N_{\min}=100$ is the minimum donor span.
+Values are sampled with replacement from valid donor rows and assigned to the missing positions.
+Additionally, each sampled value is perturbed by a multiplicative factor in the interval $[1-\delta,\;1+\delta]$, where $\delta=0.5$ is the maximum distortion percentage.
+This design preserves local feature statistics, avoids unrealistic interpolation over long outages, and introduces slight stochastic variation to reduce deterministic copy artifacts in the imputed sequences.
+
+\subsection{...}
+
