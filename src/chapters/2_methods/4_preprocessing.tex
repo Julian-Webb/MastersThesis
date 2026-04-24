@@ -141,7 +141,7 @@ Following the partitioning procedure, the boundary would have fallen slightly be
 This hindered the cycle evaluation; therefore, the boundary was manually set to fall into the gap for this patient.
 
 \subsection{Feature Extraction} \label{subsec:feature-extraction}
-Various features were extracted from signals per segment.
+The features extracted from the signals per segment as shown in \cref{tab:feature-properties}.
 Some of these were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.
 
 \begin{table}[htb]
@@ -163,12 +163,12 @@ Some of these were used as inputs to the \glspl{fb-mlp}, and all were used for t
         Total                   &                               & 15                &
     \end{tabular}
     \caption[Features and their properties]{Features and their properties}
-    \label{tab:...}
+    \label{tab:feature-properties}
 \end{table}
 
-Pearson's correlation coefficient was computed between the two channels, and the variance of each channel's signal was computed.
+We computed the signal variance and \gls{acfw} based on \textcite{maturana_critical_2020}, and Pearson's correlation coefficient between the two channels, and the spectral band powers of each channel's signal based on \textcite{muller_coherent_2022}.
 
-The \gls{acfw} \parencite{maturana_critical_2020} was calculated for each channel.
+The \gls{acfw} was calculated for each channel.
 The \gls{acf} represents the correlation of a signal $s$ with itself shifted by a lag value $\lambda$, which corresponds to a number of samples.
 $\bar{s}$ is the signal mean, $T$ is the number of total samples, $\operatorname{Var}_s$ is the variance of $s$.
 \begin{equation}
