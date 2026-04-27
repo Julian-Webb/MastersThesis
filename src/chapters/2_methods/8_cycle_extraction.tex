@@ -1,11 +1,13 @@
 %! Author = julian
 %! Date = 19.04.26
 
+
 \section{Cycle Extraction} \label{sec:cycle-extraction}
-% todo introduction
+
+We aim to identify and quantify the rhythmic patterns of seizure occurrences and predictions in the time series data.
+This section describes the methods used to preprocess the data, handle missing values, extract relevant events, and perform circular statistical analyses to relate cycles in features to the timing of seizures and model predictions.
 
 \subsection{Gap Filling} \label{subsec:gap-filling}
-% todo what part of the cycle extaction proceudre
 Cycle extraction requires gap-free data, so gaps are filled before processing.
 This is done on the segment level because more data are available there than at the clip level.
 Otherwise, segment data from invalid clips would be lost.
@@ -20,5 +22,119 @@ Values are sampled with replacement from valid donor rows and assigned to the mi
 Additionally, each sampled value is perturbed by a multiplicative factor in the interval $[1-\delta,\;1+\delta]$, where $\delta=0.5$ is the maximum distortion percentage.
 This design preserves local feature statistics, avoids unrealistic interpolation over long outages, and introduces slight stochastic variation to reduce deterministic copy artifacts in the imputed sequences.
 
-\subsection{...}
+\subsection{Events} \label{subsec:cycle-events}
+Cycle extraction is based on two types of events: seizure onsets and \glspl{fp} predicted by the models.
+Only \glspl{fp} from valid clips in the test set are included, determined using the optimal threshold from \cref{subsec:threshold-optimization}.
+Seizures from the entire dataset are used, as some patients have fewer than 10 in the test set.
+This is justified because seizure timing is independent of model training, under the assumption that phase locking between seizures and features is stable across the dataset.
 
+\subsection{Outlier Handling} \label{subsec:cycle-outlier}
+Feature-based phase locking can be affected by artifacts in the \gls{eeg} signal, such as muscle or technical noise.
+To mitigate this, extreme feature values are clipped at the \SI{99.999}{\percent} quantile.
+Various thresholds were tested for all patients and features, and this one was visually determined to remove the extreme outliers while preserving the vast majority of the data.
+After clipping, features are z-score normalized to standardize their distributions.
+
+\subsection{Filtering} \label{subsec:cycle-filtering}
+A non-causal, multidien filter is applied to each continuous feature chunk to isolate slow oscillatory components.
+Specifically, a 10th order Butterworth bandpass filter in \gls{sos} form is used with a period range of 5--50 days, and a sampling frequency corresponding to the segment duration.
+This process extracts multidien dynamics while removing short-term fluctuations.
+
+\subsection{Phase Locking} \label{subsec:phase-locking}
+Based on the filtered features, the phases at event times, \glspl{plv}, and mean angles are computed using the Hilbert transform.
+The \gls{plv} quantifies the consistency of event timing relative to the phase of an oscillatory process, ranging from 0 (no phase preference) to 1 (perfect phase locking).
+This is a standard tool in circular statistics and neuroscience for quantifying phase-event relationships.
+
+\paragraph{Computation of PLV}
+\begin{enumerate}
+    \item \textbf{Analytic Signal:} Given a real-valued time series $x(t)$ (e.g., a filtered feature), the analytic signal $z(t)$ is computed using the Hilbert transform:
+    \begin{equation} \label{eq:analytic-signal}
+        z(t) = x(t) + i \cdot \mathcal{H}[x(t)]
+    \end{equation}
+    where $\mathcal{H}[x(t)]$ is the Hilbert transform of $x(t)$.
+
+    \item \textbf{Event Phase Extraction:}
+    The instantaneous phase is then:
+    \begin{equation} \label{eq:instantaneous-phase}
+        \phi(t) = \arg(z(t)).
+    \end{equation}
+    For each event (e.g., a seizure / \gls{fp}), extract the instantaneous phase at the event times where $N$ is the number of events: $\{\phi_{e_1}, \phi_{e_2}, \ldots, \phi_{e_N}\}$.
+
+    \item \textbf{Mean Resultant Vector:} The mean resultant vector is
+    \begin{equation} \label{eq:mean-resultant-vector}
+        R = \frac{1}{N} \sum_{k=1}^N e^{i \phi_{e_k}}.
+    \end{equation}
+
+    \item \textbf{PLV Calculation:} The \gls{plv} is the magnitude of the mean resultant vector:
+    \begin{equation} \label{eq:plv}
+        \mathrm{PLV} = |R| = \left| \frac{1}{N} \sum_{k=1}^N e^{i \phi_{e_k}} \right|
+    \end{equation}
+
+    \item \textbf{Mean Angle:} The argument of $R$ gives the preferred phase:
+    \begin{equation} \label{eq:plv-mean-angle}
+        \mu = \arg(R)
+    \end{equation}
+\end{enumerate}
+
+\subsection{Rayleigh Test} \label{subsec:rayleigh}
+The statistical significance of phase locking is assessed using the Rayleigh test for each feature, which tests the null hypothesis that the event phases are uniformly distributed.
+
+\subsection{Circular Comparison} \label{subsec:circular-comparison}
+To determine whether two groups of circular data, i.e., event phases from two event types, have significantly different mean directions, a non-parametric permutation test is used.
+This is appropriate for circular data, where standard linear tests are not valid due to the periodic nature of the data.
+The null hypothesis that both samples are drawn from populations with the same mean direction is tested.
+
+Let $\{\phi_1^{(1)}, \ldots, \phi_{n_1}^{(1)}\}$ and $\{\phi_1^{(2)}, \ldots, \phi_{n_2}^{(2)}\}$ be the two samples of event phases (in radians), with sample sizes $n_1$ and $n_2$.
+
+\paragraph{Observed Statistic:}
+First, compute the circular mean for each group:
+\begin{equation} \label{eq:circ-mean}
+    \bar{\phi}^{(j)} = \arg\left( \sum_{k=1}^{n_j} e^{i \phi_k^{(j)}} \right), \quad j=1,2
+\end{equation}
+The observed difference in mean direction is then
+\begin{equation} \label{eq:delta-obs}
+    \Delta_{\text{obs}} = \mathrm{wrap}(\bar{\phi}^{(1)} - \bar{\phi}^{(2)})
+\end{equation}
+where $\mathrm{wrap}(\cdot)$ denotes wrapping the angle to the interval $[-\pi, \pi)$.
+
+\paragraph{Variance and Test Statistic:}
+To account for the concentration of the data (i.e., how tightly phases are clustered), the test uses a variance estimate based on the mean resultant length $R_j$ for each group:
+\begin{equation} \label{eq:mean-resultant-length}
+    R_j = \frac{1}{n_j} \left| \sum_{k=1}^{n_j} e^{i \phi_k^{(j)}} \right|
+\end{equation}
+The variance of the mean direction for each group is approximated as
+\begin{equation} \label{eq:var-mean-dir}
+    \mathrm{Var}_j = \frac{1 - R_j}{n_j (R_j^2 + \epsilon)}
+\end{equation}
+where $\epsilon$ is a small constant to avoid division by zero.
+The test statistic is then
+\begin{equation} \label{eq:circ-tstat}
+    T_{\text{obs}} = \frac{|\Delta_{\text{obs}}|}{\sqrt{\mathrm{Var}_1 + \mathrm{Var}_2}}
+\end{equation}
+This statistic is analogous to a Welch's t-test, but adapted for circular data.
+
+\paragraph{Permutation Procedure:}
+To generate the null distribution, the two samples are pooled and randomly reassigned into two groups of sizes $n_1$ and $n_2$, without regard to their original labels.
+For each permutation, the difference in circular means and the corresponding test statistic $T_{\text{perm}}$ are computed as above.
+This process is repeated a large number of times ($N_{perm}=5000$), yielding a distribution of $T_{\text{perm}}$ under the null hypothesis.
+
+\paragraph{P-value Calculation:}
+The two-sided p-value is calculated as the proportion of permutations where the permuted test statistic exceeds or equals the observed test statistic:
+\begin{equation} \label{eq:circ-pval}
+    p = \frac{1 + \sum_{i=1}^{N_{\text{perm}}} \mathbb{I}(T_{\text{perm},i} \geq T_{\text{obs}})}{1 + N_{\text{perm}}}
+\end{equation}
+where $\mathbb{I}(\cdot)$ is the indicator function and $N_{\text{perm}}$ is the number of permutations.
+
+\paragraph{Bootstrap Confidence Intervals:}
+In addition to the permutation test, bootstrap resampling is used to estimate confidence intervals for the mean directions and their difference.
+This involves repeatedly resampling each group with replacement, recalculating the circular means, and determining the empirical percentiles of the resulting distributions.
+
+\paragraph{Interpretation:}
+A small p-value indicates that the observed difference in mean direction is unlikely to have arisen by chance, suggesting a significant difference in the phase preference between the two groups.
+The bootstrap confidence intervals provide an estimate of the uncertainty in the mean directions and their difference.
+
+\paragraph{Usage:} The permutation test is applied to all pairs of events: seizures vs. \gls{cnn} \glspl{fp}, seizures vs.\ ensemble \glspl{fp}, and \gls{cnn} \glspl{fp} vs.\ ensemble \glspl{fp}.
+
+The Watson-Wheeler test, which tests for equality of circular distributions, was also considered as an alternative but found to be overly sensitive to event phase variability.
+
+\subsection{False Discovery Control} \label{subsec:fdr}
+Since the Rayleigh and circular tests are performed for each feature (15 p-values per test), results are corrected for \gls{fdr} using the Benjamini-Hochberg procedure, yielding \gls{fdr}-adjusted p-values for each test.
