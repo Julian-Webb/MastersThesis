@@ -21,14 +21,14 @@ Their amplitude is very extreme compared to the rest of the signal; thus, they w
     \centering
     \includegraphics{artifact_examples}
     \caption[Typical \gls{eeg} Artifacts]{Typical \gls{eeg} Artifacts. Removed intervals are shown in red. Left: A short artifact where the signal is clipped for a single sample. Right: A longer artifact where the clipping is followed by rapid oscillation and a \gls{dc} drift.}
-    \label{fig:artifact_examples}
+    \label{fig:artifact-examples}
 \end{figure}
 
-As shown in \cref{fig:artifact_examples}, artifacts usually occur in both channels.
+As shown in \cref{fig:artifact-examples}, artifacts usually occur in both channels.
 The signal hits its minimum possible amplitude of \SI{-1374.21}{\micro\volt}.
 
-In the first type of artifact, it just clips for one or more samples, as shown in the left panel of \cref{fig:artifact_examples}.
-In the second type of artifact, the clipping is followed by rapid oscillation, then a \gls{dc} drift before stabilization back to the clean signal, as shown in the right panel of \cref{fig:artifact_examples}.
+In the first type of artifact, it just clips for one or more samples, as shown in the left panel of \cref{fig:artifact-examples}.
+In the second type of artifact, the clipping is followed by rapid oscillation, then a \gls{dc} drift before stabilization back to the clean signal, as shown in the right panel of \cref{fig:artifact-examples}.
 
 To filter out these artifacts, first, all signals are scanned for clipped intervals where there are samples that are within \SI{0.1}{\micro\volt} of the most extreme possible values on either channel.
 After the end of each clipped interval, the variance is calculated in a two-second window overlapping with a \SI{0.5}{\sec} step.
@@ -57,20 +57,20 @@ Segments that are fully contained in valid intervals are labeled as ``existing''
 Segments receive a ``type'' which indicates their position relative to close seizures.
 This type is determined based on the end of a segment, as predictions are issued at the end of clips, which are based on the end of segments.
 
-\subsubsection{Interval Types} \label{subsubsec:interval_types}
+\subsubsection{Interval Types} \label{subsubsec:interval-types}
 For seizure prediction to be useful, it is necessary to have a certain minimum intervention interval between the warning time, when the prediction is issued, and the seizure's start.
 This would enable the administration of an inhibitory drug or the patient to take cautionary action.
 On the other hand, for a warning to be useful, the seizure must occur within a certain time frame after the intervention time has passed.
 The window in which the seizure is expected to occur after the intervention time is called the \gls{sph}.
 
 The equivalent to the \gls{sph} when looking backwards in time from a seizure, rather than forwards in time from a prediction, is called the preictal interval.
-It is the window before a seizure where a warning should be issued (\cref{fig:intervals_around_seizure}).
+It is the window before a seizure where a warning should be issued (\cref{fig:intervals-around-seizure}).
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{intervals_around_seizure}
     \caption[Intervals Around Seizures]{The intervals around a seizure with their approximate durations and relative time points. \textit{Not to scale.}}
-    \label{fig:intervals_around_seizure}
+    \label{fig:intervals-around-seizure}
 \end{figure}
 
 Additionally, it is important to take into account that around the seizure, even beyond the preictal interval, the signal properties might be changed.
@@ -79,18 +79,18 @@ Similar to the preictal interval, an interval after a seizure is called ``postic
 Periods that do not fall within any of these intervals are labeled as ``interictal''.
 % todo what about consecutive seizures?
 
-The exact durations of the intervals are calculated as a multiple of the segment duration, again due to the unusual sampling rate (\cref{tab:interval_durations}). This facilitates analysis by letting each interval have a whole number of segments.
+The exact durations of the intervals are calculated as a multiple of the segment duration, again due to the unusual sampling rate (\cref{tab:interval-durations}). This facilitates analysis by letting each interval have a whole number of segments.
 
 \begin{table}[!htbp]
     \centering
     \input{tables/interval_durations}
     \caption[Interval Durations]{The approximate and exact durations of the defined intervals, as multiples of segments.}
-    \label{tab:interval_durations}
+    \label{tab:interval-durations}
 \end{table}
 
 \subsubsection{Clips}
 As in \textcite{yang_seizure_2024}, non-overlapping clips that are approximately \SI{10}{\min} long are created.
-As with the other intervals, their exact duration is adjusted to a multiple of a segment (\cref{tab:interval_durations}).
+As with the other intervals, their exact duration is adjusted to a multiple of a segment (\cref{tab:interval-durations}).
 The clips are aligned to the segments and usually contain 40 thereof, regardless of whether they are existing segments.
 They inherit their type from the segments they contain, which means they can have mixed types.
 Since clips are used for later evaluations, they should not contain a mix of preictal and non-preictal segments, as they could not be clearly labeled then.

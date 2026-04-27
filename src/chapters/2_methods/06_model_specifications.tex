@@ -10,7 +10,7 @@ Only at the end are the per-channel features combined to output a final score.
 
 In the following, \gls{eeg} channels refer to electrode-derived input signals, whereas \gls{cnn} channels refer to convolutional feature maps (tensor depth).
 
-\Cref{fig:cnn_architecture} shows the exact architecture.
+\Cref{fig:cnn-architecture} shows the exact architecture.
 The inputs are passed through a combination of convolutional and pooling layers.
 There are two distinct types of convolutional blocks: conv1 and conv2.
 Conv1 uses a convolutional layer, followed by a pooling layer with a relatively large kernel size, reducing the height (\#samples) rapidly.
@@ -28,7 +28,7 @@ These pass through two final dense layers to create the output logit, which is t
     \caption[CNN Architecture]{CNN Architecture.\\
     Top: Types of special blocks where \textit{k}: kernel size \textit{f}: \#filters, \textit{p}: pool size.\\
     Bottom: A segment's EEG data is processed from left to right. The volumes represent the input tensor and the outputs of layers. In between the volumes, the network's layer's properties are shown.}
-    \label{fig:cnn_architecture}
+    \label{fig:cnn-architecture}
 \end{figure}
 
 Since the height gets reduced further and further in deeper layers, the extracted features receive information from more samples, i.e., the receptive field of deeper neurons grows on the time scale.
@@ -40,7 +40,7 @@ This means there are 8 times fewer nodes in the first flattened tensor.
 For this reason, the number of nodes in the first dense layer was reduced by a factor of 8: from 64 to 8.
 The flat tensors thus have a height of 64 → 8 → 1, instead of 512 → 64 → 1.
 
-Secondly, because the sampling rate of $\sim$\SI{207}{\Hz} here differs slightly from the sampling rate of \SI{200}{\Hz}, the number of input samples from a segment differs too (3105 vs. 3000).
+Secondly, because the sampling rate of $\sim$\SI{207}{\Hz} here differs slightly from the sampling rate of \SI{200}{\Hz}, the number of input samples from a segment differs too (3105 vs.\ 3000).
 Thus, to arrive at a height of 1 at the final conv layer, it is necessary to reduce this dimension slightly more.
 For this reason, the pool padding of the second conv2 layer was changed from same to valid.
 This minor change is enough to fully accommodate the sampling frequency difference.
@@ -69,8 +69,8 @@ Postictal and inter-post segments were not used because they might be in the pre
 Additionally, post-seizure, the brain state can be altered significantly, causing changes in the signals, which could confuse the models \parencite{muller_coherent_2022}.
 
 As mentioned in \cref{subsec:dataset-partitioning}, there is a large class imbalance with scarcity of preictal segments.
-To not waste resources training on more interictal segments than necessary, we subsampled the number of interictal segments to max. 20 times the number of preictal ones.
-The class weights were adjusted to the final ratio of preictal vs. interictal segments, so that the models were not biased towards focusing mostly on learning to predict interictal segments.
+To not waste resources training on more interictal segments than necessary, we subsampled the number of interictal segments to max.\ 20 times the number of preictal ones.
+The class weights were adjusted to the final ratio of preictal vs.\ interictal segments, so that the models were not biased towards focusing mostly on learning to predict interictal segments.
 All models received the same subsampled segments for training, so that results are more comparable.
 
 As is \textcite{eberlein_convolutional_2018}, the \glspl{cnn} were trained for 50 epochs with ADAM optimization, a learning rate of \num{0.001}, and binary cross-entropy as a loss function.

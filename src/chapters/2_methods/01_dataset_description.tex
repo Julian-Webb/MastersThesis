@@ -1,0 +1,17 @@
+\section{Dataset Description}\label{sec:dataset-description}
+% todo where does this data come from?
+% todo ethics votum
+% todo die Antragsnummer zu der Studie mit dem UNEEG Device ist: 20-1175
+Data from two different datasets called ``Ultra2'' and ``Competition'' are used.
+Patients are referred to with the initial letter of their dataset, followed by their ID number, e.g., U17 or C03.
+Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files per patient.
+
+The ultra-long-term  \gls{eeg} data was collected on patients with temporal lobe epilepsy using the 24/7 EEG™ SubQ system, which is a subscapular \gls{eeg} device by the company UNEEG\@.
+A proximal and distal electrode was positioned by the temporal lobe, resulting in two channels; the hemisphere was patient-specific.
+A inpatient visit of the clinic with video \gls{eeg} was followed by outpatient recordings with approximately monthly visits to the clinic and transferal of data.
+
+The annotations were created in a semi-automatic manner.
+First, an automatic classifier viewed the entire \gls{eeg} data and detected seizures.
+Then, two neurologists examined the automatically detected portions and evaluated if they were truly seizures.
+When there was a discrepancy between the two reviewers, a third expert decided on the final annotations.
+The seizure's starts, and in some cases the type and end, were contained in the annotations.
