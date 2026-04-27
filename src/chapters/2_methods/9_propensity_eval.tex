@@ -1,0 +1,38 @@
+\section{Model-Feature Propensity Evaluation} \label{sec:propensity-eval}
+
+To rigorously evaluate whether a model's \gls{fp} predictions reflect underlying phase-dependent seizure propensity, we define a set of qualification criteria for each \textit{patient, feature,} and \textit{model}.
+These criteria ensure that only meaningful model-feature relationships are interpreted in the context of cyclical seizure risk.
+
+\subsection{Qualification Criteria} \label{subsec:qualification-criteria}
+For a given patient, feature, and model, the following conditions must be satisfied for significance level $\alpha = 0.05$:
+
+\begin{enumerate}
+    \item \textbf{Seizure-Feature Phase Locking:} The patient's seizures must exhibit significant phase locking to the feature, as determined by the Rayleigh test with \gls{bh} \gls{fdr} correction ($p_{\mathrm{Rayleigh, BH}} < \alpha$). This criterion ensures that the feature is even relevant to the patient's seizure timing.
+    \begin{itemize}
+        \item Again, due to limited seizure counts, seizures from both training and test sets are included, under the assumption that phase locking remains stable across the dataset.
+    \end{itemize}
+    \item \textbf{Model Predictive Performance:} The model must achieve a test set \gls{roc auc} $\geq 0.75$.
+    This empirically chosen threshold ensures that only models with acceptable predictive accuracy are considered.
+    \item \textbf{\gls{fp}-Feature Phase Locking:} The model's \glspl{fp} must also be significantly phase locked to the feature ($p_{\mathrm{Rayleigh, BH}} < \alpha$). This indicates that \glspl{fp} are not randomly distributed in phase.
+    \item \textbf{Distributional Similarity:} If the above criteria are met, the phase distributions of \glspl{fp} and seizures are compared using the non-parametric permutation test (see \cref{subsec:circular-comparison}). A non-significant result ($p_{\mathrm{perm, BH}} \geq \alpha$) indicates that \glspl{fp} and seizures may arise from the same phase-dependent process.
+\end{enumerate}
+
+\subsection{Interpretation of Outcomes} \label{subsec:interpretation-of-outcomes}
+\paragraph{Ideal Case: Strong Evidence for Phase-Dependent Propensity}
+\begin{itemize}
+    \item Both seizures and \glspl{fp}: $p_{\mathrm{Rayleigh, BH}} < \alpha$
+    \item Permutation test: $p_{\mathrm{perm, BH}} \geq \alpha$
+\end{itemize}
+\textit{Interpretation:} \Glspl{fp} occur at similar preferred phases as seizures, suggesting the model captures phase-dependent seizure propensity.
+
+\paragraph{Contrary Cases}
+\begin{itemize}
+    \item For seizures, $p_{\mathrm{Rayleigh, BH}} \geq \alpha$: seizures are not significantly phase-locked to the feature.
+    Hence, any phase locking of \glspl{fp} cannot be interpreted as a meaningful proxy for propensity.
+    \item For model \glspl{fp}, $p_{\mathrm{Rayleigh, BH}} \geq \alpha$: \glspl{fp} are not significantly phase-locked to the feature.
+    The model-feature combination cannot be used to evaluate propensity.
+    \item Permutation test: $p_{\mathrm{perm, BH}} < \alpha$: The phase preference of seizures and \glspl{fp} differs significantly.
+    \Glspl{fp} cannot be interpreted as occurring during a proictal period.
+\end{itemize}
+
+As such, it is evaluated for each patient, model, and feature combination whether it indicates that \glspl{fp} are indicating high propensity.
