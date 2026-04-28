@@ -1,0 +1,34 @@
+\section{Model Evaluation and Comparison} \label{sec:model-eval-and-comparison}
+\Cref{tab:model_eval_metrics} shows the resulting evaluation metrics from \cref{sec:model-evaluation}.
+For the training set, we generally see high a \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e., low relative \gls{tifw} and high \gls{eb} sensitivity.
+For the test set, the models perform worse or equally in almost all cases.
+% todo for discussion:
+% This can be either because of overfitting or because the distribution of the test set changes.
+The classifiers do not perform better than chance on the test set for patient U03's ensemble and both models of U04, as indicated by the Hanley McNeil p-values $\geq$ \SI{5}{\percent},
+
+For the majority of patients and metrics, the \gls{cnn} performed better than the ensemble.
+This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
+
+\begin{table}[htbp]
+    \centering
+    \caption[Model Evaluation]{\textbf{Model Evaluation Metrics per Patient and Model}\\Thresh.: the optimal threshold, EB sens.: event-based sensitivity, $p_{\mathrm{HM}}$: p-value of the Hanley McNeil test for ROC AUC. \\\textit{All values in percent and rounded}.}
+    \label{tab:model_eval_metrics}
+    \setlength{\tabcolsep}{4.5pt}
+    \renewcommand{\arraystretch}{1.15}
+    \input{tables/model_eval_metrics}
+\end{table}
+
+The \glspl{cope} for patients and partitions are shown in \cref{tab:copes}.
+A strong correlation ($> 0.5$) is found for most combinations, except for U04-test, and with U12 for both.
+Though, even in these cases, the correlation is substantially positive.
+In many cases, the \gls{cope} is even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
+
+\begin{table}[htbp]
+    \centering
+    \caption[Correlation of Prediction Errors]{\gls{cope} between each Patient's Models per Partition}
+    \label{tab:copes}
+    \setlength{\tabcolsep}{9pt}
+    \renewcommand{\arraystretch}{1.15}
+    \rowcolors{2}{gray!10}{white} % Alternating row colors
+    \input{tables/copes_table}
+\end{table}
