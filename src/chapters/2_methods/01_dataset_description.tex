@@ -1,18 +1,20 @@
 \section{Dataset Description}\label{sec:dataset-description}
-% todo where does this data come from?
-% Die 
 Data from two different datasets called ``Ultra2'' and ``Competition'' are used.
 Patients are referred to with the initial letter of their dataset, followed by their ID number, e.g., U17 or C03.
 Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files per patient.
-The Ultra2 study was approved by the local ethics committee in Freiburg (20-1175).
-% todo competition dataset ethics number.
 
-The ultra-long-term  \gls{eeg} data was collected on patients with temporal lobe epilepsy using the 24/7 EEG™ SubQ system, which is a subscapular \gls{eeg} device by the company UNEEG\@.
+The ultra-long-term  \gls{eeg} data was collected on patients with temporal lobe epilepsy using the 24/7 EEG™ SubQ system (UNEEG Medical A/S, Denmark), which is a subscapular \gls{eeg} device.
 A proximal and distal electrode was positioned by the temporal lobe, resulting in two channels; the hemisphere was patient-specific.
-A inpatient visit of the clinic with video \gls{eeg} was followed by outpatient recordings with approximately monthly visits to the clinic and transferal of data.
+Inpatient visits of the clinic with video \gls{eeg} were followed by outpatient recordings with approximately monthly visits to the clinic and transferal of data for as long as possible, up to 15 months.
 
 The annotations were created in a semi-automatic manner.
 First, an automatic classifier viewed the entire \gls{eeg} data and detected seizures.
 Then, two neurologists examined the automatically detected portions and evaluated if they were truly seizures.
 When there was a discrepancy between the two reviewers, a third expert decided on the final annotations.
 The seizure's starts, and in some cases the type and end, were contained in the annotations.
+
+Regarding the Ultra2 study, only patients from Freiburg were used, and it was approved by the local ethics committee in Freiburg (20-1175).
+
+The competition dataset \parencite{viana_real-world_2025} includes recordings from three selected participants of the concluded SUBER Study (“SUBcutaneous EEG: foRecasting of epileptic seizures through investigation of long-term dynamics of seizure occurrences, stress, sleep, and other factors”) — an observational, prospective, non-randomized, and non-interventional study, conducted at King’s College London and King’s College Hospital NHS Foundation Trust.
+Participants’ consent was obtained in accordance with the Declaration of Helsinki, the study was approved by the local ethics committee (19/LO/0354), and participants consented to their anonymized data being shared with the wider scientific community.
+
