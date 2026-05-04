@@ -1,2 +1,44 @@
 \chapter{Discussion}\label{ch:discussion}
+\section{Summary of Work}
+
+
+\section{Interpretation and Implications of Results}
+We observed that the models generally performed worse on the test set than on the training set, as measured by the \gls{eb} score (mean: 81 vs.\ 67) and \gls{roc auc} (mean: 83 vs.\ 67).
+This may be explained either by overfitting to the training set or by non-stationarity of distributions in the train vs.\ test set.
+In the latter case, the preictal patterns in the test set would differ from those in the training set, making the learned decision rules less applicable and thereby reducing performance.
+Such a shift is plausible in time-series prediction, where earlier data are used for training and later data are used for testing, allowing the underlying distribution to change over time.
+To distinguish between overfitting and distribution shift, future work could partition the data into larger contiguous blocks, for example spanning multiple days, and randomly assign these blocks to the training and test sets.
+While this would no longer yield a purely prospective evaluation and therefore would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
+If performance on the test set remained worse under this setting, that would indicate overfitting, since the training and test distributions would be similar.
+
+We also saw that the \gls{cnn} performed better than the ensemble.
+This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
+
+% -------------------
+When we look at when patient-model-feature combinations meet the criteria from \cref{sec:propensity-eval} (\cref{fig:qualifications_flow_chart}), we can see that almost all \glspl{fp} significant phase locking, which is puzzling when seizures do not show phase locking.
+Since the models only receive $\sim$\SI{15}{\sec} of data, they cannot know the phase unless specific features in the local data indicate the phase.
+% todo write about this
+
+It is also questionable that the proportion of combinations that pass the permutation test is only \SI{4}{\percent} when the other criteria are met, but is \SI{51}{\percent} overall.
+This means that, in many cases, the phase preference of seizures and \glspl{fp} is similar, even the seizures are not significantly phase locked to feature, or the model's performance is poor.
+This is unexpected, since the poorer a model's performance, the more random the predictions are expected to be.
+Particularly, it would not be expected to exhibit a similar phase preference to seizures.
+
+
+\section{Limitations}
+
+The study has several important limitations that affect the interpretation and generalizability of the results.
+
+First, the cohort is small (twelve patients), which limits statistical power and increases susceptibility to sampling variability.
+Consequently, patient-specific effects may drive some observations: for example, the subject with the largest number of seizures (U01) also exhibited comparatively large phase-locking values, although the corresponding \glspl{fp} were shifted in phase relative to seizures.
+This raises the possibility that the apparent phase structure is influenced by unequal event counts across patients rather than reflecting a generalizable phenomenon.
+Future work should therefore prioritize larger, more heterogeneous cohorts and explicitly assess how phase-estimate variance depends on seizure count.
+
+Second, intermittent recording gaps introduce label uncertainty that can bias both model training and subsequent statistical analyses.
+Seizures that occur during gaps are unobserved; if an unobserved seizure falls within approximately \SI{4}{\hour} of the next available recording, for example, segments that truly belong to the preictal class may be mislabelled as interictal.
+Such label noise can degrade classifier performance, distort event-based metrics, and attenuate or spuriously modify measured phase relationships between features and events.
+Mitigation strategies include excluding segments that occur within a conservative window following recording gaps, treating gap-adjacent segments as ``unknown'' during training and evaluation, explicitly modelling missingness, or conducting sensitivity analyses that vary the exclusion window to quantify its impact on results.
+However, since continuous data was needed for the cycle extraction, and gap filling was already used, the exclusion of further data would have been problematic.
+
+\section{Future Work}
 
