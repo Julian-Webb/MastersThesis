@@ -19,7 +19,9 @@ Even though only very few patient-model-feature combinations meet the criteria, 
 His seizures have a clear preferred phase (\cref{fig:U01-seizure-phases}).
 Likewise, his \glspl{fp} have a clear preferred phase for both the \gls{cnn} (\cref{fig:U01-CNN-FP-phases}) and ensemble (\cref{fig:U01-ensemble-FP-phases}).
 However, between seizures and \glspl{fp}, there is a phase delay, i.e., \glspl{fp} tend to occur somewhat later than seizures.
-This effect is only pronounced for patient U03.
+This can also be seen when we look at the filtered signal with seizures and \glspl{fp} in \cref{fig:U01_filtered_var_P}: the \glspl{fp} tend to occur during portions with many seizures, but also frequently thereafter, rather than before.
+This explains the detected shifted phase preference.
+This effect is only pronounced for patient U01.
 
 For other patients, this is not the case.
 Patient C03 acts as an example here for when seizures are only phase locked to some or no features (\cref{fig:C03-seizure-phases}) and \glspl{fp} are not phase locked to features (\cref{fig:C03-CNN-FP-phases}, \cref{fig:C03-ensemble-FP-phases}).
@@ -44,6 +46,13 @@ This is what the phase locking more typically looks like for all patients, excep
     \includegraphics{phase_histrograms/U01/ensemble FPs}
     \caption{Ensemble FP Phase Histogram per Feature of Patient U01}
     \label{fig:U01-ensemble-FP-phases}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{U01_filtered_var_P}
+    \caption{The Original and Filtered Signal of Feature Var. (P) of Patient U01, including the occurrences of seizures and FPs}
+    \label{fig:U01_filtered_var_P}
 \end{figure}
 
 \begin{figure}[p]
