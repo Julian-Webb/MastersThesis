@@ -1,20 +1,25 @@
+% ======================================================================================================================
+% Document Class & Setup
+% ======================================================================================================================
 \documentclass[11pt, oneside, openany]{scrbook}
-% todo move packages to separate file
+\usepackage[a4paper, includeheadfoot, top=10mm, bottom=10mm]{geometry} % Reduce Top and Bottom Margins
 
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
 \input{settings/config}
 \input{settings/glossaries}
-\makeglossaries
 
+% ======================================================================================================================
+% Main Document
+% ======================================================================================================================
 \begin{document}
-    % todo test change for overleaf git
     % Front Matter
-    \input{paratext/title_page}
-    \input{chapters/0_acknowledgements}
-
-    \input{chapters/0_abstract}
+%    \input{paratext/title_page}
+%    \input{paratext/declaration}
+%    \input{chapters/0_acknowledgements}
+%
+%    \input{chapters/0_abstract}
 
     \tableofcontents
     \listoffigures
@@ -32,7 +37,9 @@
     \printbibliography
 
     % Appendices
+    \appendix
+    \input{chapters/appendix}
 
     % Back Matter
-    \input{paratext/declaration}
+
 \end{document}

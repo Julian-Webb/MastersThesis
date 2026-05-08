@@ -21,13 +21,28 @@ Ultimately, the sample dimension (height) is reduced to 1 with 32 features per \
 Only then are the per-channel features combined (flattened).
 These pass through two final dense layers to create the output logit, which is then bounded between 0 and 1 with the sigmoid function, to create the final output.
 
-\begin{figure}[bpt]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics{conv_blocks}
-    \includegraphics[width=\textwidth]{CNN_architecture}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics{conv_blocks}
+        \caption{Special CNN Blocks}
+        \label{fig:special-cnn-blocks}
+    \end{subfigure}
+
+    \vspace{1ex}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{CNN_architecture}
+        \caption{Full CNN Architecture}
+        \label{fig:full-cnn-architecture}
+    \end{subfigure}
+
     \caption[CNN Architecture]{CNN Architecture.\\
-    Top: Types of special blocks where \textit{k}: kernel size \textit{f}: \#filters, \textit{p}: pool size.\\
-    Bottom: A segment's EEG data is processed from left to right. The volumes represent the input tensor and the outputs of layers. In between the volumes, the network's layer's properties are shown.}
+    A segment's EEG data is processed from left to right. The volumes represent the input tensor and the outputs of layers. In between the volumes, the network's layer's properties are shown.\\
+    \textit{k}: kernel size, \textit{f}: \#filters, \textit{p}: pool size.}
     \label{fig:cnn-architecture}
 \end{figure}
 

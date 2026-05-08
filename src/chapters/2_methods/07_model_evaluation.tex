@@ -25,7 +25,7 @@ That is to say it is minimized when non-preictal (false) samples are correctly c
 However, when a prediction is issued from a $\sim$\SI{10}{\minute} clip, it is not issued for the timespan of that clip, but for that clip's \gls{sph}, i.e., the timespan $\sim$\num{5}--\SI{65}{\minute} after the clip's end.
 This means that summing the duration of \gls{fp} clips is not sufficient to calculate the \gls{tifw}.
 The clip's \glspl{sph} and overlaps thereof must be taken into account.
-When a system unnecessarily alarms the patient, it causes them distress and inconvenience, which is why it is essential to minimize false alarms. % todo source
+When a system unnecessarily alarms the patient, it causes them distress and inconvenience, which is why it is essential to minimize false alarms.
 
 To calculate \gls{tifw}, only valid, non-preictal clips are selected.
 For all such clips that issue a warning (\glspl{fp}), the \glspl{sph} are selected.
