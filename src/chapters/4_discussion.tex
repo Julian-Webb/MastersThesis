@@ -1,23 +1,39 @@
 \chapter{Discussion}\label{ch:discussion}
 \section{Summary of Work}
+This work addressed the problem of forecasting seizures from ultra-long-term \gls{eeg} by evaluating how well predictive models generalize to unseen data and whether their false alarms align with cyclical changes in seizure occurrence.
+The overall aim was to use cycle-based analysis of model outputs to assess whether false predictions reflect a shift in the underlying brain state with an increased propensity for seizures, rather than noise.
 
+We analyzed two subcutaneous \gls{eeg} datasets (Ultra2 and Competition) comprising twelve patients with temporal lobe epilepsy, with recordings and seizure start annotations. 
+Patients were included if they had at least 10 valid seizures and recording coverage of at least \SI{60}{\percent}. 
+The recordings were cleaned, temporally aligned, and segmented into $\sim$\SI{15}{\sec} segments and $\sim$\SI{10}{\min} clips, which were labeled relative to seizures to define a preictal vs. non-preictal prediction task. 
+Features (variance, \gls{acfw}, inter-channel correlation, and band powers) were extracted per segment and used both for modeling and for subsequent cycle analysis. 
+We compared a \gls{cnn} operating on raw segments with an ensemble of \glspl{fb-mlp}, trained on temporally earlier data and tested on later, unseen data using a per-patient chronological split (targeting $\sim$\SI{60}{\percent} of seizures for training and $\sim$\SI{40}{\percent} for testing). 
+Performance was summarized with clip-based \gls{roc auc} and \gls{eb} measures, including \gls{eb} sensitivity, relative \gls{tifw} and the \gls{eb} score as the harmonic mean thereof.
+Across patients, mean \gls{eb} decreased from 81 (training) to 67 (test) and mean \gls{roc auc} decreased from 83 (training) to 67 (test), and the \gls{cnn} performed better than the ensemble for most patients. 
+To probe cyclical structure, multidien components were extracted from feature time series and phase relationships were quantified using circular statistics (e.g., \gls{plv} and the Rayleigh test), followed by a permutation test comparing the phase distributions of seizures and model \glspl{fp}.
+While \SI{96}{\percent} of combinations showed significant phase locking of \glspl{fp}, only \SI{0.83}{\percent} of patient--model--feature combinations met the full qualification criteria and exhibited \gls{fp} phase preferences significantly similar to seizures. 
+Overall, the study provides a joint evaluation of predictive performance and cycle-aligned propensity, which motivates the following sections on interpretation and implications, limitations, and directions for future work.
 
 \section{Interpretation and Implications of Results}
+\subsection{Model Performance}
 We observed that the models generally performed worse on the test set than on the training set, as measured by the \gls{eb} score (mean: 81 vs.\ 67) and \gls{roc auc} (mean: 83 vs.\ 67).
 This may be explained either by overfitting to the training set or by non-stationarity of distributions in the train vs.\ test set.
 In the latter case, the preictal patterns in the test set would differ from those in the training set, making the learned decision rules less applicable and thereby reducing performance.
 Such a shift is plausible in time-series prediction, where earlier data are used for training and later data are used for testing, allowing the underlying distribution to change over time.
-To distinguish between overfitting and distribution shift, future work could partition the data into larger contiguous blocks, for example spanning multiple days, and randomly assign these blocks to the training and test sets.
-While this would no longer yield a purely prospective evaluation and therefore would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
+To distinguish between overfitting and distribution shift, future work could partition the data into larger contiguous blocks, for example, spanning multiple days, and randomly assign these blocks to the training and test sets.
+Although this would no longer produce a purely prospective evaluation and, therefore, would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
 If performance on the test set remained worse under this setting, that would indicate overfitting, since the training and test distributions would be similar.
 
-We also saw that the \gls{cnn} performed better than the ensemble.
+We also saw that the \glspl{cnn} performed better than the ensembles for most patients.
 This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
 
-% -------------------
-When we look at when patient-model-feature combinations meet the criteria from \cref{sec:propensity-eval} (\cref{fig:qualifications_flow_chart}), we can see that almost all \glspl{fp} significant phase locking, which is puzzling when seizures do not show phase locking.
-Since the models only receive $\sim$\SI{15}{\sec} of data, they cannot know the phase unless specific features in the local data indicate the phase.
-% todo write about this
+\subsection{Cycle Extraction}
+In \cref{fig:qualifications_flow_chart}, we saw that even when seizures and \glspl{fp} phase lock with features and the model performance is acceptable, still for only \SI{4}{\percent} of patient-model-feature combinations, \glspl{fp} have a phase preference significantly similar to seizures, as tested with the permutation test.
+Since seizures and \glspl{fp} were not shown to have a tendency to occur in the same phases, these results do not indicate that \glspl{fp} represent a phase-dependent propensity for seizures.
+
+We can also see that \SI{96}{\percent} of combinations exhibit significant phase locking, which is puzzling in the case when seizures do not phase lock.
+Since the models only receive one segment, i.e., $\sim$\SI{15}{\sec} of data, at a time, they cannot know the phase unless specific features in the local data indicate the phase.
+This would be worth investigating in the future.
 
 It is also questionable that the proportion of combinations that pass the permutation test is only \SI{4}{\percent} when the other criteria are met, but is \SI{51}{\percent} overall.
 This means that, in many cases, the phase preference of seizures and \glspl{fp} is similar, even the seizures are not significantly phase locked to feature, or the model's performance is poor.
@@ -26,7 +42,6 @@ Particularly, it would not be expected to exhibit a similar phase preference to 
 
 
 \section{Limitations}
-
 The study has several important limitations that affect the interpretation and generalizability of the results.
 
 First, the cohort is small (twelve patients), which limits statistical power and increases susceptibility to sampling variability.
@@ -40,5 +55,4 @@ Such label noise can degrade classifier performance, distort event-based metrics
 Mitigation strategies include excluding segments that occur within a conservative window following recording gaps, treating gap-adjacent segments as ``unknown'' during training and evaluation, explicitly modelling missingness, or conducting sensitivity analyses that vary the exclusion window to quantify its impact on results.
 However, since continuous data was needed for the cycle extraction, and gap filling was already used, the exclusion of further data would have been problematic.
 
-\section{Future Work}
 
