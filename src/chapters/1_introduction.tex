@@ -4,6 +4,12 @@ Globally, epilepsy affects approximately 65 million individuals and imposes a su
 For the roughly one-third of patients with drug-resistant epilepsy, the unpredictability of seizure occurrence presents a significant challenge in daily life \parencite{schulze-bonhage_unpredictability_2008}.
 The development of reliable, automated seizure prediction algorithms holds the potential to improve patient quality of life by enabling personalized interventions, such as adaptive medication regimens, closed-loop neurostimulation, or timely precautionary actions by patients themselves, thereby increasing patient empowerment and reducing uncertainty.
 
+% todo add:
+% History of prediction (competitions, etc.)
+% history of forecasting
+% bring together to introduce Muller/Yangs paper
+% description of EEG (also subscalp, scalp, etc.)
+
 
 \section{Epileptic Cycles and the Proictal State}
 In seizure prediction, we distinguish between \enquote{preictal} states---periods preceding a seizure---and \enquote{interictal} states, which are temporally distant from any seizure event \parencite{yang_seizure_2024}.
@@ -25,8 +31,8 @@ A further possibility is that false positive predictions may, in fact, correspon
 
 
 \section{Research Approach}
-In this work, we systematically investigate these possibilities.
-Two distinct model types are trained: a \gls{cnn} that processes raw \gls{ieeg} signals, and an ensemble of multilayer perceptrons that operate on hand-crafted features extracted from the signals.
-The temporal co-occurrence of false positive predictions across these models is interpreted as evidence for the existence of a proictal state.
-Additionally, we analyze whether false positive predictions are phase-locked to the same cycles as seizures.
+In this work, we systematically investigated these possibilities.
+Two distinct model types were trained: a \gls{cnn} that processes raw \gls{ieeg} signals, and an ensemble of multilayer perceptrons that operate on hand-crafted features extracted from the signals.
+The temporal co-occurrence of false positive predictions across these models was interpreted as evidence for the existence of a proictal state.
+Additionally, we analyzed whether false positive predictions were phase-locked to the same cycles as seizures.
 If false positives cluster in the same cycle phases as true seizures, this further supports the hypothesis that these periods represent genuine proictal states, even in the absence of overt seizures.

@@ -1,9 +1,9 @@
 \section{Model Architectures}\label{sec:model-architectures}
 In this project, a \gls{cnn} and an ensemble of \glspl{fb-mlp} were trained per patient to predict seizures.
-This section will discuss their exact specifications.
+This section discusses their exact specifications.
 
 \subsection{Convolutional Neural Network}\label{subsec:cnn-architecture}
-In this project, the architecture of the \gls{cnn} was adapted from \textcite{muller_coherent_2022} which used the nv1x16 topology originally proposed in \textcite{eberlein_convolutional_2018}.
+In this project, the architecture of the \gls{cnn} was adapted from \textcite{muller_coherent_2022}, which used the nv1x16 topology originally proposed in \textcite{eberlein_convolutional_2018}.
 It analyzes a segment and uses the raw \gls{eeg} signals per \gls{eeg} channel as inputs.
 Until the final stages, it treats \gls{eeg} channels separately, computing features per channel.
 Only at the end are the per-channel features combined to output a final score.
@@ -46,52 +46,54 @@ These pass through two final dense layers to create the output logit, which is t
     \label{fig:cnn-architecture}
 \end{figure}
 
-Since the height gets reduced further and further in deeper layers, the extracted features receive information from more samples, i.e., the receptive field of deeper neurons grows on the time scale.
+Since the height is reduced further and further in deeper layers, the extracted features receive information from more samples, i.e., the receptive field of deeper neurons grows on the time scale.
 Since the per-channel features are only combined after the final conv block, information from the \gls{eeg} channels is evaluated separately until the end.
 
-To accommodate two differences in the data structure, compared to \textcite{eberlein_convolutional_2018}, two adjustments were made to the architecture.
-Here, 2 \gls{eeg} channels are used instead of 16.
-This means there are 8 times fewer nodes in the first flattened tensor.
+To accommodate two differences in the data structure compared to \textcite{eberlein_convolutional_2018}, two adjustments were made to the architecture.
+Here, 2 \gls{eeg} channels were used instead of 16.
+This meant there were 8 times fewer nodes in the first flattened tensor.
 For this reason, the number of nodes in the first dense layer was reduced by a factor of 8: from 64 to 8.
-The flat tensors thus have a height of 64 → 8 → 1, instead of 512 → 64 → 1.
+The flat tensors thus had a height of 64 → 8 → 1, instead of 512 → 64 → 1.
 
-Secondly, because the sampling rate of $\sim$\SI{207}{\Hz} here differs slightly from the sampling rate of \SI{200}{\Hz}, the number of input samples from a segment differs too (3105 vs.\ 3000).
-Thus, to arrive at a height of 1 at the final conv layer, it is necessary to reduce this dimension slightly more.
+Secondly, because the sampling rate of $\sim$\SI{207}{\Hz} here differed slightly from the sampling rate of \SI{200}{\Hz}, the number of input samples from a segment differed too (3105 vs.\ 3000).
+Thus, to arrive at a height of 1 at the final conv layer, it was necessary to reduce this dimension slightly more.
 For this reason, the pool padding of the second conv2 layer was changed from same to valid.
-This minor change is enough to fully accommodate the sampling frequency difference.
+This minor change was enough to fully accommodate the sampling frequency difference.
 
 \subsection{Ensemble of Feature-Based Multilayer Perceptrons}\label{subsec:ensemble-architecture}
-The second model is an ensemble of \glspl{fb-mlp} that was also adapted from \textcite{muller_coherent_2022}.
-Instead of raw signal, it uses hand-picked features: specifically the band power spectrum and correlation coefficient from \cref{subsec:feature-extraction}.
-This allows it taking features of individual channels and their correlation into consideration.
+The second model was an ensemble of \glspl{fb-mlp} that was also adapted from \textcite{muller_coherent_2022}.
+Instead of raw signal, it used hand-crafted features.
+The input features consisted of the band power spectrum and correlation coefficient from \cref{subsec:feature-extraction}, which had previously demonstrated forecasting potential in a cycle-based framework \parencite{yang_seizure_2024}.
+This allowed it to take features of individual channels and their correlation into consideration.
 
-An individual \gls{fb-mlp} uses the z-score normalized features as its input layer.
-It has three dense, hidden layers comprising 16, 8, and 4 nodes, which use \gls{relu} as an activation function.
-Batch normalization follows the input and hidden layers.
-The output layer uses the sigmoid activation function.
+An individual \gls{fb-mlp} used the z-score normalized features as its input layer.
+It had three dense, hidden layers comprising 16, 8, and 4 nodes, which used \gls{relu} as an activation function.
+Batch normalization followed the input and hidden layers.
+The output layer used the sigmoid activation function.
 
-The ensemble consists of 50 \glspl{fb-mlp} that are initialized with different random weights and share their input layer.
-The outputs of the individual models are then averaged to get the final output.
-\Textcite{muller_coherent_2022} use an ensemble size of 100, rather than 50.
-However, they also use many more features as inputs, which enables greater variability between models.
+The ensemble consisted of 50 \glspl{fb-mlp} that were initialized with different random weights and shared their input layer.
+The outputs of the individual models were then averaged to obtain the final output.
+\Textcite{muller_coherent_2022} used an ensemble size of 100, rather than 50.
+However, the original work investigated a broader set of input features, allowing for greater variability between models. 
 Since the variability cannot be as high here, a smaller ensemble size was chosen to reduce resources needed for training.
 
 \subsection{Model Training} \label{subsec:model-training}
-To train the models, only preictal and interictal segments were used.
-Inter-pre and intervention segments were not used as are shortly before a seizure and thus might often contain similar features to preictal segments.
-If this was the case, they would make the model learn the wrong patterns since they are still labeled as 0 (not preictal).
-Postictal and inter-post segments were not used because they might be in the preictal window of non-valid seizures and thus contain preictal features.
-Additionally, post-seizure, the brain state can be altered significantly, causing changes in the signals, which could confuse the models \parencite{muller_coherent_2022}.
+For model training, only preictal and interictal segments were included. 
+Inter-pre and intervention segments were excluded because they occur immediately prior to seizure onset and may therefore share electro-physiological characteristics with preictal segments. 
+If included, these segments—while still annotated with the label 0 (non-preictal)—could induce the model to learn misleading patterns.
 
-As mentioned in \cref{subsec:dataset-partitioning}, there is a large class imbalance with scarcity of preictal segments.
-To not waste resources training on more interictal segments than necessary, we subsampled the number of interictal segments to max.\ 20 times the number of preictal ones.
+Similarly, postictal and inter-post segments were omitted, as they may fall within the preictal window of seizures that did not meet the validity criteria and could consequently contain preictal-like features. 
+Moreover, the postictal period is characterized by substantial alterations in brain state, leading to marked changes in signal dynamics that may confound model learning and degrade performance \parencite{muller_coherent_2022}.
+
+As mentioned in \cref{subsec:dataset-partitioning}, there was a large class imbalance with scarcity of preictal segments.
+To avoid wasting resources training on more interictal segments than necessary, we subsampled the number of interictal segments to a maximum of 20 times the number of preictal ones.
 The class weights were adjusted to the final ratio of preictal vs.\ interictal segments, so that the models were not biased towards focusing mostly on learning to predict interictal segments.
-All models received the same subsampled segments for training, so that results are more comparable.
+All models received the same subsampled segments for training, so that results were more comparable.
 
-As is \textcite{eberlein_convolutional_2018}, the \glspl{cnn} were trained for 50 epochs with ADAM optimization, a learning rate of \num{0.001}, and binary cross-entropy as a loss function.
+As in \textcite{eberlein_convolutional_2018}, the \glspl{cnn} were trained for 50 epochs with ADAM optimization, a learning rate of \num{0.001}, and binary cross-entropy as a loss function.
 
 To train the \glspl{fb-mlp}, before subsampling, a z-score normalizer was fit to the features of the entire train set.
-This same scaling was then always applied when this model was later used, also for the test set.
-They were then trained for 200 epochs using stochastic gradient descent for optimization, a learning rate of \num{0.0001}, and binary cross-entropy as a loss function.
+This same scaling was then always applied when this model was later used, including for the test set.
+The \glspl{fb-mlp} were then trained for 200 epochs using stochastic gradient descent for optimization, a learning rate of \num{0.0001}, and binary cross-entropy as a loss function.
 \Textcite{muller_coherent_2022} used 500 epochs for training.
 However, here the performance could not be seen to improve after 200 epochs, which is likely also due to the smaller input dimension, requiring less fitting.

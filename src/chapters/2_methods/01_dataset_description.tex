@@ -1,20 +1,55 @@
 \section{Dataset Description}\label{sec:dataset-description}
-Data from two different datasets called ``Ultra2'' and ``Competition'' are used.
-Patients are referred to with the initial letter of their dataset, followed by their ID number, e.g., U17 or C03.
-Both datasets consist of seizure annotations and \gls{eeg} data, stored as \gls{edf} files per patient.
+The present work utilized subcutaneous ultra-long-term \gls{eeg} data acquired during two clinical trials using the 24/7 EEG™ SubQ system (UNEEG Medical A/S, Denmark). Consequently, two distinct datasets were analyzed. 
 
-The ultra-long-term  \gls{eeg} data was collected on patients with temporal lobe epilepsy using the 24/7 EEG™ SubQ system (UNEEG Medical A/S, Denmark), which is a subscapular \gls{eeg} device.
-A proximal and distal electrode was positioned by the temporal lobe, resulting in two channels; the hemisphere was patient-specific.
-Inpatient visits of the clinic with video \gls{eeg} were followed by outpatient recordings with approximately monthly visits to the clinic and transferal of data for as long as possible, up to 15 months.
+\subsection{Recording device}
+The system consists of an implantable component with three electrodes positioned over the presumed seizure onset zone and an external recording unit, resulting in two-channel recordings.
+The implantation hemisphere and electrode placement were determined individually based on each patient’s epileptic focus.
+Data are recorded exclusively when the external unit is connected to the implant.
 
-The annotations were created in a semi-automatic manner.
-First, an automatic classifier viewed the entire \gls{eeg} data and detected seizures.
-Then, two neurologists examined the automatically detected portions and evaluated if they were truly seizures.
-When there was a discrepancy between the two reviewers, a third expert decided on the final annotations.
-The seizure's starts, and in some cases the type and end, were contained in the annotations.
+\begin{figure}[h]
+    \centering
 
-Regarding the Ultra2 study, only patients from Freiburg were used, and it was approved by the local ethics committee in Freiburg (20-1175).
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{src/figures/UNEEG_implant}
+        \caption{Implant and electrodes.}
+        \label{fig:uneeg-implant}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{src/figures/UNEEG_device_orientation}
+        \caption{External recording unit orientation.}
+        \label{fig:uneeg-orientation}
+    \end{subfigure}
 
-The competition dataset \parencite{viana_real-world_2025} includes recordings from three selected participants of the concluded SUBER Study (“SUBcutaneous EEG: foRecasting of epileptic seizures through investigation of long-term dynamics of seizure occurrences, stress, sleep, and other factors”) — an observational, prospective, non-randomized, and non-interventional study, conducted at King’s College London and King’s College Hospital NHS Foundation Trust.
-Participants’ consent was obtained in accordance with the Declaration of Helsinki, the study was approved by the local ethics committee (19/LO/0354), and participants consented to their anonymized data being shared with the wider scientific community.
+    \caption{24/7 EEG\texttrademark{} SubQ system components \parencite{uneeg_medical_uneeg_nodate}.}
+    \label{fig:uneeg-system}
+\end{figure}
+
+
+\subsection{Dataset}
+The first dataset was obtained at the Epilepsy Center Freiburg, Germany, as part of the multicentre ULTRA2 study. 
+After implantation, patients were instructed on how to use the device, and concurrent video-\gls{eeg} and subcutaneous \gls{eeg} recordings were obtained during the inpatient period. 
+Upon discharge, patients continued with outpatient recordings using the device. 
+Approximately monthly visits to the clinic were conducted for follow-up and data transfer throughout the individual study duration. 
+
+The seizure annotations were created using a semi-automatic scheme. 
+First, an automated classifier \parencite{furbass_automatic_2017} processed the \gls{eeg} recordings to detect potential seizures. 
+These detections were then reviewed by two epileptologists to verify true seizure events. 
+In cases of disagreement, a third expert made the final decision. 
+The annotations consisted of a single marker per event, which indicated the seizure onset detected by the classifier, whereas detailed information on seizure onset, offset, and type was only sparsely available. 
+
+The second dataset comprised recordings from three participants enrolled in the SUBER study (“SUBcutaneous EEG: foRecasting of epileptic seizures through
+investigation of long-term dynamics of seizure occurrences, stress, sleep, and other factors”)
+— an observational, prospective, non-randomized, study \parencite{viana_real-world_2025}, conducted at King’s College London and King’s College Hospital NHS Foundation Trust.  
+Their data were shared as part of a worldwide seizure prediction competition. 
+
+Both datasets initially consisted of seizure annotations and \gls{eeg} recordings on a per-patient basis. 
+Patients are referred to by the initial letter of their respective dataset (ULTRA2/competition), followed by their ID number, e.g., U17 or C03.
+
+Both studies were conducted in accordance with the Declaration of Helsinki and approved by the respective local ethics committees (20-1175; 19/LO/0354). 
+Informed consent was obtained from all participants.
+
+ 
 

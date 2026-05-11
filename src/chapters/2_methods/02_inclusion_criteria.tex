@@ -1,28 +1,26 @@
 \section{Inclusion Criteria}\label{sec:inclusion-criteria}
-For a patient to be included in this study, generally speaking, they needed to have enough \gls{eeg} data and seizures.
-These were necessary, so the models have enough examples to learn features which can be used to forecast seizures and for the evaluation to carry statistical weight.
-Regarding the Ultra2 dataset, only patients who had completed the study at the point of writing and thus whose entire \gls{eeg} data was available were considered.
 
-Patients needed to have at least 10 valid seizures.
-In this context, a seizure is considered valid if no other seizure occurs within its preictal interval (\cref{subsubsec:interval-types}), i.e., a seizure must occur at least $\sim$\SI{65}{\min} after the previous seizure.
+For a patient to be included in formal analyses, they needed to have enough \gls{eeg} data and seizures, so the models had enough data to learn patterns for seizure forecasting and for statistical validity of the analysis.
+All of the following criteria had to be met:
+\begin{itemize}
+    \item \textbf{Complete ULTRA2 data availability:} for ULTRA2, only patients who had completed the study (and therefore had their full outpatient recording available) were considered.
+    \item \textbf{Sufficient seizure count:} at least $10$ \emph{valid} seizures.
+    \item \textbf{Sufficient recording coverage:} recording coverage $\geq\SI{60}{\percent}$.
+\end{itemize}
 
-Regarding the recording duration, there are two separate concepts.
-First, there is the total monitoring timespan, which is the duration from the start of the first recording to the end of the last.
-However, data is not recorded all the time, since the device is regularly taken off for a while.
-So secondly, the total duration of all available recordings is taking into account.
-Based on these, we want to quantify how much of the monitoring timespan data is available.
-We define this so-called \textbf{recording coverage} as:
+A seizure was considered \emph{valid} if no other seizure occurred within its preictal interval (\cref{subsubsec:interval-types}), i.e., it occurred at least $\sim$\SI{65}{\min} after the previous seizure.
 
-\[\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}\]
+Recording coverage quantifies how much of the total monitoring timespan (from the start of the first recording to the end of the last) contains recorded data:
+\[
+\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}.
+\]
 
-Patients with a recording coverage less than \SI{60}{\percent} were excluded.
-No patients needed to be excluded on the basis of the total recorded duration, as no patients with little \gls{eeg} data had enough seizures.
-
-\Cref{tab:patient-inclusion} shows which patients were included and why.
+\Cref{tab:patient-inclusion} summarizes which patients met the criteria.
 
 \begin{table}[hptb]
     \centering
-    \caption[Patient Inclusion]{Patient Inclusion: shows which inclusion criteria were met for which patients. Next to the valid seizures ($\geq 10$) and recording coverage ($\geq\SI{60}{\percent}$) conditions is denoted whether they were met.}
+    \caption[Patient Inclusion]{Patient Inclusion Criteria.\\
+    Next to the valid seizures and recording coverage, it is denoted whether the corresponding criteria were met ($\checkmark$) or not ($\times$). ULTRA2 patients who had not completed the study are omitted.}
     \label{tab:patient-inclusion}
     \setlength{\tabcolsep}{9pt}
     \renewcommand{\arraystretch}{1.15}

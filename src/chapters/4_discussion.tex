@@ -3,7 +3,7 @@
 This work addressed the problem of forecasting seizures from ultra-long-term \gls{eeg} by evaluating how well predictive models generalize to unseen data and whether their false alarms align with cyclical changes in seizure occurrence.
 The overall aim was to use cycle-based analysis of model outputs to assess whether false predictions reflect a shift in the underlying brain state with an increased propensity for seizures, rather than noise.
 
-We analyzed two subcutaneous \gls{eeg} datasets (Ultra2 and Competition) comprising twelve patients with temporal lobe epilepsy, with recordings and seizure start annotations. 
+We analyzed two subcutaneous \gls{eeg} datasets (ULTRA2 and Competition) comprising twelve patients with temporal lobe epilepsy, with recordings and seizure start annotations. 
 Patients were included if they had at least 10 valid seizures and recording coverage of at least \SI{60}{\percent}. 
 The recordings were cleaned, temporally aligned, and segmented into $\sim$\SI{15}{\sec} segments and $\sim$\SI{10}{\min} clips, which were labeled relative to seizures to define a preictal vs. non-preictal prediction task. 
 Features (variance, \gls{acfw}, inter-channel correlation, and band powers) were extracted per segment and used both for modeling and for subsequent cycle analysis. 
@@ -28,17 +28,17 @@ We also saw that the \glspl{cnn} performed better than the ensembles for most pa
 This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
 
 \subsection{Cycle Extraction}
-In \cref{fig:qualifications_flow_chart}, we saw that even when seizures and \glspl{fp} phase lock with features and the model performance is acceptable, still for only \SI{4}{\percent} of patient-model-feature combinations, \glspl{fp} have a phase preference significantly similar to seizures, as tested with the permutation test.
+In \cref{fig:qualifications_flow_chart}, we saw that even when seizures and \glspl{fp} were phase locked with features and model performance was acceptable, for only \SI{4}{\percent} of patient-model-feature combinations did \glspl{fp} have a phase preference significantly similar to seizures, as tested with the permutation test.
 Since seizures and \glspl{fp} were not shown to have a tendency to occur in the same phases, these results do not indicate that \glspl{fp} represent a phase-dependent propensity for seizures.
 
-We can also see that \SI{96}{\percent} of combinations exhibit significant phase locking, which is puzzling in the case when seizures do not phase lock.
+We also saw that \SI{96}{\percent} of combinations exhibited significant phase locking, which is puzzling in cases where seizures did not phase lock.
 Since the models only receive one segment, i.e., $\sim$\SI{15}{\sec} of data, at a time, they cannot know the phase unless specific features in the local data indicate the phase.
-This would be worth investigating in the future.
+This would be worth investigating in future work.
 
-It is also questionable that the proportion of combinations that pass the permutation test is only \SI{4}{\percent} when the other criteria are met, but is \SI{51}{\percent} overall.
-This means that, in many cases, the phase preference of seizures and \glspl{fp} is similar, even the seizures are not significantly phase locked to feature, or the model's performance is poor.
+It is also questionable that the proportion of combinations that passed the permutation test was only \SI{4}{\percent} when the other criteria were met, but \SI{51}{\percent} overall.
+This means that, in many cases, the phase preference of seizures and \glspl{fp} was similar, even when seizures were not significantly phase locked to a feature or the model's performance was poor.
 This is unexpected, since the poorer a model's performance, the more random the predictions are expected to be.
-Particularly, it would not be expected to exhibit a similar phase preference to seizures.
+In particular, it would not be expected to exhibit a similar phase preference to seizures.
 
 
 \section{Limitations}

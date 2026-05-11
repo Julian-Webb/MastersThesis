@@ -1,6 +1,6 @@
-% ======================================================================================================================
+% =================================
 % Document Class & Setup
-% ======================================================================================================================
+% =================================
 \documentclass[11pt, oneside, openany]{scrbook}
 % Reduce Top and Bottom Margins
 \usepackage[a4paper, includeheadfoot, top=10mm, bottom=10mm]{geometry}
@@ -11,21 +11,21 @@
 \input{settings/config}
 \input{settings/glossaries}
 
-% ======================================================================================================================
+% =================================
 % Main Document
-% ======================================================================================================================
+% =================================
 \begin{document}
     % Front Matter
-    \input{paratext/title_page}
-    \input{paratext/declaration}
-    \input{chapters/0_acknowledgements}
+    % \input{paratext/title_page}
+    % \input{paratext/declaration}
+    % \input{chapters/0_acknowledgements}
 
-    \input{chapters/0_abstract}
+    % \input{chapters/0_abstract}
 
     \tableofcontents
-    \listoffigures
-    \listoftables
-    \printglossary[type=\acronymtype, title=List of Abbreviations]
+    % \listoffigures
+    % \listoftables
+    % \printglossary[type=\acronymtype, title=List of Abbreviations]
 
     % Chapters
     \input{chapters/1_introduction}
@@ -38,8 +38,8 @@
     \printbibliography
 
     % Appendices
-    \appendix
-    \input{chapters/appendix}
+    % \appendix
+    % \input{chapters/appendix}
 
     % Back Matter
 

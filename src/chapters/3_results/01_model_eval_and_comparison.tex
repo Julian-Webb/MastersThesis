@@ -1,14 +1,14 @@
 \section{Model Evaluation and Comparison} \label{sec:model-eval-and-comparison}
 \Cref{tab:model_eval_metrics} shows the resulting evaluation metrics from \cref{sec:model-evaluation}.
-For the training set, we generally see high a \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e., low relative \gls{tifw} and high \gls{eb} sensitivity.
-For the test set, the models perform worse or equally in almost all cases.
-The classifiers do not perform better than chance on the test set for patient U03's ensemble and both models of U04, as indicated by the Hanley McNeil p-values~$\geq\SI{5}{\percent}$.
+For the training set, we generally saw a high \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e., low relative \gls{tifw} and high \gls{eb} sensitivity.
+For the test set, the models performed worse or equally in almost all cases.
+The classifiers did not perform better than chance on the test set for patient U03's ensemble and both models of U04, as indicated by the Hanley McNeil p-values~$\geq\SI{5}{\percent}$.
 For the majority of patients and metrics, the \gls{cnn} performed better than the ensemble.
 
 The \glspl{cope} for patients and partitions are shown in \cref{tab:copes}.
-A strong correlation ($>0.5$) is found for most combinations, except for U04-test, and with U12 for both.
-Though, even in these cases, the correlation is substantially positive.
-In many cases, the \gls{cope} is even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
+A strong correlation ($>0.5$) was found for most combinations, except for U04-test and for U12 in both partitions.
+Even in these cases, the correlation was substantially positive.
+In many cases, the \gls{cope} was even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
 
 \begin{table}[htbp]
     \centering
@@ -19,9 +19,9 @@ In many cases, the \gls{cope} is even above \num{0.8}, indicating a very strong 
     \input{tables/copes_table}
 \end{table}
 
-In some cases, we can see that the \gls{cope} is lower when models perform poorly, such as for patients U03-test and U04-test, which are also the cases where models were not shown to perform better than chance.
-However, the same cannot be  said about their training set, since models perform acceptably (\gls{roc auc}$\approx$\SI{66}{\percent}) to very good (\gls{roc auc}$\approx$\SI{90}{\percent}) there.
-More contrary evidence comes from patient U12: here, models perform quite well, especially for the training set, yet he has the lowest \gls{cope} scores.
+In some cases, we saw that the \gls{cope} was lower when models performed poorly, such as for patients U03-test and U04-test, which were also the cases where models were not shown to perform better than chance.
+However, the same could not be said about their training sets, since models performed acceptably (\gls{roc auc}$\approx$\SI{66}{\percent}) to very well (\gls{roc auc}$\approx$\SI{90}{\percent}) there.
+Contrary evidence came from patient U12: here, models performed quite well, especially for the training set, yet he had the lowest \gls{cope} scores.
 
 \begin{table}[htbp]
     \centering

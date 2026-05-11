@@ -4,43 +4,43 @@
 
 \section{Cycle Extraction} \label{sec:cycle-extraction}
 
-We aim to identify and quantify the rhythmic patterns of seizure occurrences and predictions in the time series data.
+We aimed to identify and quantify the rhythmic patterns of seizure occurrences and predictions in the time series data.
 This section describes the methods used to preprocess the data, handle missing values, extract relevant events, and perform circular statistical analyses to relate cycles in features to the timing of seizures and model predictions.
 
 \subsection{Gap Filling} \label{subsec:gap-filling}
-Cycle extraction requires gap-free data, so gaps are filled before processing.
-This is done on the segment level because more data are available there than at the clip level.
-Otherwise, segment data from invalid clips would be lost.
+Cycle extraction required gap-free data, so gaps were filled before processing.
+To avoid losing data from invalid clips, this was performed on the segment- rather than clip-level, such that non-existing segments were imputed.
 
-The gap-filling procedure preserves the original segment timeline while imputing only short missing intervals ($<\SI{14}{\day}$) in the extracted feature series.
-Long gaps ($\geq\SI{14}{\day}$) are treated as structural recording interruptions and are therefore not imputed.
-Instead, they are used to split the data into independent continuous chunks, ensuring that donor values are never drawn across major recording breaks.
+Within each fillable gap, imputation was performed independently per feature column by sampling adjacent segment values.
+For a gap of length $L$, feature value samples were taken from neighboring segments before and after the gap within a window of size $W=\max(L, N_{\min})$, where $N_{\min}=100$ is the minimum sampling span.
+The sampled values were then randomly assigned within the gap.
+Additionally, each sampled value was perturbed by a multiplicative factor in the interval $[1-\delta,\;1+\delta]$, where $\delta=0.5$ is the maximum distortion percentage.
+This design preserved local feature statistics, avoided unrealistic interpolation over long outages, and introduced slight stochastic variation to reduce deterministic copy artifacts in the imputed sequences.
 
-Within each fillable gap, imputation is performed independently per feature column by local donor sampling.
-For a gap of length $L$, donor candidates are taken from neighboring segments before and after the gap within a window of size $W=\max(L, N_{\min})$, where $N_{\min}=100$ is the minimum donor span.
-Values are sampled with replacement from valid donor rows and assigned to the missing positions.
-Additionally, each sampled value is perturbed by a multiplicative factor in the interval $[1-\delta,\;1+\delta]$, where $\delta=0.5$ is the maximum distortion percentage.
-This design preserves local feature statistics, avoids unrealistic interpolation over long outages, and introduces slight stochastic variation to reduce deterministic copy artifacts in the imputed sequences.
+The gap-filling procedure preserved the original segment timeline while imputing only short missing intervals ($<\SI{14}{\day}$) in the extracted feature series, as in \textcite{yang_seizure_2024}.
+Long gaps ($\geq\SI{14}{\day}$) were treated as structural recording interruptions and were therefore not imputed.
+Instead, they were used to split the data into independent continuous chunks, ensuring that feature samples were never drawn across major recording breaks.
+
 
 \subsection{Events} \label{subsec:cycle-events}
-Cycle extraction is based on two types of events: seizure onsets and \glspl{fp} predicted by the models.
-Only \glspl{fp} from valid clips in the test set are included, determined using the optimal threshold from \cref{subsec:threshold-optimization}.
-Seizures from the entire dataset are used, as some patients have fewer than 10 in the test set.
-This is justified because seizure timing is independent of model training, under the assumption that phase locking between seizures and features is stable across the dataset.
+Three types of events were evaluated: seizure onsets and \glspl{fp} predicted by both models.
+Only \glspl{fp} from valid clips in the test set were included, determined using the optimal threshold from \cref{subsec:threshold-optimization}.
+Due to the low number of seizures ($\leq$10) in the test sets of some patients, and assuming stable phase locking of seizures to cycles over time, seizures were drawn from the entire dataset to enable statistical analysis.
+
 
 \subsection{Outlier Handling} \label{subsec:cycle-outlier}
-Feature-based phase locking can be affected by artifacts in the \gls{eeg} signal, such as muscle or technical noise.
-To mitigate this, extreme feature values are clipped at the \SI{99.999}{\percent} quantile.
-Various thresholds were tested for all patients and features, and this one was visually determined to remove the extreme outliers while preserving the vast majority of the data.
-After clipping, features are z-score normalized to standardize their distributions.
+Feature-based phase locking can be affected by artifacts present in the \gls{eeg} signal, including myogenic activity and technical noise.
+To attenuate the impact of such artifacts, extreme feature values were clipped at the \SI{99.999}{\percent} quantile.
+A range of quantile thresholds was systematically evaluated across all patients and all feature types, and the chosen threshold was identified through visual inspection as effectively suppressing extreme outliers while retaining the vast majority of the data.
+Subsequent to clipping, all features were standardized via z-score normalization to standardize their distributions.
 
 \subsection{Filtering} \label{subsec:cycle-filtering}
-A non-causal, multidien filter is applied to each continuous feature chunk to isolate slow oscillatory components.
-Specifically, a 10th order Butterworth bandpass filter in \gls{sos} form is used with a period range of 5--50 days, and a sampling frequency corresponding to the segment duration.
-This process extracts multidien dynamics while removing short-term fluctuations.
+A non-causal, multidien filter was applied to each continuous feature chunk to isolate slow oscillatory components.
+Specifically, a 10th order Butterworth bandpass filter in \gls{sos} form was used with a period range of 5--50 days, and a sampling frequency corresponding to the segment duration.
+This process extracted multidien dynamics while removing short-term fluctuations.
 
 \subsection{Phase Locking} \label{subsec:phase-locking}
-Based on the filtered features, the phases at event times, \glspl{plv}, and mean angles are computed using the Hilbert transform.
+Based on the filtered features, the phases at event times, \glspl{plv}, and mean angles were computed using the Hilbert transform.
 The \gls{plv} quantifies the consistency of event timing relative to the phase of an oscillatory process, ranging from 0 (no phase preference) to 1 (perfect phase locking).
 This is a standard tool in circular statistics and neuroscience for quantifying phase-event relationships.
 
@@ -76,12 +76,12 @@ This is a standard tool in circular statistics and neuroscience for quantifying 
 \end{enumerate}
 
 \subsection{Rayleigh Test} \label{subsec:rayleigh}
-The statistical significance of phase locking is assessed using the Rayleigh test for each feature, which tests the null hypothesis that the event phases are uniformly distributed.
+The statistical significance of phase locking was assessed using the Rayleigh test for each feature, which tests the null hypothesis that the event phases are uniformly distributed.
 
 \subsection{Circular Comparison} \label{subsec:circular-comparison}
-To determine whether two groups of circular data, i.e., event phases from two event types, have significantly different mean directions, a non-parametric permutation test is used.
+To determine whether two groups of circular data, i.e., event phases from two event types, had significantly different mean directions, a non-parametric permutation test was used.
 This is appropriate for circular data, where standard linear tests are not valid due to the periodic nature of the data.
-The null hypothesis that both samples are drawn from populations with the same mean direction is tested.
+The null hypothesis that both samples are drawn from populations with the same mean direction was tested.
 
 Let $\{\phi_1^{(1)}, \ldots, \phi_{n_1}^{(1)}\}$ and $\{\phi_1^{(2)}, \ldots, \phi_{n_2}^{(2)}\}$ be the two samples of event phases (in radians), with sample sizes $n_1$ and $n_2$.
 
@@ -97,7 +97,7 @@ The observed difference in mean direction is then
 where $\mathrm{wrap}(\cdot)$ denotes wrapping the angle to the interval $[-\pi, \pi)$.
 
 \paragraph{Variance and Test Statistic:}
-To account for the concentration of the data (i.e., how tightly phases are clustered), the test uses a variance estimate based on the mean resultant length $R_j$ for each group:
+To account for the concentration of the data (i.e., how tightly phases are clustered; similar to variance in non-circular statistics), the test uses an estimate of variance based on the mean resultant length $R_j$ for each group:
 \begin{equation} \label{eq:mean-resultant-length}
     R_j = \frac{1}{n_j} \left| \sum_{k=1}^{n_j} e^{i \phi_k^{(j)}} \right|
 \end{equation}
@@ -113,28 +113,28 @@ The test statistic is then
 This statistic is analogous to a Welch's t-test, but adapted for circular data.
 
 \paragraph{Permutation Procedure:}
-To generate the null distribution, the two samples are pooled and randomly reassigned into two groups of sizes $n_1$ and $n_2$, without regard to their original labels.
-For each permutation, the difference in circular means and the corresponding test statistic $T_{\text{perm}}$ are computed as above.
-This process is repeated a large number of times ($N_{perm}=5000$), yielding a distribution of $T_{\text{perm}}$ under the null hypothesis.
+To generate the null distribution, the two samples were pooled and randomly reassigned into two groups of sizes $n_1$ and $n_2$, without regard to their original labels.
+For each permutation, the difference in circular means and the corresponding test statistic $T_{\text{perm}}$ were computed as above.
+This process was repeated a large number of times ($N_{perm}=5000$), yielding a distribution of $T_{\text{perm}}$ under the null hypothesis.
 
 \paragraph{P-value Calculation:}
-The two-sided p-value is calculated as the proportion of permutations where the permuted test statistic exceeds or equals the observed test statistic:
+The two-sided p-value was calculated as the proportion of permutations where the permuted test statistic exceeded or equaled the observed test statistic:
 \begin{equation} \label{eq:circ-pval}
     p = \frac{1 + \sum_{i=1}^{N_{\text{perm}}} \mathbb{I}(T_{\text{perm},i} \geq T_{\text{obs}})}{1 + N_{\text{perm}}}
 \end{equation}
 where $\mathbb{I}(\cdot)$ is the indicator function and $N_{\text{perm}}$ is the number of permutations.
 
 \paragraph{Bootstrap Confidence Intervals:}
-In addition to the permutation test, bootstrap resampling is used to estimate confidence intervals for the mean directions and their difference.
-This involves repeatedly resampling each group with replacement, recalculating the circular means, and determining the empirical percentiles of the resulting distributions.
+In addition to the permutation test, bootstrap resampling was used to estimate confidence intervals for the mean directions and their difference.
+This involved repeatedly resampling each group with replacement, recalculating the circular means, and determining the empirical percentiles of the resulting distributions.
 
 \paragraph{Interpretation:}
 A small p-value indicates that the observed difference in mean direction is unlikely to have arisen by chance, suggesting a significant difference in the phase preference between the two groups.
 The bootstrap confidence intervals provide an estimate of the uncertainty in the mean directions and their difference.
 
-\paragraph{Usage:} The permutation test is applied to all pairs of events: seizures vs. \gls{cnn} \glspl{fp}, seizures vs.\ ensemble \glspl{fp}, and \gls{cnn} \glspl{fp} vs.\ ensemble \glspl{fp}.
+\paragraph{Usage:} The permutation test was applied to all pairs of events: seizures vs.\ \gls{cnn} \glspl{fp}, seizures vs.\ ensemble \glspl{fp}, and \gls{cnn} \glspl{fp} vs.\ ensemble \glspl{fp}.
 
 The Watson-Wheeler test, which tests for equality of circular distributions, was also considered as an alternative but found to be overly sensitive to event phase variability.
 
 \subsection{False Discovery Control} \label{subsec:fdr}
-Since the Rayleigh and circular tests are performed for each feature (15 p-values per test), results are corrected for \gls{fdr} using the \gls{bh} procedure, yielding \gls{fdr}-adjusted p-values for each test.
+Since the Rayleigh and circular tests were performed for each feature (15 p-values per test), results were corrected for \gls{fdr} using the \gls{bh} procedure, yielding \gls{fdr}-adjusted p-values for each test.
