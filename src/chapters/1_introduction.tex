@@ -1,25 +1,23 @@
-\chapter{Introduction} \label{ch:introduction}
+\chapter{Introduction}\label{ch:introduction}
+\section{Epilepsy and Seizure Prediction}
 Epilepsy is a chronic neurological disorder characterized by recurrent, transient episodes of abnormal, synchronous neuronal activity known as seizures.
 Globally, epilepsy affects approximately 65 million individuals and imposes a substantial social and economic burden, including increased disability and mortality rates \parencite{leonardi_global_2002, feigin_global_2021}.
-For the roughly one-third of patients with drug-resistant epilepsy, the unpredictability of seizure occurrence presents a significant challenge in daily life \parencite{schulze-bonhage_unpredictability_2008}.
-The development of reliable, automated seizure prediction algorithms holds the potential to improve patient quality of life by enabling personalized interventions, such as adaptive medication regimens, closed-loop neurostimulation, or timely precautionary actions by patients themselves, thereby increasing patient empowerment and reducing uncertainty.
 
-% todo add:
-% History of prediction (competitions, etc.)
-% history of forecasting
-% bring together to introduce Muller/Yangs paper
-% description of EEG (also subscalp, scalp, etc.)
+For the roughly one-third of patients with drug-resistant epilepsy, the unpredictability of seizure occurrence presents a significant challenge in daily life \parencite{schulze-bonhage_unpredictability_2008}.
+They do not experience seizures more than \SI{99.95}{\percent} of the time, during which they would be able to live relatively normal lives, however, the constant uncertainty of seizure occurrences intrudes into every aspect of daily life \parencite{freestone_forward-looking_2017}.
+
+The development of reliable, automated seizure prediction algorithms holds the potential to improve patient quality of life by enabling personalized interventions, such as adaptive medication regimens, closed-loop neurostimulation, or timely precautionary actions by patients themselves, thereby increasing patient empowerment and reducing uncertainty \parencite{mormann_seizure_2007}.
 
 
 \section{Epileptic Cycles and the Proictal State}
-In seizure prediction, we distinguish between \enquote{preictal} states---periods preceding a seizure---and \enquote{interictal} states, which are temporally distant from any seizure event \parencite{yang_seizure_2024}.
+In seizure prediction, \enquote{preictal} states---periods preceding a seizure---are distinguished from \enquote{interictal} states, which are temporally distant from any seizure event \parencite{yang_seizure_2024}.
 Numerous studies have demonstrated that machine learning models can distinguish these states with performance significantly better than chance in both human and canine \gls{ieeg} recordings \parencite{brinkmann_crowdsourcing_2016, kuhlmann_epilepsyecosystemorg_2018}.
 Notably, \textcite{cook_prediction_2013} provided evidence that, in some cases, seizures can be predicted hours in advance.
 
 A growing body of research has revealed that seizures and related \gls{iea} are not randomly distributed in time, but instead exhibit rhythmicity across multiple temporal scales, including circadian (daily), multidien (multi-day), and circannual (yearly) cycles \parencite{karoly_cycles_2021}.
 Seizure occurrence is often phase-locked to specific phases of these cycles, suggesting that the brain's susceptibility to seizures fluctuates over time.
 
-Despite these insights, the mechanisms underlying ictogenesis—the process by which a normal brain transitions into a seizure—remain incompletely understood \parencite{kuhlmann_seizure_2018}.
+Despite these insights, the mechanisms underlying ictogenesis---the process by which a normal brain transitions into a seizure---remain incompletely understood \parencite{kuhlmann_seizure_2018}.
 A central question is whether seizures arise spontaneously, with little or no warning (i.e., within seconds to milliseconds), or whether the brain undergoes a gradual transition into a state of heightened seizure susceptibility over minutes, hours, or even longer.
 The latter scenario is conceptualized as the \enquote{proictal} state, in which the brain is primed for seizure generation and only a minor perturbation is required to trigger a seizure.
 In this framework, certain phases of the aforementioned cycles correspond to periods of increased proictal risk.
@@ -27,11 +25,12 @@ In this framework, certain phases of the aforementioned cycles correspond to per
 In the context of seizure prediction, two major challenges persist: (1) understanding if or why some seizures are not preceded by detectable preictal changes and thus remain unpredictable (sensitivity), and (2) elucidating the origins of false positive predictions (specificity).
 One hypothesis is that not all seizures are preceded by reliable preictal signatures, reflecting truly spontaneous ictogenesis.
 Alternatively, limitations in model architecture or feature selection may prevent the detection of existing preictal patterns.
-A further possibility is that false positive predictions may, in fact, correspond to periods when the brain is in a proictal state—i.e., a seizure was likely, but the critical perturbation did not occur, resulting in a subclinical event \parencite{muller_coherent_2022}.
+A further possibility is that false positive predictions may, in fact, correspond to periods when the brain is in a proictal state---i.e., a seizure was likely, but the critical perturbation did not occur, resulting in a subclinical event \parencite{muller_coherent_2022}.
+Because the brain is a system with internal, regulatory mechanisms \parencite{buzsaki_rhythms_2006}, it may be possible for it to enter a highly susceptible state without epileptic events occurring, because homeostatic mechanisms may correct abnormal activity \parencite{freestone_forward-looking_2017}.
 
 
 \section{Research Approach}
-In this work, we systematically investigated these possibilities.
+In this work, these possibilities are systematically investigated.
 Two distinct model types were trained: a \gls{cnn} that processes raw \gls{ieeg} signals, and an ensemble of multilayer perceptrons that operate on hand-crafted features extracted from the signals.
 The temporal co-occurrence of false positive predictions across these models was interpreted as evidence for the existence of a proictal state.
 Additionally, we analyzed whether false positive predictions were phase-locked to the same cycles as seizures.

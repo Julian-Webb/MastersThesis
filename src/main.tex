@@ -1,15 +1,17 @@
 % =================================
 % Document Class & Setup
 % =================================
-\documentclass[11pt, oneside, openany]{scrbook}
+\documentclass[11pt, oneside, openany, listof=totoc]{scrbook}
 % Reduce Top and Bottom Margins
 \usepackage[a4paper, includeheadfoot, top=10mm, bottom=10mm]{geometry}
+\usepackage[onehalfspacing]{setspace} % Line spacing
 
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
 \input{settings/config}
 \input{settings/glossaries}
+% \makeglossaries
 
 % =================================
 % Main Document
@@ -29,17 +31,23 @@
 
     % Chapters
     \input{chapters/1_introduction}
+    \input{chapters/2_theoretical_background}
     \input{chapters/2_methods}
     \input{chapters/3_results}
     \input{chapters/4_discussion}
     \input{chapters/5_conclusion}
 
-    % Bibliography
-    \printbibliography
-
     % Appendices
-    % \appendix
-    % \input{chapters/appendix}
+    \appendix
+    % adjust the reference names for the appendix:
+    \crefname{appendix}{appendix}{appendices}
+    \Crefname{appendix}{Appendix}{Appendices}
+    \crefalias{chapter}{appendix}
+    \input{chapters/appendix}
+
+    % Bibliography
+    \printbibliography[heading=bibintoc]
+
 
     % Back Matter
 

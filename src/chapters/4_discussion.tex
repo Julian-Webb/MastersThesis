@@ -7,7 +7,7 @@ We analyzed two subcutaneous \gls{eeg} datasets (ULTRA2 and Competition) compris
 Patients were included if they had at least 10 valid seizures and recording coverage of at least \SI{60}{\percent}. 
 The recordings were cleaned, temporally aligned, and segmented into $\sim$\SI{15}{\sec} segments and $\sim$\SI{10}{\min} clips, which were labeled relative to seizures to define a preictal vs. non-preictal prediction task. 
 Features (variance, \gls{acfw}, inter-channel correlation, and band powers) were extracted per segment and used both for modeling and for subsequent cycle analysis. 
-We compared a \gls{cnn} operating on raw segments with an ensemble of \glspl{fb-mlp}, trained on temporally earlier data and tested on later, unseen data using a per-patient chronological split (targeting $\sim$\SI{60}{\percent} of seizures for training and $\sim$\SI{40}{\percent} for testing). 
+A \gls{cnn} operating on raw segments was compared with an ensemble of \glspl{fb-mlp}, trained on temporally earlier data and tested on later, unseen data using a per-patient chronological split (targeting $\sim$\SI{60}{\percent} of seizures for training and $\sim$\SI{40}{\percent} for testing).
 Performance was summarized with clip-based \gls{roc auc} and \gls{eb} measures, including \gls{eb} sensitivity, relative \gls{tifw} and the \gls{eb} score as the harmonic mean thereof.
 Across patients, mean \gls{eb} decreased from 81 (training) to 67 (test) and mean \gls{roc auc} decreased from 83 (training) to 67 (test), and the \gls{cnn} performed better than the ensemble for most patients. 
 To probe cyclical structure, multidien components were extracted from feature time series and phase relationships were quantified using circular statistics (e.g., \gls{plv} and the Rayleigh test), followed by a permutation test comparing the phase distributions of seizures and model \glspl{fp}.
@@ -16,7 +16,7 @@ Overall, the study provides a joint evaluation of predictive performance and cyc
 
 \section{Interpretation and Implications of Results}
 \subsection{Model Performance}
-We observed that the models generally performed worse on the test set than on the training set, as measured by the \gls{eb} score (mean: 81 vs.\ 67) and \gls{roc auc} (mean: 83 vs.\ 67).
+The models generally performed worse on the test set than on the training set, as measured by the \gls{eb} score (mean: 81 vs.\ 67) and \gls{roc auc} (mean: 83 vs.\ 67).
 This may be explained either by overfitting to the training set or by non-stationarity of distributions in the train vs.\ test set.
 In the latter case, the preictal patterns in the test set would differ from those in the training set, making the learned decision rules less applicable and thereby reducing performance.
 Such a shift is plausible in time-series prediction, where earlier data are used for training and later data are used for testing, allowing the underlying distribution to change over time.
@@ -24,14 +24,14 @@ To distinguish between overfitting and distribution shift, future work could par
 Although this would no longer produce a purely prospective evaluation and, therefore, would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
 If performance on the test set remained worse under this setting, that would indicate overfitting, since the training and test distributions would be similar.
 
-We also saw that the \glspl{cnn} performed better than the ensembles for most patients.
+The \glspl{cnn} also performed better than the ensembles for most patients.
 This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
 
 \subsection{Cycle Extraction}
-In \cref{fig:qualifications_flow_chart}, we saw that even when seizures and \glspl{fp} were phase locked with features and model performance was acceptable, for only \SI{4}{\percent} of patient-model-feature combinations did \glspl{fp} have a phase preference significantly similar to seizures, as tested with the permutation test.
+\Cref{fig:qualifications_flow_chart} shows that, even when seizures and \glspl{fp} were phase locked with features and model performance was acceptable, only \SI{4}{\percent} of patient-model-feature combinations exhibited \glspl{fp} phase preferences significantly similar to seizures, as tested with the permutation test.
 Since seizures and \glspl{fp} were not shown to have a tendency to occur in the same phases, these results do not indicate that \glspl{fp} represent a phase-dependent propensity for seizures.
 
-We also saw that \SI{96}{\percent} of combinations exhibited significant phase locking, which is puzzling in cases where seizures did not phase lock.
+In addition, \SI{96}{\percent} of combinations exhibited significant phase locking, which is puzzling in cases where seizures did not phase lock.
 Since the models only receive one segment, i.e., $\sim$\SI{15}{\sec} of data, at a time, they cannot know the phase unless specific features in the local data indicate the phase.
 This would be worth investigating in future work.
 
@@ -44,15 +44,59 @@ In particular, it would not be expected to exhibit a similar phase preference to
 \section{Limitations}
 The study has several important limitations that affect the interpretation and generalizability of the results.
 
+\subsection{Cohort Size} 
 First, the cohort is small (twelve patients), which limits statistical power and increases susceptibility to sampling variability.
 Consequently, patient-specific effects may drive some observations: for example, the subject with the largest number of seizures (U01) also exhibited comparatively large phase-locking values, although the corresponding \glspl{fp} were shifted in phase relative to seizures.
 This raises the possibility that the apparent phase structure is influenced by unequal event counts across patients rather than reflecting a generalizable phenomenon.
 Future work should therefore prioritize larger, more heterogeneous cohorts and explicitly assess how phase-estimate variance depends on seizure count.
 
+\subsection{Recording Gaps} 
 Second, intermittent recording gaps introduce label uncertainty that can bias both model training and subsequent statistical analyses.
 Seizures that occur during gaps are unobserved; if an unobserved seizure falls within approximately \SI{4}{\hour} of the next available recording, for example, segments that truly belong to the preictal class may be mislabelled as interictal.
 Such label noise can degrade classifier performance, distort event-based metrics, and attenuate or spuriously modify measured phase relationships between features and events.
 Mitigation strategies include excluding segments that occur within a conservative window following recording gaps, treating gap-adjacent segments as ``unknown'' during training and evaluation, explicitly modelling missingness, or conducting sensitivity analyses that vary the exclusion window to quantify its impact on results.
 However, since continuous data was needed for the cycle extraction, and gap filling was already used, the exclusion of further data would have been problematic.
 
+\subsection{Missing Seizures in Annotations}
+Since an imperfect, automated classifier was used to detect potential seizures outside the \gls{emu} (\cref{sec:dataset-description}) and the raw \gls{eeg} data was not further investigated for seizures, we can assume that some seizures were not detected, and were thus occurred in the \gls{eeg} data without being annotated.
+Regarding the automated classifier, \textcite{furbass_automatic_2017} reported a sensitivity of \SI{84}{\percent} for a \gls{eeg} montage with three electrodes, \SI{79}{\percent} for an 8-electrode forehead montage, and \SI{68}{\percent} 7-electrode posterior montage.
+This indicates that performance decreases with fewer electrodes, which is concerning for the 3-electrode montage used here.
+However, \textcite{furbass_automatic_2017} used scalp \gls{eeg}, which has more noise that the subscalp \gls{eeg} used here, due to the impedance of the skin.
+The improved resolution could (partially) counteract the reduced number of electrodes.
+The exact sensitivity of the seizure annotations is thus hard to estimate, but we can safely assume that a certain percentage of seizures were not detected.
 
+When seizures were missing, the segments and clips received the wrong labels, which would affect various parts of the pipeline:
+
+\begin{itemize}
+    \item Missing seizures would have worsened the \textbf{models' learning}, as the gradient calculated based on the prediction error during training would have pointed in the wrong direction.
+    Fortunately, deep learning models are robust to limited sample-class mislabeling.
+    Depending on the extent of missing seizures, we can thus expect the impairment to learning ranging from negligible up to moderate.
+
+    \item Regarding \textbf{model evaluation}, class mislabeling due to missing seizures would have distorted the \gls{roc auc} and \gls{tifw}, as thus the \gls{eb} score.
+    The mechanism being that when a model raised an alarm during supposed interictal periods, it could have been because it detected real preictal patterns from a missing seizure, but this would have been counted as a \gls{fp}, thus distorting the mentioned metrics.
+
+    \item Missing seizures would have only distorted the seizure and \gls{fp} \textbf{cycles}, if missing seizures themselves exhibit a phase preference.
+    As we saw in this work, forecasting model predictions do exhibit a phase preference in some cases, but do not know if the same was the case for the model used to detect seizures.
+\end{itemize}
+
+
+\subsection{Multi-Modality of Phase Distributions}
+In this work, phase preference was assessed primarily via the Rayleigh test, which is a standard approach for testing non-uniformity of circular data.
+However, an important limitation is that the Rayleigh test is most sensitive to \emph{unimodal}, approximately von Mises-like alternatives (i.e., a single preferred phase).
+As a consequence, phase distributions that are plausibly \emph{multi-modal} can still yield a non-significant Rayleigh test, even when the phases are clearly not uniformly distributed.
+This issue is exacerbated when the number of events is small, which is common for seizure counts in long-term recordings.
+
+Visual inspection of the phase histograms for patient-event-feature combinations suggests several cases where multi-modality may be present, including, but by far not limited to:
+\begin{itemize}
+    \item C01 -- seizures -- Alpha (D) (\cref{fig:appendix-phase-histogram-C01-seizures})
+    \item C03 -- \gls{cnn} \glspl{fp} -- ACFW (P) (\cref{fig:appendix-phase-histogram-C03-CNN FPs})
+    \item U01 -- \gls{cnn} \glspl{fp} -- Theta (D) (\cref{fig:appendix-phase-histogram-U01-CNN FPs})
+    \item U04 -- ensemble \glspl{fp} -- Var. (P) (\cref{fig:appendix-phase-histogram-U04-ensemble FPs})
+    \item U12 -- \gls{cnn} \glspl{fp} -- Var. (P) (\cref{fig:appendix-phase-histogram-U12-CNN FPs})
+    \item U17 -- ensemble \glspl{fp} -- Delta (P) (\cref{fig:appendix-phase-histogram-U17-ensemble FPs})
+    \item U17 -- seizures -- Corr. Coef. (\cref{fig:appendix-phase-histogram-U17-seizures})
+\end{itemize}
+In such situations, interpreting a non-significant Rayleigh test as ``no phase structure'' is overly conservative; it may instead indicate that the phase structure is not well described by a single peak.
+
+A more complete analysis could therefore complement the Rayleigh test with methods that are sensitive to broader classes of deviations from uniformity (e.g., tests designed for multimodal alternatives) and/or by explicitly fitting circular mixture models (e.g., mixtures of von Mises components) to capture multiple peaks.
+Practically, this would help distinguish true uniformity from structured but multi-peaked phase preferences, and may be particularly relevant for seizures where the small sample size reduces the power of any statistical test.

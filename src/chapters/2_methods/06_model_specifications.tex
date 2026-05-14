@@ -86,7 +86,7 @@ Similarly, postictal and inter-post segments were omitted, as they may fall with
 Moreover, the postictal period is characterized by substantial alterations in brain state, leading to marked changes in signal dynamics that may confound model learning and degrade performance \parencite{muller_coherent_2022}.
 
 As mentioned in \cref{subsec:dataset-partitioning}, there was a large class imbalance with scarcity of preictal segments.
-To avoid wasting resources training on more interictal segments than necessary, we subsampled the number of interictal segments to a maximum of 20 times the number of preictal ones.
+To avoid wasting resources training on more interictal segments than necessary, the number of interictal segments was subsampled to a maximum of 20 times the number of preictal ones.
 The class weights were adjusted to the final ratio of preictal vs.\ interictal segments, so that the models were not biased towards focusing mostly on learning to predict interictal segments.
 All models received the same subsampled segments for training, so that results were more comparable.
 

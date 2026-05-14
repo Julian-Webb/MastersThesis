@@ -21,65 +21,101 @@ For the remaining 357 combinations (\SI{99.27}{\percent}), the assumptions did n
     \input{tables/model_feature_qualifications}
 \end{table}
 
-\FloatBarrier
+The patient-model-feature combinations that met the qualification criteria for patient U17 (with features Alpha (P) and Beta (P)) are shown in \cref{fig:U17-phase-histograms}.
+Although formally qualified, the mean angle difference between seizures and \glspl{fp} is high (Alpha (P): \SI{40}{\degree}, Beta (P): \SI{53}{\degree}).
+
+For the other qualified combination (C02, CNN, ACFW (D)) shown in \cref{fig:appendix-phase-histogram-C02-seizures} and \cref{fig:appendix-phase-histogram-C02-CNN FPs}, the mean angle difference of \SI{131}{\degree} is even higher.
+Although, in this case the $p_{\mathrm{Permutation,BH}}$ of \num{0.101} is also not far above the significance level of \num{0.05}.
+% todo discussion: discuss why do these combinations pass the tests? They are not similar at all!
+
+\begin{figure}[p]
+    \centering
+
+    \begin{subfigure}[t]{0.94\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/U17/seizures}
+        \caption{Seizures}
+        \label{fig:U17-seizure-phases}
+    \end{subfigure}
+
+    \medskip
+
+    \begin{subfigure}[t]{0.94\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/U17/ensemble FPs}
+        \caption{Ensemble FPs}
+        \label{fig:U17-ensemble-FP-phases}
+    \end{subfigure}
+
+    \caption[Phase Histograms per Feature of Patient U17 for seizures and ensemble FPs]{Phase Histograms per Feature and for seizures and ensemble \glspl{fp} of \textbf{Patient U17}.\\
+    The number of events per bin is displayed on the polar y-axis. The mean phase angle is denoted next to the feature name and shown as a red arrow. The arrow's length represents the \gls{plv}.}
+    \label{fig:U17-phase-histograms}
+\end{figure}
+
 \subsection{Descriptive Results} \label{subsec:descriptive-results}
-Even though only very few patient-model-feature combinations met the criteria, we visually observed an effect for patient U01.
-His seizures had a clear preferred phase (\cref{fig:U01-seizure-phases}).
-Likewise, his \glspl{fp} had a clear preferred phase for both the \gls{cnn} (\cref{fig:U01-CNN-FP-phases}) and ensemble (\cref{fig:U01-ensemble-FP-phases}).
-However, between seizures and \glspl{fp}, there was a phase delay, i.e., \glspl{fp} tended to occur somewhat later than seizures.
-This could also be seen when we inspected the filtered signal with seizures and \glspl{fp} in \cref{fig:U01_filtered_var_P}: the \glspl{fp} tended to occur during portions with many seizures, but also frequently thereafter, rather than before.
-This explained the detected shifted phase preference.
-This effect was only pronounced for patient U01.
-
-For other patients, this was not the case.
-Patient C03 acted as an example for cases where seizures were only phase locked to some or no features (\cref{fig:C03-seizure-phases}) and \glspl{fp} were not phase locked to features (\cref{fig:C03-CNN-FP-phases}, \cref{fig:C03-ensemble-FP-phases}).
-This was more typical of the phase locking observed across patients, except for U01.
+% todo decide whether to show U17 first and move the detailed caption accordingly, as well as adjust figure widths
+Even though only very few patient-model-feature combinations met the formal criteria, there were various observable effects that weren't captured by the statistical tests.
+These are examined in this section.
 
 \begin{figure}[p]
     \centering
-    \includegraphics{phase_histograms/U01/seizures}
-    \caption[Seizure Phase Histogram per Feature of Patient U01]{Seizure Phase Histogram per Feature of Patient U01.\\The number of events per bin is displayed on the polar y-axis. The phase angle is displayed around the circle. 90° indicates the phase is falling, 270° indicates rising. The mean angle and its magnitude are shown in red. It is also denoted next to the feature name.}
-    \label{fig:U01-seizure-phases}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/U01/seizures}
+        \caption{Seizures}
+        \label{fig:U01-seizure-phases}
+    \end{subfigure}
+
+    \medskip
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/U01/CNN FPs}
+        \caption{CNN FPs}
+        \label{fig:U01-CNN-FP-phases}
+    \end{subfigure}
+
+    \caption[Phase Histograms per Feature of Patient U01 for seizures and CNN FPs]{Phase Histograms per Feature and for seizures and \gls{cnn} \glspl{fp} of \textbf{Patient U01}.}
+    \label{fig:U01-phase-histograms}
 \end{figure}
 
-\begin{figure}[p]
-    \centering
-    \includegraphics{phase_histograms/U01/CNN FPs}
-    \caption{CNN FP Phase Histogram per Feature of Patient U01}
-    \label{fig:U01-CNN-FP-phases}
-\end{figure}
+For patient U01, there was a significant phase preference for seizures (\cref{fig:U01-seizure-phases}), \gls{cnn} \glspl{fp} (\cref{fig:U01-CNN-FP-phases}), and ensemble \glspl{fp} (\cref{fig:appendix-phase-histogram-U01-ensemble FPs}), which is also clearly visible in the figures.
+However, between seizures and \glspl{fp}, there was usually a phase delay, i.e., \glspl{fp} tended to occur later than seizures.
+This delay is also visible when inspecting the filtered signal with seizures and \glspl{fp} (\cref{fig:U01-filtered-var-P}): the \glspl{fp} tended to occur during portions with many seizures, but also frequently thereafter, more so than before, which is consistent with the detected shift of phase preference.
+This strong phase preference, albeit being shifted, was only present for patient U01.
 
-\begin{figure}[p]
+\begin{figure}[hbtp]
     \centering
-    \includegraphics{phase_histograms/U01/ensemble FPs}
-    \caption{Ensemble FP Phase Histogram per Feature of Patient U01}
-    \label{fig:U01-ensemble-FP-phases}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics{U01_filtered_var_P}
+    \includegraphics{src/figures/U01_filtered_var_P.pdf}
     \caption{The Original and Filtered Signal of Feature Var. (P) of Patient U01, including the occurrences of seizures and FPs}
-    \label{fig:U01_filtered_var_P}
+    \label{fig:U01-filtered-var-P}
 \end{figure}
+
+Other patients usually did not exhibit a significant phase preference of events (seizures or \glspl{fp}), or only did so for few combinations of features and event types.
+For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} were never significantly phase locked to features.
+Accordingly, there were few or no combinations of event types and features that exhibited a strong phase preference across patients, except for U01.
+For further examination, all phase histograms are shown in \cref{ch:phase-histograms} and all filtered feature plots with event occurrences in \cref{ch:filtered-feature-plots}.
 
 \begin{figure}[p]
     \centering
-    \includegraphics{phase_histograms/C03/seizures}
-    \caption[Seizure Phase Histogram per Feature of Patient C03]{Seizure Phase Histogram per Feature of Patient C03.}
-    \label{fig:C03-seizure-phases}
-\end{figure}
 
-\begin{figure}[p]
-    \centering
-    \includegraphics{phase_histograms/C03/CNN FPs}
-    \caption{CNN FP Phase Histogram per Feature of Patient C03}
-    \label{fig:C03-CNN-FP-phases}
-\end{figure}
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/C03/seizures}
+        \caption{Seizures}
+        \label{fig:C03-seizure-phases}
+    \end{subfigure}
 
-\begin{figure}[p]
-    \centering
-    \includegraphics{phase_histograms/C03/ensemble FPs}
-    \caption{Ensemble FP Phase Histogram per Feature of Patient C03}
-    \label{fig:C03-ensemble-FP-phases}
+    \medskip
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{phase_histograms/C03/ensemble FPs}
+        \caption{Ensemble FPs}
+        \label{fig:C03-ensemble-FP-phases}
+    \end{subfigure}
+
+    \caption[Phase Histograms per Feature of Patient C03 for seizures and ensemble FPs]{Phase Histograms per Feature and for seizures and ensemble \glspl{fp} of \textbf{Patient C03}.}
+    \label{fig:C03-phase-histograms}
 \end{figure}

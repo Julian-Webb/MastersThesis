@@ -1,0 +1,47 @@
+\chapter{Theoretical Background}\label{ch:theoretical-background}
+
+\section{State of the Art}
+% todo add:
+% History of prediction (competitions, etc.)
+% history of forecasting
+% bring together to introduce Müller & Yangs paper
+% description of EEG (also subscalp, scalp, etc.)
+
+
+\subsection{Evolution of Seizure Prediction and Algorithmic Development}
+
+The pursuit of extracting seizure precursors from the electroencephalogram began in the 1970s with \textit{linear approaches}, such as autoregressive modeling and power-spectrum analysis of spike-wave bursts \parencite{mormann_seizure_2007}.
+Early research also focused on the predictive value of \textit{interictal spike rates}, though results were often contradictory; while some early studies suggested focal spiking decreased before seizures, subsequent investigations on more extended databases showed no systematic or reproducible changes \parencite{mormann_seizure_2007}.
+
+In the 1990s, the field shifted toward \textit{nonlinear dynamics}, treating the brain as a chaotic system \parencite{mormann_seizure_2007, kuhlmann_epilepsyecosystemorg_2018}.
+Researchers utilized measures like the largest Lyapunov exponent to identify a decrease in chaoticity in the minutes preceding a seizure, alongside the dynamical similarity index and correlation density to characterize a transitional preictal phase \parencite{mormann_seizure_2007}.
+This era was marked by significant optimism, with many studies reporting high sensitivity on small, highly selected datasets \parencite{mormann_seizure_2007, muller_coherent_2022}.
+However, a period of \textit{skepticism} followed in the early 2000s as more rigorous evaluations on unselected, continuous multi-day recordings failed to reproduce these optimistic findings, highlighting issues with overfitting, lack of specificity evaluation, and the absence of out-of-sample statistical validation \parencite{mormann_seizure_2007, freestone_forward-looking_2017}.
+
+To overcome these reproducibility challenges and address the \enquote{ceiling effect} in predictive performance, the field turned to \textit{crowdsourcing and open competitions} using standardized, high-quality datasets. Platforms like \textit{Kaggle} hosted the American Epilepsy Society Seizure Prediction Challenge, providing \gls{ieeg} recordings from both humans and canines \parencite{brinkmann_crowdsourcing_2016}.
+Subsequent efforts by \textit{epilepsyecosystem.org} continued this trend, enabling researchers to compare algorithms on ultra-long-term human recordings \parencite{kuhlmann_epilepsyecosystemorg_2018}.
+These competitions demonstrated that \textit{machine learning} could achieve better-than-chance performance \parencite{brinkmann_crowdsourcing_2016}.
+Winning solutions typically utilized a variety of \enquote{hand-crafted} features---including band power spectra, statistical moments (skewness, kurtosis), and cross-channel linear correlations in both time and frequency domains---classified by \textit{Support Vector Machines (SVM)}, \textit{Random Forests}, or \textit{k-nearest neighbors} \parencite{kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}.
+
+More recently, \textit{deep learning} has emerged as a dominant paradigm, with \textit{\gls{cnn}} and \textit{\gls{lstm}} networks used to extract features directly from raw data, bypassing the need for manual feature engineering \parencite{kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}.
+Looking forward, \textcite{freestone_forward-looking_2017} suggest the field is shifting from binary classification to a \textit{probabilistic framework}, casting prediction as a regression problem that expresses a continuous seizure likelihood.
+This future vision relies on power-efficient, \textit{neuromorphic hardware}---such as IBM's TrueNorth chip---and less-invasive \textit{subscalp monitors} to support sophisticated real-time monitoring in ambulatory settings \parencite{freestone_forward-looking_2017, yang_seizure_2024}.
+
+
+\subsection{Precursors and Mechanisms of Ictogenesis}
+% todo keep going through section and fix errors
+Understanding the mechanisms by which a \enquote{normal} brain transitions into a seizure---a process known as \textit{ictogenesis}---is fundamental to predictive modeling \parencite{mormann_seizure_2007}.
+While some patients report clinical prodromi such as behavioral or mood changes, the field operates on the assumption that these transitions are best tracked by \textit{\gls{eeg}}, which can capture measurable shifts in brain dynamics hours or even days before a clinical event in many patients \parencite{freestone_forward-looking_2017, cook_prediction_2013}.
+
+On a network level, focal seizures are hypothesized to arise from \textit{\enquote{burster} neurons} that abnormally recruit and entrain neighbors into a \enquote{critical mass}.
+This build-up is viewed not merely as an increasing count of neurons but as an unfolding process of increasing \textit{critical interactions} within a pathological functional network \parencite{mormann_seizure_2007}.
+
+A key indicator of this transition is \enquote{\textit{critical slowing}}, a universal signature of a system losing its resilience as it approaches a tipping point or state transition.
+In the context of epilepsy, this is often characterized by an increase in the autocorrelation of the \gls{eeg} or a lengthening of electrical evoked potentials, indicating a system that takes longer to recover from perturbations  \parencite{freestone_forward-looking_2017, maturana_critical_2020}.
+
+This transition is frequently framed through the lens of \textit{bi/multistability}, where a stable healthy attractor (e.g., wakefulness or sleep) coexists with a pathological seizure state.
+Seizures may occur due to deterministic variations in underlying parameters or random \enquote{noisy} fluctuations in background activity that drive the brain's state across the energy barrier separating these attractors.
+Because the brain possesses internal \textit{homeostatic regulatory mechanisms}, it is possible for the brain to enter a state of \textit{high susceptibility} without a clinical event actually occurring, as these mechanisms may correct the abnormal activity \parencite{freestone_forward-looking_2017}.
+This conceptualization leads to the idea of a \textit{proictal state}---a period of heightened seizure likelihood that does not always terminate in an ictal event \parencite{muller_coherent_2022}.
+Furthermore, research into biomarkers like \textit{interictal spikes} and \textit{\glspl{hfo}} has revealed that while these indicators have clear implications for understanding ictogenesis, their dynamics are highly patient-specific \parencite{freestone_forward-looking_2017}.
+Consequently, there is an increasing recognition that \enquote{one-size-fits-all} algorithms are insufficient, necessitating long-term monitoring to account for individual variability in seizure-generating mechanisms and the diverse populations of seizures that can coexist within a single patient \parencite{freestone_forward-looking_2017, yang_seizure_2024}.
