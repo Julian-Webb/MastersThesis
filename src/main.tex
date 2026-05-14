@@ -6,48 +6,60 @@
 \usepackage[a4paper, includeheadfoot, top=10mm, bottom=10mm]{geometry}
 \usepackage[onehalfspacing]{setspace} % Line spacing
 
+% Development switch 
+\newif\ifprintfull
+% Set to \printfullfalse to speed up compilation by excluding front matter and appendices.
+\printfulltrue
+
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
 \input{settings/config}
 \input{settings/glossaries}
-% \makeglossaries
+\ifprintfull
+    \makeglossaries
+\fi
 
 % =================================
 % Main Document
 % =================================
 \begin{document}
     % Front Matter
-    % \input{paratext/title_page}
-    % \input{paratext/declaration}
-    % \input{chapters/0_acknowledgements}
-
-    % \input{chapters/0_abstract}
-
+    \ifprintfull
+        \input{paratext/title_page}
+        \input{paratext/declaration}
+        \input{chapters/0_acknowledgements}
+        \input{chapters/0_abstract}
+    \fi
+    
     \tableofcontents
-    % \listoffigures
-    % \listoftables
-    % \printglossary[type=\acronymtype, title=List of Abbreviations]
+
+    \ifprintfull
+        \listoffigures
+        \listoftables
+        \printglossary[type=\acronymtype, title=List of Abbreviations]
+    \fi
 
     % Chapters
     \input{chapters/1_introduction}
     \input{chapters/2_theoretical_background}
-    \input{chapters/2_methods}
-    \input{chapters/3_results}
-    \input{chapters/4_discussion}
-    \input{chapters/5_conclusion}
+    \input{chapters/3_methods}
+    \input{chapters/4_results}
+    \input{chapters/5_discussion}
+    \input{chapters/6_conclusion}
 
-    % Appendices
-    \appendix
-    % adjust the reference names for the appendix:
-    \crefname{appendix}{appendix}{appendices}
-    \Crefname{appendix}{Appendix}{Appendices}
-    \crefalias{chapter}{appendix}
-    \input{chapters/appendix}
+    % Appendices (included only if \ifprintfull)
+    \ifprintfull
+        \appendix
+        % adjust the reference names for the appendix:
+        \crefname{appendix}{appendix}{appendices}
+        \Crefname{appendix}{Appendix}{Appendices}
+        \crefalias{chapter}{appendix}
+        \input{chapters/appendix}
+    \fi
 
     % Bibliography
     \printbibliography[heading=bibintoc]
-
 
     % Back Matter
 
