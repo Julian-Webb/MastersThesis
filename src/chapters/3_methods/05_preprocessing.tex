@@ -130,6 +130,7 @@ Consequently, it is essential to account for the number of seizures per partitio
 Our objective was therefore to allocate approximately \SI{60}{\percent} of seizures to the training set and approximately \SI{40}{\percent} to the test set.
 These proportions were based on \textcite{yang_seizure_2024} using \SI{60}{\percent} of data for training.
 
+%todo consider making the steps a numbered list
 The partition boundary was determined per patient as a timestamp on the clip grid.
 First, seizures were ordered chronologically and an initial split was targeted at \SI{60}{\percent} training seizures and \SI{40}{\percent} test seizures.
 If $N$ denotes the number of valid seizures, the number initially allocated to training was $\lfloor 0.6N \rfloor$.
@@ -148,8 +149,9 @@ This hindered the cycle evaluation; therefore, the boundary was manually set to 
 \subsection{Feature Extraction} \label{subsec:feature-extraction}
 % todo rewrite section for clarity
 % add why the selected features were used in the papers, or something like that.
-The features extracted from the signals per segment are shown in \cref{tab:feature-properties}.
-Some of these were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.
+\Cref{subsec:background-periictal-intervals-in-eeg-recordings} introduced how signal properties tend to change throughout the various periictal intervals.
+To quantify these changes and use them for prediction and to compute cycles, various hand-crafted features were extracted from the signals per segment (\cref{tab:feature-properties}).
+Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.
     
 \begin{table}[htb]
     \centering
@@ -157,42 +159,75 @@ Some of these were used as inputs to the \glspl{fb-mlp}, and all were used for t
     \renewcommand{\arraystretch}{1.15}
     \rowcolors{2}{gray!10}{white} % Alternating row colors
     %! suppress = MissingGlossaryReference
-    \begin{tabular}{l c c c}
+    \begin{tabular}{l r r r r}
         \rowcolor{gray!25}
-        \textbf{Feature}        & \textbf{\#Values per channel} & \textbf{\#Values} & \textbf{Used for ensemble} \\
+        \textbf{Feature}
+        & \makecell{\textbf{\#Values}\\\textbf{per channel}} 
+        & \textbf{\#Values} 
+        & \makecell{\textbf{Used for}\\\textbf{ensemble}} 
+        \\
         \hline
-        Correlation coefficient & -                             & 1                 & \checkmark                 \\
-        ACFW                    & 1                             & 2                 &                            \\
-        Variance                & 1                             & 2                 &                            \\
-        Bandpowers              & 5                             & 10                & \checkmark                 \\
+        Correlation coefficient & - &  1 & \checkmark \\
+        ACFW                    & 1 &  2 &            \\
+        Variance                & 1 &  2 &            \\
+        Bandpowers              & 5 & 10 & \checkmark \\
         \hline
         \rowcolor{gray!15}
-        Total                   &                               & 15                &
+        Total                   &   & 15 & 
     \end{tabular}
     \caption[Features and their properties]{Features and their properties}
     \label{tab:feature-properties}
 \end{table}
 
-The signal variance and \gls{acfw} were computed based on \textcite{maturana_critical_2020}, and Pearson's correlation coefficient between the two channels and the spectral band powers of each channel's signal based on \textcite{muller_coherent_2022}.
+The \textbf{spectral band powers} of each channel's signal, and \textbf{Pearson's correlation coefficient} between the two channels were extracted, because they were used in many of the top-performing algorithms in the competitions \parencite{brinkmann_crowdsourcing_2016, muller_coherent_2022, kuhlmann_epilepsyecosystemorg_2018}.
+Additionally, the \textbf{signal variance} and \textbf{\gls{acfw}} were used as markers for \textit{critical slowing} \parencite{maturana_critical_2020}. 
+The exact \textit{numeric properties} of these features are essential for usage as model input and cycle extraction, and are therefore discussed below.
 
-The \gls{acfw} was calculated for each channel.
-The \gls{acf} represents the correlation of a signal $s$ with itself shifted by a lag value $\lambda$, which corresponds to a number of samples.
-$\bar{s}$ is the signal mean, $T$ is the number of total samples, $\operatorname{Var}_s$ is the variance of $s$.
+\subsubsection{Variance}
+The variance measures the average squared deviation of a signal $s$ from its mean $\bar{s}$ within a segment, and was computed \textit{for each segment and channel}.
+
+\begin{equation}
+    \label{eq:variance}
+    \operatorname{Var}_s = \frac{1}{T} \sum_{t=1}^{T} \left(s_t-\bar{s}\right)^2
+\end{equation}
+
+\subsubsection{Pearson Correlation Coefficient}
+Pearson's correlation coefficient (bounded in [\num{-1}, \num{1}]) is the only cross-channel feature used here.
+It quantifies how the two channel signals $s$ and $r$ vary together within a segment and is defined as the normalized linear covariance:
+
+\begin{equation}
+    \label{eq:pearson-correlation}
+    \rho_{sr} =
+    \frac{1}{T}
+    \frac{\sum_{t=1}^{T} \left(s_t-\bar{s}\right)\left(r_t-\bar{r}\right)}{\sqrt{\operatorname{Var}_s\,\operatorname{Var}_r}}
+\end{equation}
+
+where $\bar{s}$ and $\bar{r}$ are the signal means over the $T$ samples of the segment.
+
+\subsubsection{Autocorrelation Function Width}
+The \gls{acf} (bounded in [\num{-1}, \num{1}]) represents the correlation of a signal $s$ with itself shifted by a lag value $\lambda$, which corresponds to a number of samples:
+
 \begin{equation}
     \label{eq:acf}
     \operatorname{ACF}_\lambda =
     \frac{1}{T} \frac    {\sum_{t=1}^{T-\lambda}\left(s_t-\bar{s}\right)\left(s_{t+\lambda}-\bar{s}\right)}{\operatorname{Var}_s}
 \end{equation}
-The \gls{acf} is bounded between $-1$ and $1$.
-The \gls{acfw} is defined as the lag $\lambda$ where the \gls{acf} reaches its half-maximum value of $0.5$.
+
+where $\bar{s}$ is the signal mean, and $T$ is the number of total samples.
+
+The \textbf{\gls{acfw}} is then defined as the \textbf{lag $\lambda$} where the \gls{acf} reaches its half-maximum value of $0.5$.
+It is can thus range from 1 to 3105 (the number of samples in a segment).
 It can be interpreted as a measure of temporal persistence: it quantifies how quickly a signal decorrelates over time.
+This measure was calculated \textit{for each segment and channel}.
 
-Lastly, the spectral band powers were calculated for the delta (0.5–\SI{4}{\Hz}), theta (4–\SI{8}{\Hz}), alpha (8–\SI{12}{\Hz}), beta (12–\SI{35}{\Hz}), and gamma (35–\SI{100}{\Hz}) bands for each channel.
-Band powers were computed for each segment and channel from the \gls{psd} estimated with Welch’s method.
+\subsubsection{Spectral Band Powers}
+Lastly, the spectral band powers were extracted for the delta (0.5–\SI{4}{\Hz}), theta (4–\SI{8}{\Hz}), alpha (8–\SI{12}{\Hz}), beta (12–\SI{35}{\Hz}), and gamma (35–\SI{100}{\Hz}) bands.
+They were computed \textit{for each segment and channel} as follows:
 
-Specifically, the signal was divided into Hann-windowed subwindows of length ($2/f_{\min}$) (where $f_{\min}=\SI{0.5}{\Hz}$ is the lower bound of the lowest spectral band), with \SI{50}{\percent} overlap, detrending by subtraction of the mean, and density scaling (resulting in the unit $\si{\volt}^2 / r\si{\Hz}$).
-This yielded a \gls{psd} over frequency for every segment-channel pair.
+\begin{enumerate}
+    \item The \gls{psd} was estimated using Welch’s method by splitting the signal into Hann-windowed subwindows of length $2/f_{\min}$ (with $f_{\min}=\SI{0.5}{\Hz}$), using \SI{50}{\percent} overlap, detrending by subtracting the mean, and density scaling (unit $\si{\volt}^2 / r\si{\Hz}$).
+    \item For each band, the (absolute) band power was obtained by numerically integrating the \gls{psd} between the band limits using Simpson’s rule, with the frequency-bin spacing as the integration step.
+    \item The absolute (rather than relative) band powers were used to maintain comparability between segments.
+\end{enumerate}
 
-For each predefined band, the absolute band power was then obtained by numerically integrating the \gls{psd} between the band limits using Simpson’s rule, with the frequency-bin spacing as the integration step.
-It was important to use the absolute, rather than relative band power, so that it stayed comparable between segments.
 The result was one scalar band-power value per band and per channel (10 values total for two channels and five bands).

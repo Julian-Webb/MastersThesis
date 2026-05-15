@@ -52,9 +52,9 @@ Consequently, there is an increasing recognition that \enquote{one-size-fits-all
 
 \section{Electroencephalography (EEG)}\label{sec:eeg-background}
 
-\textbf{\Gls{eeg}} is an electro-physiological technique used to record the electrical activity arising from brains. 
-It primarily measures the \textbf{summation of excitatory and inhibitory postsynaptic potentials} from relatively large groups of neurons---especially cortical pyramidal neurons---firing synchronously. 
-Because these neurons are oriented perpendicularly to the brain's surface, their combined activity creates a dipole that can be detected by recording electrodes. 
+\textbf{\Gls{eeg}} is an electrophysiological technique used to record the electrical activity arising from brains.
+It primarily measures the \textbf{summation of excitatory and inhibitory postsynaptic potentials} from relatively large groups of neurons---especially cortical pyramidal neurons---firing synchronously.
+Because these neurons are oriented perpendicularly to the brain's surface, their combined activity creates a dipole that can be detected by recording electrodes.
 \gls{eeg} is characterized by its \textbf{exquisite temporal sensitivity}, providing a near real-time display of ongoing cerebral activity \parencite{st_louis_electroencephalography_2016}.
 
 \subsection{Clinical Utility and Applications}
@@ -68,7 +68,7 @@ It is widely used for several clinical indications \parencite{st_louis_electroen
 \end{itemize}
 
 \subsection{Frequency Bands}
-\gls{eeg} activity is conventionally categorized into frequency\footnote{The exact frequencies boundaries of each band vary in the literature and are based on \textcite{mormann_seizure_2007} here.} bandwidths, or bands, which vary according to the patient's state (e.g., wakefulness, sleep) and developmental stage \parencite{st_louis_electroencephalography_2016,, mormann_seizure_2007, nayak_normal_2026}:
+\gls{eeg} activity is conventionally categorized into frequency\footnote{The exact frequency boundaries of each band vary in the literature and are based on \textcite{mormann_seizure_2007} here.} bandwidths, or bands, which vary according to the patient's state (e.g., wakefulness, sleep) and developmental stage \parencite{st_louis_electroencephalography_2016, mormann_seizure_2007, nayak_normal_2026}:
 
 {
 \sisetup{range-phrase = {--}, range-units = single}
@@ -81,18 +81,46 @@ It is widely used for several clinical indications \parencite{st_louis_electroen
 \end{itemize}
 }
 
+
 \subsection{EEG Recording Modalities}
 The choice of electrode placement significantly impacts the recorded signal quality and spatial resolution \parencite{st_louis_electroencephalography_2016}:
 \begin{itemize}
     \item \textbf{Surface (scalp) \gls{eeg}:} Non-invasive electrodes are placed on the skin using systems like the \textit{International 10--20 System}. 
     However, the signal must traverse biological filters (brain, cerebrospinal fluid, meninges, skull, and skin), which reduce its amplitude and blur spatial information. 
     The skull acts as a \textit{spatial averager} and a dominant attenuator of high-frequency signals.
+    \item \textbf{Video-\gls{eeg} Monitoring}: Considered the \enquote{gold standard} for characterizing paroxysmal spells and localizing seizures, this modality involves prolonged \gls{eeg} recording with simultaneous time-linked video. 
+    Its primary value lies in the ability to correlate clinical behavioral changes (seizure semiology) with underlying electrographic activity. 
+    It is essential for distinguishing true epileptic seizures from nonepileptic mimickers, such as psychogenic nonepileptic spells or syncope. 
+    This monitoring is typically conducted in a specialized inpatient \gls{emu}, where antiepileptic drugs may be safely withdrawn to capture habitual seizures.
     \item \textbf{\Gls{ecog} / \gls{ieeg}:} Invasive monitoring involves placing electrodes directly on the cortex (subdural grids or strips) or within the brain (depth electrodes). 
     These provide much cleaner fidelity without muscle or movement artifacts, enabling precise localization of epileptic foci.
     \item \textbf{Subcutaneous (subscalp) \gls{eeg}:} This modality involves electrodes implanted under the skin but outside the skull, such as the \textit{UNEEG SubQ system} used in this study.
-    Such systems offering a robust and unobtrusive alternative to traditional scalp \gls{eeg} \parencite{duun-henriksen_subdural_2013}. 
+    Such systems offer a robust and unobtrusive alternative to traditional scalp \gls{eeg} \parencite{duun-henriksen_subdural_2013}.
 \end{itemize}
 
-Research comparing subcutaneous systems to standard surface electrodes shows that they achieve similar performance, as measured by \textit{\gls{psd}} and \textit{coherence analysis}. 
-Subcutaneous recordings often demonstrate \textit{higher signal quality} during rest, primarily because the electrodes provide \textit{higher signal amplitudes} and maintain a \textit{rigid connection} to the source, reducing artifacts caused by electrode-skin instability or movements \parencite{duun-henriksen_eeg_2015}. 
-While the skull still acts as a spatial averager for these signals, the subcutaneous approach avoids the degradation of the electrodes contact to the of skin over time, common with surface electrodes, as well as being portable and inconspicuous, making it suitable for \enquote{ultra-long-term} monitoring over months.
+Research comparing subcutaneous systems to standard surface electrodes shows that they achieve similar performance, as measured by \textit{\gls{psd}} and \textit{coherence analysis}.
+Subcutaneous recordings often demonstrate \textit{higher signal quality} during rest, primarily because the electrodes provide \textit{higher signal amplitudes} and maintain a \textit{rigid connection} to the source, reducing artifacts caused by electrode-skin instability or movements \parencite{duun-henriksen_eeg_2015}.
+While the skull still acts as a spatial averager for these signals, the subcutaneous approach avoids degradation of electrode--skin contact over time (common with surface electrodes) and is portable and inconspicuous, making it suitable for \enquote{ultra-long-term} monitoring over months.
+
+
+
+\subsection{Seizure-Related Intervals in EEG Recordings}\label{subsec:background-periictal-intervals-in-eeg-recordings}
+
+In the analysis of \gls{eeg} data for seizure prediction, the continuous recording is typically categorized into four distinct functional states or intervals based on their temporal relationship to a seizure event: ictal, pre-ictal, post-ictal, and inter-ictal \parencite{moghim_predicting_2014}:
+
+\begin{itemize}
+    \item \textbf{Ictal Interval}: This state represents the period of the actual seizure activity. It is characterized by sudden, abnormal, and synchronous neuronal discharges that typically manifest as high-amplitude, highly variable signal energy across EEG channels. While the duration varies, these events often last approximately three minutes.
+    \item \textbf{Pre-ictal Interval}: This is the critical window immediately preceding a seizure (often defined as the 5 to 60 minutes prior to onset) where the brain undergoes a transition in dynamics. It is believed to hold predictive markers, as an increasing number of critical interactions among neurons in the focal region unfold over time. Signal properties such as accumulated energy and spectral edge frequency often show distinctive trends during this phase as the brain approaches a "critical mass" for ictogenesis.
+    \item \textbf{Post-ictal Interval}: This period follows the seizure offset, typically lasting around five minutes, during which the brain recovers from the ictus. EEG signals during this state may show abnormal excitement or depressed activity as physiological functions return to baseline.
+    \item \textbf{Inter-ictal Interval}: This state encompasses all non-seizure data that is temporally distant from both pre-ictal and post-ictal periods. It serves as the baseline for a patient's \enquote{normal} brain activity between events.
+\end{itemize}
+
+During the distinct intervals, electrophysiological changes in the brain affect the voltages recorded in the \gls{eeg} electrodes (\cref{fig:background-periictal-intervals}), thus, understanding the specific signal properties of these intervals is fundamental to developing predictive algorithms.
+To distinguish these states, researchers analyze various quantitative descriptors, or features, extracted from the \gls{eeg} signal. 
+
+\begin{figure}[hb]
+    \centering
+    \includegraphics[width=\linewidth]{ictal_intervals}
+    \caption[Annotated Periictal Intervals of an \gls{ieeg} recording]{Annotated Ictal Intervals of an \gls{ieeg} recording. Source: \textcite{moghim_predicting_2014}}
+    \label{fig:background-periictal-intervals}
+\end{figure}

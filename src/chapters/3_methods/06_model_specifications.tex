@@ -61,21 +61,29 @@ For this reason, the pool padding of the second conv2 layer was changed from sam
 This minor change was enough to fully accommodate the sampling frequency difference.
 
 \subsection{Ensemble of Feature-Based Multilayer Perceptrons}\label{subsec:ensemble-architecture}
-The second model was an ensemble of \glspl{fb-mlp} that was also adapted from \textcite{muller_coherent_2022}.
-Instead of raw signal, it used hand-crafted features.
-The input features consisted of the band power spectrum and correlation coefficient from \cref{subsec:feature-extraction}, which had previously demonstrated forecasting potential in a cycle-based framework \parencite{yang_seizure_2024}.
-This allowed it to take features of individual channels and their correlation into consideration.
+The second model was implemented as an ensemble of \glspl{fb-mlp}, also adapted from \textcite{muller_coherent_2022}, where it had shown strong performance.
+In contrast to architectures operating directly on the raw signal, this model relied the hand-crafted features.
+The input feature set comprised the band power spectrum and the correlation coefficient defined in \cref{subsec:feature-extraction}, which have previously been shown to possess forecasting utility in a cycle-based framework \parencite{yang_seizure_2024}.
+This design enabled the model to incorporate both channel-wise feature characteristics and their inter-channel statistical dependencies.
 
-An individual \gls{fb-mlp} used the z-score normalized features as its input layer.
-It had three dense, hidden layers comprising 16, 8, and 4 nodes, which used \gls{relu} as an activation function.
-Batch normalization followed the input and hidden layers.
-The output layer used the sigmoid activation function.
+Each individual \gls{fb-mlp} received z-score normalized features as input.
+The network consisted of three fully connected hidden layers with 16, 8, and 4 nodes, respectively, each employing the \gls{relu} activation function.
+Batch normalization was applied after the input layer and after each hidden layer to stablize and accelerate training.
+The output layer comprised a single unit with a sigmoid activation function to produce a probabilistic output.
 
-The ensemble consisted of 50 \glspl{fb-mlp} that were initialized with different random weights and shared their input layer.
-The outputs of the individual models were then averaged to obtain the final output.
-\Textcite{muller_coherent_2022} used an ensemble size of 100, rather than 50.
-However, the original work investigated a broader set of input features, allowing for greater variability between models. 
-Since the variability cannot be as high here, a smaller ensemble size was chosen to reduce resources needed for training.
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=\linewidth]{FB_MLP}
+    \caption[Architecture of the Feature-Based Multilayer Perceptron]{Architecture of the \gls{fb-mlp} with layers and their number of nodes annotated below.}
+    \label{fig:fb-mlp}
+\end{figure}
+
+The ensemble consisted of 50 \glspl{fb-mlp} that shared a common input layer but were initialized with distinct random weight configurations.
+The final prediction was obtained by averaging the scalar outputs of the individual ensemble members.
+While \textcite{muller_coherent_2022} employed an ensemble size of 100, their study considered
+ a substantially more diverse set of input features, which allowed for greater heterogeneity among ensemble members.
+Given the more constrained feature space in the present work, a smaller ensemble size of 50 was selected as a trade-off to limit computational and memory requirements during training, while retaining the benefits of ensembling.
+
 
 \subsection{Model Training} \label{subsec:model-training}
 For model training, only preictal and interictal segments were included. 
