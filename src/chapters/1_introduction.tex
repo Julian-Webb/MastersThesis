@@ -22,7 +22,7 @@ A central question is whether seizures arise spontaneously, with little or no wa
 The latter scenario is conceptualized as the \enquote{proictal} state, in which the brain is primed for seizure generation and only a minor perturbation is required to trigger a seizure.
 In this framework, certain phases of the aforementioned cycles correspond to periods of increased proictal risk.
 
-In the context of seizure prediction, two major challenges persist: (1) understanding if or why some seizures are not preceded by detectable preictal changes and thus remain unpredictable (sensitivity), and (2) elucidating the origins of false positive predictions (specificity).
+In the context of seizure prediction, two major challenges persist: (1) understanding if or why some seizures are not preceded by detectable preictal changes and thus remain unpredictable \textbf{(sensitivity)}, and (2) elucidating the origins of false positive predictions \textbf{(specificity)}.
 One hypothesis is that not all seizures are preceded by reliable preictal signatures, reflecting truly spontaneous ictogenesis.
 Alternatively, limitations in model architecture or feature selection may prevent the detection of existing preictal patterns.
 A further possibility is that false positive predictions may, in fact, correspond to periods when the brain is in a proictal state---i.e., a seizure was likely, but the critical perturbation did not occur, resulting in a subclinical event \parencite{muller_coherent_2022}.
@@ -30,8 +30,12 @@ Because the brain is a system with internal, regulatory mechanisms \parencite{bu
 
 
 \section{Research Approach}
-In this work, these possibilities are systematically investigated.
+In this work, the \textit{primary goal} was to systematically investigate the possibilities.
 Two distinct model types were trained: a \gls{cnn} that processes raw \gls{ieeg} signals, and an ensemble of multilayer perceptrons that operate on hand-crafted features extracted from the signals.
 The temporal co-occurrence of false positive predictions across these models was interpreted as evidence for the existence of a proictal state.
 Additionally, we analyzed whether false positive predictions were phase-locked to the same cycles as seizures.
 If false positives cluster in the same cycle phases as true seizures, this further supports the hypothesis that these periods represent genuine proictal states, even in the absence of overt seizures.
+
+The \textit{secondary goal} was to evaluate the model performance.
+It was investigated how it compares to the existing literature, which is of particular interest due to the ultra-long-term recordings used here.
+It was also how the two types of models compare to each other, as in \textcite{muller_coherent_2022}.

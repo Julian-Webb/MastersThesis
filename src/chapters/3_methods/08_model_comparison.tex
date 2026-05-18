@@ -1,15 +1,11 @@
-%! Author = julian
-%! Date = 19.04.26
-
-
-\section{Model Comparison} \label{sec:model-comparison}
+\section{Co-Occurrence of False Predictions} \label{sec:co-occurrence-of-false-predictions}
 If different models both classify a portion of data as preictal, even though no seizure occurs afterward, this is interpreted as evidence for a proictal state, since preictal features were apparently present in the data.
 To quantify the tendency of false predictions to co-occur across models, the \gls{cope} \parencite{muller_coherent_2022} was calculated between the ensemble and \gls{cnn} scores for each patient.
 Its definition follows.
 
-Let $\vec{p}_i$ and $\vec{p}_j$ be the model's outputs for models $i$ and $j$, respectively, and $\vec{L}$ the correct label vector.
-The prediction error vector of model $i$ is defined as $\vec{e}_i=\lvert\vec{p}_i-\vec{L}\rvert$ (analogously for model $j$).
-The weight $w_k$ for each sample $k$, the weighted mean $\langle z\rangle_w$, and weighted standard deviation $\sigma_w(z)$ are defined as:
+Let $\vec{p}_i$ and $\vec{p}_j$ be the \textit{model's outputs} for models $i$ and $j$, respectively, and $\vec{L}$ the correct \textit{label} vector.
+The \textit{prediction error} vector of model $i$ is defined as $\vec{e}_i=\lvert\vec{p}_i-\vec{L}\rvert$ (analogously for model $j$).
+The \textit{weight} $w_k$ for each sample $k$, the \textit{weighted mean} $\langle z\rangle_w$, and \textit{weighted standard deviation} $\sigma_w(z)$ are defined as:
 \begin{equation} \label{eq:cope-helpers}
     \begin{aligned}
         w_k &= \max(e_{i,k},e_{j,k}),\\
@@ -17,7 +13,7 @@ The weight $w_k$ for each sample $k$, the weighted mean $\langle z\rangle_w$, an
         \sigma_w(z) &= \sqrt{\langle z^2\rangle_w-\langle z\rangle_w^2}.
     \end{aligned}
 \end{equation}
-The \gls{cope} is then
+The \textbf{\gls{cope}} is then
 \begin{equation} \label{eq:cope}
     c_w=\frac{\left\langle\left(\vec{e}_i-\langle \vec{e}_i\rangle_w\right)\left(\vec{e}_j-\langle \vec{e}_j\rangle_w\right)\right\rangle_w}
     {\sigma_w(\vec{e}_i)\,\sigma_w(\vec{e}_j)}.
