@@ -66,19 +66,38 @@ In contrast to architectures operating directly on the raw signal, this model re
 The input feature set comprised the band power spectrum and the correlation coefficient defined in \cref{subsec:feature-extraction}, which have previously been shown to possess forecasting utility in a cycle-based framework \parencite{yang_seizure_2024}.
 This design enabled the model to incorporate both channel-wise feature characteristics and their inter-channel statistical dependencies.
 
-Each individual \gls{fb-mlp} received z-score normalized features as input.
+Each individual \textbf{\gls{fb-mlp}} (\cref{fig:fb-mlp}) received z-score normalized features as input.
 The network consisted of three fully connected hidden layers with 16, 8, and 4 nodes, respectively, each employing the \gls{relu} activation function.
-Batch normalization was applied after the input layer and after each hidden layer to stablize and accelerate training.
+Batch normalization was applied after the input layer and after each hidden layer to stabilize and accelerate training.
 The output layer comprised a single unit with a sigmoid activation function to produce a probabilistic output.
 
-\begin{figure}[hbtp]
+\begin{figure}[p]
     \centering
-    \includegraphics[width=\linewidth]{FB_MLP}
-    \caption[Architecture of the Feature-Based Multilayer Perceptron]{Architecture of the \gls{fb-mlp} with layers and their number of nodes annotated below.}
-    \label{fig:fb-mlp}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{FB_MLP}
+        \caption{Ensemble \textbf{Input Layer} and a Single \textbf{\gls{fb-mlp}} with Layers and their Corresponding Number of Nodes.}
+        \label{fig:fb-mlp}
+    \end{subfigure}
+
+    \vspace{1cm}
+
+    \begin{subfigure}[t]{0.7\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{ensemble_architecture}
+        \caption{Ensemble}
+        \label{fig:ensemble-architecture}
+    \end{subfigure}
+
+    \vspace{0.4cm}
+    
+    \caption[Architecture of the Ensemble of FB-MLPs]{Architecture of the Ensemble of FB-MLPs.\\
+    A segment's correlation coefficient and bandpowers are processed from left to right.}
+    \label{fig:ensemble}
 \end{figure}
 
-The ensemble consisted of 50 \glspl{fb-mlp} that shared a common input layer but were initialized with distinct random weight configurations.
+The \textbf{ensemble} (\cref{fig:ensemble-architecture}) consisted of 50 \glspl{fb-mlp} that shared a common input layer but were initialized with distinct random weight configurations.
 The final prediction was obtained by averaging the scalar outputs of the individual ensemble members.
 While \textcite{muller_coherent_2022} employed an ensemble size of 100, their study considered
  a substantially more diverse set of input features, which allowed for greater heterogeneity among ensemble members.
@@ -102,6 +121,6 @@ As in \textcite{eberlein_convolutional_2018}, the \glspl{cnn} were trained for 5
 
 To train the \glspl{fb-mlp}, before subsampling, a z-score normalizer was fit to the features of the entire train set.
 This same scaling was then always applied when this model was later used, including for the test set.
-The \glspl{fb-mlp} were then trained for 200 epochs using stochastic gradient descent for optimization, a learning rate of \num{0.0001}, and binary cross-entropy as a loss function.
+The \glspl{fb-mlp} were then trained for \textbf{200 epochs} using \textbf{stochastic gradient descent} for optimization, a \textbf{learning rate} of \num{0.0001}, and binary cross-entropy as a loss function.
 \Textcite{muller_coherent_2022} used 500 epochs for training.
 However, here the performance could not be seen to improve after 200 epochs, which is likely also due to the smaller input dimension, requiring less fitting.

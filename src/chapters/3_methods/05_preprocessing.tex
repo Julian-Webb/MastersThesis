@@ -182,6 +182,7 @@ Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evalua
 The \textbf{spectral band powers} of each channel's signal, and \textbf{Pearson's correlation coefficient} between the two channels were extracted, because they were used in many of the top-performing algorithms in the competitions \parencite{brinkmann_crowdsourcing_2016, muller_coherent_2022, kuhlmann_epilepsyecosystemorg_2018}.
 Additionally, the \textbf{signal variance} and \textbf{\gls{acfw}} were used as markers for \textit{critical slowing} \parencite{maturana_critical_2020}. 
 The exact \textit{numeric properties} of these features are essential for usage as model input and cycle extraction, and are therefore discussed below.
+Note that single-channel features are denoted by their full feature name followed by the initial letter of the corresponding channel (\underline{D}istal / \underline{P}roximal).
 
 \subsubsection{Variance}
 The variance measures the average squared deviation of a signal $s$ from its mean $\bar{s}$ within a segment, and was computed \textit{for each segment and channel}.
