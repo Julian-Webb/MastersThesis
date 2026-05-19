@@ -14,20 +14,30 @@ To probe cyclical structure, multidien components were extracted from feature ti
 While \SI{96}{\percent} of combinations showed significant phase locking of \glspl{fp}, only \SI{0.83}{\percent} of patient--model--feature combinations met the full qualification criteria and exhibited \gls{fp} phase preferences significantly similar to seizures. 
 Overall, the study provides a joint evaluation of predictive performance and cycle-aligned propensity, which motivates the following sections on interpretation and implications, limitations, and directions for future work.
 
-\section{Interpretation and Implications of Results}
-\subsection{Model Performance}
-The models generally performed worse on the test set than on the training set, as measured by the \gls{eb} score (mean: 81 vs.\ 67) and \gls{roc auc} (mean: 83 vs.\ 67).
-This may be explained either by overfitting to the training set or by non-stationarity of distributions in the train vs.\ test set.
+\section{Interpretation and Implications of Results}\label{sec:interpretation-and-implications-of-results}
+
+\subsection{Model Performance}\label{subsec:discussion-model-performance}
+The model's performance decrease on the train vs.\ test set may be explained either by overfitting to the training set or by non-stationarity of distributions in the train vs.\ test set.
 In the latter case, the preictal patterns in the test set would differ from those in the training set, making the learned decision rules less applicable and thereby reducing performance.
 Such a shift is plausible in time-series prediction, where earlier data are used for training and later data are used for testing, allowing the underlying distribution to change over time.
 To distinguish between overfitting and distribution shift, future work could partition the data into larger contiguous blocks, for example, spanning multiple days, and randomly assign these blocks to the training and test sets.
 Although this would no longer produce a purely prospective evaluation and, therefore, would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
 If performance on the test set remained worse under this setting, that would indicate overfitting, since the training and test distributions would be similar.
 
-The \glspl{cnn} also performed better than the ensembles for most patients.
-This is consistent with \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
 
-\subsection{Cycle Extraction}
+\subsection{Model Comparison}\label{subsec:discussion-model-comparison}
+% todo more scientific
+The \gls{cnn} significantly outperformed the ensemble for the training set, but no model showed significant outperformance for the test set.
+This could indicate that the \gls{cnn} is overfitting to the training set, or the \gls{cnn} is more sensitive to changes in the underlying distribution of the train vs.\ test set, due to the non-stationarity of the signal.
+
+The ensemble performing slightly worse than the \gls{cnn} on the test set is consistent with \textcite{eberlein_evaluation_2019} and \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
+
+The ensemble is also a much more resource-intense model than the \gls{cnn}.
+Although an individual \gls{fb-mlp} is lighter than the \gls{cnn}, using 50 or 100 thereof requires much larger computational resources (for training approximately \SI{1}{\hour} vs.\ \SI{15}{\hour} on the \textit{NVIDIA RTX A5000 GPU} used here---a 15-fold increase).
+
+The lower compute cost paired with the better performance of the \gls{cnn} here thus make it the better model in this analysis.
+
+\subsection{Cycle Extraction}\label{subsec:discussion-cycle-extraction}
 \Cref{fig:qualifications_flow_chart} shows that, even when seizures and \glspl{fp} were phase locked with features and model performance was acceptable, only \SI{4}{\percent} of patient-model-feature combinations exhibited \glspl{fp} phase preferences significantly similar to seizures, as tested with the permutation test.
 Since seizures and \glspl{fp} were not shown to have a tendency to occur in the same phases, these results do not indicate that \glspl{fp} represent a phase-dependent propensity for seizures.
 

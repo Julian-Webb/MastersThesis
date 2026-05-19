@@ -1,11 +1,21 @@
 \section{Model Evaluation and Comparison} \label{sec:model-eval-and-comparison}
-\Cref{tab:model_eval_metrics} shows the resulting model evaluation metrics from \cref{sec:model-evaluation}.
+\Cref{tab:model_eval_metrics} shows the resulting \textbf{model evaluation metrics} from \cref{sec:model-evaluation}.
 On the training set, the models achieved a high \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e., low relative \gls{tifw} and high \gls{eb} sensitivity.
 For the test set, the models performed worse or equally in almost all cases.
 The classifiers did not perform better than chance on the test set for patient U03's ensemble and both models of U04, as indicated by the Hanley McNeil p-values~$\geq\SI{5}{\percent}$.
+
 For the majority of patients and metrics, the \gls{cnn} performed better than the ensemble.
+For the training set, the \gls{cnn} performed significantly better for relative \gls{tifw}, \gls{eb} score, and \gls{roc auc}, but not for \gls{eb} sensitivity, as measured by the Wilcoxon test (\cref{tab:model-comparison}).
+On the test set, while performance is much more similar, as measured by the mean per metric across patients (\cref{tab:model_eval_metrics}), the \gls{cnn} still tended to perform better.
+However, for the test set, no model showed statistically significant outperformance.
 
-
+\begin{table}[!htb]
+    \centering
+    \caption{Model Comparison.\\Results of the Wilcoxon Test between the Evaluation Metrics of the Ensemble and CNN}
+    \label{tab:model-comparison}
+    \rowcolors{4}{gray!10}{white} % Alternating row colors
+    \input{tables/model_comparison}
+\end{table}
 
 \section{Co-Occurrence of Prediction Errors}\label{sec:results-co-occurrence-of-prediction-errors}
 The \glspl{cope} for patients and partitions are shown in \cref{tab:copes}.
@@ -13,7 +23,7 @@ A strong correlation ($>0.5$) was found for most combinations, except for U04-te
 Even in these cases, the correlation was substantially positive.
 In many cases, the \gls{cope} was even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
 
-\begin{table}[htbp]
+\begin{table}[!htb]
     \centering
     \caption[Correlation of Prediction Errors]{\gls{cope} between each Patient's Models by Partition}
     \label{tab:copes}
@@ -26,7 +36,7 @@ In some cases, the \gls{cope} was lower when models performed poorly, such as fo
 However, the same could not be said about their training sets, since models performed acceptably (\gls{roc auc}$\approx$\SI{66}{\percent}) to very well (\gls{roc auc}$\approx$\SI{90}{\percent}) there.
 Contrary evidence came from patient U12: here, models performed quite well, especially for the training set, yet he had the lowest \gls{cope} scores.
 
-\begin{table}[htbp]
+\begin{table}[p]
     \centering
     \caption[Model Evaluation]{\textbf{Model Evaluation Metrics per Patient and Model}\\Thresh.: the optimal threshold, EB sens.: event-based sensitivity, $p_{\mathrm{HM}}$: p-value of the Hanley McNeil test for ROC AUC. \\\textit{All values in percent and rounded}.}
     \label{tab:model_eval_metrics}
