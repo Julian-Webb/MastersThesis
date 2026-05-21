@@ -9,14 +9,15 @@
 % Development switch 
 \newif\ifprintfull
 % Set to \printfullfalse to speed up compilation by excluding front matter and appendices.
- \printfulltrue
-%\printfullfalse
+% \printfulltrue
+\printfullfalse
 
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
 \input{settings/config}
 \input{settings/glossaries}
+
 \ifprintfull
     \makeglossaries
 \fi
@@ -26,6 +27,8 @@
 % =================================
 \begin{document}
     % Front Matter
+    \printglossary[type=\acronymtype, title=List of Abbreviations]
+    
     \ifprintfull
         \input{paratext/title_page}
         \input{paratext/declaration}
@@ -38,7 +41,6 @@
     \ifprintfull
         \listoffigures
         \listoftables
-        \printglossary[type=\acronymtype, title=List of Abbreviations]
     \fi
 
     % Chapters
@@ -63,5 +65,7 @@
     \printbibliography[heading=bibintoc]
 
     % Back Matter
+    \printglossary[type=\acronymtype, title=List of Abbreviations]
+
 
 \end{document}
