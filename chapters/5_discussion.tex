@@ -2,7 +2,7 @@
 
 
 \section{Summary of Work}
-This work addressed the problem of forecasting seizures from ultra-long-term \gls{eeg} by evaluating how well predictive models generalize to unseen data and whether their false alarms align with cyclical changes in seizure occurrence.
+This work addressed the problem of predicting seizures from ultra-long-term \gls{eeg} by evaluating how well predictive models generalize to unseen data and whether their false alarms align with cyclical changes in seizure occurrence.
 The overall aim was to use cycle-based analysis of model outputs to assess whether false predictions reflect a shift in the underlying brain state with an increased propensity for seizures, rather than noise.
 
 We analyzed two subcutaneous \gls{eeg} datasets (ULTRA2 and Competition) comprising twelve patients with temporal lobe epilepsy, with recordings and seizure start annotations.
@@ -55,57 +55,52 @@ Overall, the study provides a joint evaluation of predictive performance and cyc
 % Dataset 2: 2 canines with NeuroVista iEEG
 % Dataset 3: 9 patients with subcutaneous EEG with UNEEG system (2 channels)
 
-% todo more scientific and avoid repetitions
-The predictive performance observed in this work is broadly consistent with prior studies on seizure forecasting, while also reflecting the particular difficulty of ultra-long-term subcutaneous \gls{eeg} recordings.
-Across patients, the \gls{roc auc}\footnote{We focus on comparing the \gls{roc auc} here because it is widely reported across studies, whereas \gls{eb} measures are often not.} on the test set (\gls{cnn}: 0.68, ensemble: 0.66) are in the same general range as those reported in previous forecasting studies, but direct comparison remains challenging because most earlier work was conducted on intracranial or otherwise higher-density recordings, often with different evaluation protocols, datasets, and temporal horizons.
 
-In particular, \textcite{muller_coherent_2022} is of special interest because it used the same two types of models as the present study, with only minor technical adjustments to the \gls{cnn} and a reduced feature set for the ensemble.
-The performance reported there is remarkably similar to what was achieved here, especially for the \gls{cnn} where the mean \gls{roc auc} across patients is identical (\num{0.68}).
-For the ensemble, it was higher there (\num{0.79}), presumably due to the retrospective feature selection.
+The predictive performance obtained here is broadly consistent with prior seizure prediction studies, while reflecting the particular challenges posed by ultra-long-term subcutaneous \gls{eeg} recordings.
+Across patients, the test-set \gls{roc auc}\footnote{We focus on comparing the \gls{roc auc} here because it is widely reported across studies, whereas \gls{eb} measures are often not.} (\gls{cnn}: \num{0.68}, ensemble: \num{0.66}) falls within the range typically reported in the literature; however, earlier work predominantly relied datasets with intracranial recordings with more \gls{eeg} channels and shorter monitoring timespans.
 
-The agreement with \textcite{muller_coherent_2022} is reassuring, because it indicates that the models behave consistently across related seizure forecasting pipelines, despite differences in recording setup and cohort composition.
+In particular, \textcite{muller_coherent_2022} is of special interest because it evaluated the same two model families, with only minor technical adjustments to the \gls{cnn} and a reduced feature set for the ensemble.
+The performance reported there is remarkably similar to what was achieved here.
+Their mean \gls{roc auc} across patients for the \gls{cnn} is equal (\num{0.68}), whereas the ensemble performed better (\num{0.79}), likely attributable to retrospective feature selection.
 
-Compared to the \glspl{roc auc} of the top-performing models of the seizure prediction competitions (\textcite{brinkmann_crowdsourcing_2016}: \num{0.82}, \textcite{kuhlmann_seizure_2018}: \num{0.81}), the performance here is lower.
-However, this comparison should be interpreted with caution is limited due to them mostly using \gls{ieeg} with 16 electrodes.
-Intracranial recordings typically provide more spatially informative and less noisy signals than subcutaneous recordings, which can make seizure-related patterns easier to capture.
+Overall, the close agreement suggests that the observed performance is reproducible across related seizure prediction pipelines, despite differences in cohort composition and recording modality.
 
-At the same time, the present work benefits from \textit{ultra-long-term monitoring}, which can increase the amount of training data per patient and thereby improve model estimation.
-This is an important advantage over these shorter studies; they often used only days of recordings per subject, which may restrict the ability of models to learn stable preictal signatures.
-However, longer observation windows also make the forecasting task more demanding, because the temporal gap between training and test data is larger and non-stationarities in the signal are more likely to accumulate.
-In other words, ultra-long-term recordings create a trade-off: they provide more data, but they also expose the models to stronger distribution shift over time.
-This trade-off may help explain why the performance in this work is not substantially higher than that reported in studies with shorter or more controlled recording periods.
+Relative to the top-performing approaches in seizure prediction competitions (\textcite{brinkmann_crowdsourcing_2016}: \num{0.82}; \textcite{kuhlmann_seizure_2018}: \num{0.81}), performance is lower.
+However, this difference should be interpreted cautiously because those studies primarily used \gls{ieeg} with many more electrodes (often 16 channels), which tends to provide higher signal-to-noise ratio and richer spatial information than subcutaneous recordings, which can ease capturing of prediction-related patterns.
+
+A key strength of the present setting is \textit{ultra-long-term monitoring}, which increases the amount of training data per patient and the increased number of samples can thereby improve the model's learning of preictal signatures.
+Conversely, longer observation windows also make the prediction task more demanding, because temporal separation between earlier train and later test data makes non-stationarities in the signal more likely to accumulate (e.g., electrode-tissue interface changes, medication adjustments, or evolving seizure dynamics).
+Hence, ultra-long-term recordings create a trade-off: they provide more data, but they also expose the models to stronger distribution shift over time.
+This tension between increased sample size and increased temporal drift may explain why performance does not exceed that reported in shorter or more controlled studies.
 
 \subsection{Comparison of Partitions}
-The fact that the test performance decreased relative to the training performance may be explained by a combination of overfitting to the training set and by the non-stationarity of the signal in the train vs.\ test set.
-Due to non-stationarity, the preictal patterns in the test set can be assumed to differ from those in the training set, making the learned decision rules less applicable and thereby reducing performance.
-Such a shift is plausible in time-series prediction, where earlier data are used for training and later data are used for testing, allowing the underlying distribution to change over time.
+The reduction in test performance relative to training is consistent with a combination of model overfitting to the train set and non-stationarity between the earlier (train) and later (test) recordings.
+The time-series format naturally permits the underlying data-generating process to change over time, which can render learned decision rules less transferable, thereby reducing performance.
 
-To distinguish between overfitting and distribution shift, future work could partition the data into larger contiguous blocks, for example, spanning multiple days, and randomly assign these blocks to the training and test sets.
-Although this would no longer produce a purely (pseudo-)prospective evaluation and, therefore, would not directly reflect clinical performance, it would allow a more controlled comparison of training and test metrics.
-If performance on the test set remained worse under this setting, that would indicate overfitting, since the training and test distributions would be similar.
+To better separate overfitting from distribution shift, future work could partition the dataset into small, contiguous blocks (e.g., spanning multiple hours) and randomly assign such blocks to train and test sets.
+Although such a design is no longer pseudo-prospective and therefore less representative of clinical performance, it would better control for temporal drift when comparing train and test metrics.
+Since the train and test distributions would be highly similar, persistently lower performance under this block-randomized scheme would be more indicative of overfitting, rather than issues with signal non-stationarities.
 
-Thus, the results do not suggest that the models are fundamentally inadequate; rather, they indicate that seizure forecasting in ultra-long-term \gls{eeg} is constrained by both the scarcity of robust seizure-related patterns and the instability of those patterns over time.
+Overall, the results suggest that prediction performance in this ultra-long-term \gls{eeg} setting is constrained by both the scarcity of robust seizure-related patterns and the instability of these patterns over time.
 
 \subsection{Model Comparison}\label{subsec:discussion-model-comparison}
-% todo more scientific
-The \gls{cnn} significantly outperformed the ensemble for the training set, but no model showed significant outperformance for the test set.
-This could indicate that the \gls{cnn} is overfitting to the training set, or the \gls{cnn} is more sensitive to changes in the underlying distribution of the train vs.\ test set, due to the non-stationarity of the signal.
-This could be conceivable due to the ensemble consisting of many individual, simpler models.
-Their simplicity reduces the complexity of patterns they can represent and thus reduces their potential for overfitting.
-Even when some of these models overfit to certain patterns in the train set, others may not have been sensitive to the same patterns, and the averaging of their outputs would have thus further reduced their overfitting potential.
+The \gls{cnn} outperformed the ensemble significantly on the training set, while no statistically significant difference was observed on the test set.
+This patterns is consistent with either stronger overfitting of the \gls{cnn} or greater sensitivity of the \gls{cnn} to temporal distribution shift.
+By construction, the ensemble aggregates multiple simpler base learners, which can only represent patterns of more limited complexity.
+This typically reduces variance and can mitigate overfitting through averaging.
+Even when some of the base-learners do overfit to certain patterns, other may not be sensitive to the same patterns, which reduces the ensemble's overfitting potential.
 
-The ensemble performing slightly worse than the \gls{cnn} on the test set is consistent with \textcite{eberlein_evaluation_2019} and \textcite{muller_coherent_2022} who expected the ensemble to perform worse if the best features were not retrospectively selected from the test set, as is the case here.
-That the ensemble did not gain an advantage here may again reflect the strong temporal variability of the data: an aggregation of simpler models cannot fully compensate for systematic changes in the underlying signal distribution.
+The slightly inferior test performance of the \textit{ensemble compared with the \gls{cnn}} is also in line with \textcite{eberlein_evaluation_2019, muller_coherent_2022}, who expected the ensemble to perform worse without retrospective selection of the best features from the test set, which was intentionally avoided here.
 
-The ensemble is also a much more resource-intense model than the \gls{cnn}.
-Although an individual \gls{fb-mlp} is lighter than the \gls{cnn}, using 50 or 100 thereof requires much larger computational resources (for training approximately \SI{1}{\hour} vs.\ \SI{15}{\hour} on the \textit{NVIDIA RTX A5000 GPU} used here---a 15-fold increase).
+From a computational perspective, the ensemble is substantially more demanding that the \gls{cnn}.
+While a single \gls{fb-mlp} is lightweight, training 50 thereof took approximately \SI{15}{\hour}, compared to \SI{1}{\hour} for the \gls{cnn} on the \textit{NVIDIA RTX A5000 GPU} used here.
 
-Conclusively, the \gls{cnn} appears to offer a better predictive performance, as well as reduced computational cost.
+Taken together, the \textit{\gls{cnn}} provides a superior predictive performance, as well as predictive performance, which suggests it is the \textit{superior model} in this setting.
 
 \subsection{Conclusions on Performance}
-Overall, the literature and partition performance comparisons suggest that the present results are credible and in line with prior seizure forecasting work, while also highlighting the added difficulty of ultra-long-term subcutaneous recordings.
-The similarity to \textcite{muller_coherent_2022} is especially encouraging, because it indicates that the same model families produce comparable performance even when applied in a more challenging longitudinal setting.
-At the same time, the results reinforce the view that future improvements will likely depend less on marginal classifier refinements and more on methods that are explicitly robust to temporal non-stationarity and patient-specific changes in seizure dynamics.
+In summary, the literature comparison and the observed train--test gap support the credibility of the reported results while also highlighting the added difficulty of ultra-long-term subcutaneous seizure prediction.
+The consistency with \textcite{muller_coherent_2022} is especially encouraging, because it further suggests that these model families yield comparable performance even when applied under more challenging longitudinal conditions.
+At the same time, these results might imply that future improvements may depend less on incremental classifier refinements and more on approaches that explicitly target temporal non-stationarity and patient-specific changes in seizure dynamics.
 
 
 \section{Propensity Evaluation}\label{sec:discussion-propensity-evaluation}
@@ -208,7 +203,7 @@ Practically, this would help distinguish true uniformity from structured but mul
 
 
 \section{Limitations}\label{sec:limitations}
-
+% todo if no more subsections are added to limitations, remove the subsection level.
 \subsection{Shorter-Term Cyclical Patterns and Data Gaps}\label{subsec:shorter-term-cyclical-patterns-and-data-gaps}
 The analysis of cyclical patterns in this work was restricted to multidien periods ranging from 5 to 50 days, which precluded the investigation of shorter-term cycles, including circadian rhythms.
 While the models may have learned to exploit such shorter-term patterns (as evidenced by the high co-occurrence of false predictions), these cycles could not be reliably analyzed due to the frequent daily recording gaps inherent to the device.

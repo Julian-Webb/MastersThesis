@@ -133,23 +133,28 @@ Consequently, it is essential to account for the number of seizures per partitio
 Our objective was therefore to allocate approximately \SI{60}{\percent} of seizures to the training set and approximately \SI{40}{\percent} to the test set.
 These proportions were based on \textcite{yang_seizure_2024} using \SI{60}{\percent} of data for training.
 
-%todo consider making the steps a numbered list
-The partition boundary was determined per patient as a timestamp on the clip grid.
-First, seizures were ordered chronologically and an initial split was targeted at \SI{60}{\percent} training seizures and \SI{40}{\percent} test seizures.
-If $N$ denotes the number of valid seizures, the number initially allocated to training was $\lfloor 0.6N \rfloor$.
-The approximate split timestamp was set to the midpoint between the last training seizure and the first test seizure.
-This timestamp was then aligned to the clip representation by snapping it to a clip start.
-
-Next, the split was constrained using valid clips to ensure adequate \gls{eeg} data in both partitions: the train partition had to contain between \SI{40}{\percent} and \SI{70}{\percent} of valid clips.
-If the snapped split violated these bounds, the split position was shifted in clip-index space to the nearest admissible bound.
-Finally, the boundary was required to start at an interictal clip; if necessary, the closest interictal clip was selected (searching forward or backward depending on which bound adjustment was needed).
-The start time of this clip was used as the final boundary.
+The partition boundary was determined per patient as a timestamp on the clip grid:
+\begin{enumerate}
+    \item 
+    First, seizures were ordered chronologically and an \textit{initial split} was targeted at \textit{\SI{60}{\percent} training} seizures and \textit{\SI{40}{\percent} test} seizures.
+    If $N$ denotes the number of valid seizures, the number initially allocated to training was $\lfloor 0.6N \rfloor$. The \textit{approximate split timestamp} was set to the \textit{midpoint} between the \textit{last training seizure} and the \textit{first test seizure}.
+    \item 
+    This timestamp was then aligned to the clip representation by \textit{snapping it to a clip start}.
+    \item
+    Next, the split was constrained using valid clips to ensure adequate \gls{eeg} data in both partitions: the train partition had to contain between \SI{40}{\percent} and \SI{70}{\percent} of valid clips.
+    If the snapped split violated these bounds, the \textit{split position was shifted} in clip-index space to the \textit{nearest admissible bound}.
+    \item
+    Finally, the boundary was required to start at an \textit{interictal clip}; if necessary, the closest interictal clip was selected (searching forward or backward depending on which bound adjustment was needed).
+    The start time of this clip was used as the final boundary.
+\end{enumerate}
 
 As previously mentioned, patient U03 had a large missing recording period in the middle of his monitoring timespan.
 Following the partitioning procedure, the boundary would have fallen slightly before this gap, creating a very short portion of data, followed by a large gap.
 This hindered the cycle evaluation; therefore, the boundary was manually set to fall into the gap for this patient.
 
+
 \subsection{Feature Extraction} \label{subsec:feature-extraction}
+
 \Cref{subsec:background-periictal-intervals-in-eeg-recordings} introduced how signal properties tend to change throughout the various periictal intervals.
 To quantify these changes and use them for prediction and to compute cycles, various hand-crafted features were extracted from the signals per segment (\cref{tab:feature-properties}).
 Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.

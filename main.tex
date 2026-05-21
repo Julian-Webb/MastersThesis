@@ -15,33 +15,22 @@
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
-\input{settings/config}
 \input{settings/glossaries}
-
-\ifprintfull
-    \makeglossaries
-\fi
+\graphicspath{{figures/}}
+\addbibresource{references.bib}
 
 % =================================
 % Main Document
 % =================================
 \begin{document}
     % Front Matter
-    \printglossary[type=\acronymtype, title=List of Abbreviations]
-    
     \ifprintfull
         \input{paratext/title_page}
         \input{paratext/declaration}
         \input{chapters/0_acknowledgements}
         \input{chapters/0_abstract}
     \fi
-    
     \tableofcontents
-
-    \ifprintfull
-        \listoffigures
-        \listoftables
-    \fi
 
     % Chapters
     \input{chapters/1_introduction}
@@ -51,7 +40,14 @@
     \input{chapters/5_discussion}
     \input{chapters/6_conclusion}
 
-    % Appendices (included only if \ifprintfull)
+    % Back Matter
+    \ifprintfull
+        \listoffigures
+        \listoftables
+        \printnoidxglossary[type=\acronymtype,sort=def] % sort=def: Print acronyms in the order they are defined 
+    \fi
+    
+    % Appendices
     \ifprintfull
         \appendix
         % adjust the reference names for the appendix:
@@ -63,9 +59,5 @@
 
     % Bibliography
     \printbibliography[heading=bibintoc]
-
-    % Back Matter
-    \printglossary[type=\acronymtype, title=List of Abbreviations]
-
 
 \end{document}
