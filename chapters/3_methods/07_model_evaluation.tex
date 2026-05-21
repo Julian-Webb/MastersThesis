@@ -1,0 +1,52 @@
+\section{Model Evaluation} \label{sec:model-evaluation}
+After training, model performance was evaluated on the test set clips to ensure that seizure detection was substantially better than chance. 
+Only under this condition do the \glspl{fp} provide meaningful information about the model’s seizure propensity; \glspl{fp} from a near‑random classifier would not.
+
+
+The models were employed to assign scores in the range [0, 1] to all existing segments, representing the model-derived probability that a given segment is preictal.  
+Subsequently, the segment-level scores were averaged within each clip to obtain a corresponding clip-level score.  
+These clip-level scores, rather than the raw segment-level scores, were used in subsequent evaluations.
+Two types of metrics were used to evaluate the performance: clip-based metrics and \glspl{ebm}.
+
+Here, clip-based metrics refer to the standard measures used to evaluate models in machine learning on samples (clips), which use the confusion matrix of \glspl{tp}, \glspl{fp}, \glspl{fn}, and \glspl{tn} to compute metrics, such as precision, sensitivity, accuracy, and the \gls{roc auc}.
+The Hanley McNeil test \parencite{hanley_method_1983} was performed to test for statistically significant improvement of the \gls{roc auc} compared to a random classifier.
+
+On the other hand, \glspl{ebm} are specific to time-series data and seizure prediction and quantify more clinically relevant properties.
+Here, the (relative) \gls{tifw} \parencite{mormann_seizure_2007, eberlein_machine_2025} and the (relative) number of seizures predicted were used.
+
+\subsection{Time in False Warning} \label{subsec:tifw}
+Relative \gls{tifw} is the \gls{eb} equivalent to the \gls{fpr}, i.e., the inverse of specificity.
+That is to say it is minimized when non-preictal (false) samples are correctly classified as such.
+However, when a prediction is issued from a $\sim$\SI{10}{\minute} clip, it is not issued for the timespan of that clip, but for that clip's \gls{sph}, i.e., the timespan $\sim$\num{5}--\SI{65}{\minute} after the clip's end.
+This means that summing the duration of \gls{fp} clips is not sufficient to calculate the \gls{tifw}.
+The clip's \glspl{sph} and overlaps thereof must be taken into account.
+When a system unnecessarily alarms the patient, it causes them distress and inconvenience, which is why it is essential to minimize false alarms.
+
+To calculate \gls{tifw}, only valid, non-preictal clips were selected.
+For all such clips that issued a warning (\glspl{fp}), the \glspl{sph} were selected.
+Overlapping \glspl{sph} were then merged, so that shared time was not counted multiple times.
+The total duration of these non-overlapping false-warning intervals was the absolute \gls{tifw}.
+The relative \gls{tifw} was obtained by normalizing absolute \gls{tifw} by the maximum possible warning time, which was the sum of the non-overlapping \gls{sph} intervals from all non-preictal clips.
+This yielded a metric bounded between 0 and 1, enabling comparable interpretation across patients and consistent with the guidelines in \textcite{mormann_seizure_2007}.
+
+\subsection{Event-Based Sensitivity} \label{subsec:eb-sensitivity}
+It is also essential to quantify the relative number of seizures successfully predicted, which is also referred to as \gls{eb} sensitivity.
+For preictal clips, a positive prediction is considered a true warning, and a seizure is counted as predicted if it falls within the \gls{sph} of at least one positively predicted preictal clip.
+This yields the number of predicted seizures, and \gls{eb} sensitivity is then computed as the ratio of predicted to total seizures.
+This metric therefore reflects clinically relevant event detection performance at seizure level rather than clip level.
+
+\subsection{Threshold Optimization} \label{subsec:threshold-optimization}
+Whether a clip issued a warning depended on whether its score was greater than or equal to a classification threshold.
+To optimize it, metrics were calculated for all possible thresholds, i.e., all unique model scores.
+To take both the \gls{eb} specificity (1 - rel. \gls{tifw}) and the \gls{eb} sensitivity into account, the harmonic mean between them was calculated:
+\begin{equation} \label{eq:harmonic-mean}
+    H(a,b)=\frac{2ab}{a+b}
+\end{equation}
+\begin{equation} \label{eq:eb-score}
+    S_{\mathrm{EB}} = H\!\left(\mathrm{Sensitivity}_{\mathrm{EB}},\, 1-\mathrm{rel.\ TIFW}\right)
+\end{equation}
+The threshold that maximized this \gls{eb} score was set as the best threshold and used to determine binary clip predictions in further steps.
+
+The metrics were calculated independently on the train and test set.
+In causal, (pseudo-)prospective study designs, classification thresholds should be determined exclusively using the training set. 
+However, as this work prioritizes the cycle-based evaluation over a realistic measure of performance, the threshold was individually optimized for the train and test set, which boosted performance on the test set.

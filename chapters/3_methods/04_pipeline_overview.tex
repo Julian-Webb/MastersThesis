@@ -1,0 +1,30 @@
+\section{Overview of the Processing Pipeline} \label{sec:pipeline-overview}
+
+After dataset cleaning, the analysis pipeline began with a comprehensive preprocessing stage.
+This included timestamp localization to ensure all \gls{eeg} recordings were temporally aligned, accounting for time zone differences and \gls{dst} changes.
+Artifacts in the \gls{eeg} signals, such as extreme amplitude events or technical noise, were systematically detected and removed to prevent contamination of downstream analyses.
+The continuous \gls{eeg} data were then segmented into short, fixed-length windows (\textit{segments}) and longer, non-overlapping windows (\textit{clips}), with careful labeling of intervals relative to seizure events (e.g., preictal, interictal).
+The dataset was partitioned into training and test sets, ensuring sufficient representation of both periictal and interictal periods for robust model development and evaluation.
+
+Feature extraction was performed on each segment, yielding a set of quantitative descriptors that captured both temporal and spectral properties of the \gls{eeg}.
+These included signal variance, \gls{acfw}, Pearson correlation between channels, and absolute band powers across standard frequency bands.
+Some features were used as direct inputs to machine learning models to align with literature, while all were retained for the complementary cycle analysis.
+The extraction process was designed to maximize the interpretability and physiological relevance of the features, supporting both predictive modeling and the investigation of cyclical patterns in seizure risk.
+
+Two main model architectures were employed: a \gls{cnn} that operated on raw \gls{eeg} segments, and an ensemble of \glspl{fb-mlp} that utilized the extracted features.
+The \gls{cnn} architecture was adapted to the specific characteristics of the dataset, including its sampling rate and channel configuration, and was regularized to prevent overfitting.
+The \gls{fb-mlp} ensemble leveraged z-score normalized features and aggregated predictions across multiple independently initialized models.
+Both models were trained using only preictal and interictal segments, with careful handling of class imbalance and standardized training procedures to ensure comparability.
+
+Model evaluation was conducted using both standard machine learning metrics and \glspl{ebm} tailored to the clinical context of seizure prediction.
+The latter included measures like \gls{tifw} and \gls{eb} sensitivity, which reflected the real-world utility of the models in predicting seizures while minimizing unnecessary alarms.
+Thresholds for issuing warnings were optimized to balance \gls{eb} sensitivity and specificity, and all evaluations were performed separately on training and test sets to assess generalization.
+
+To further understand the temporal dynamics of seizure risk, cycle extraction was performed on the feature time series.
+This involved gap filling, outlier handling, and bandpass filtering to isolate multidien (multi-day) oscillatory components.
+The relationship between cyclical features and event timing was quantified using circular statistics, including \gls{plv} and the Rayleigh test for phase preference.
+A non-parametric permutation test was used to compare the phase distributions of seizures and model-predicted \glspl{fp}, with multiple testing correction applied to control the \gls{fdr}.
+
+Finally, the propensity evaluation framework integrated these analyses to determine whether a model’s \glspl{fp} were meaningfully aligned with periods of increased seizure risk.
+Qualification criteria were defined for each patient, feature, and model, requiring significant phase locking and predictive performance.
+Only when these criteria were met were the phase relationships between \glspl{fp} and seizures interpreted as evidence of the model capturing cyclical seizure propensity, supporting the overall objective of understanding and predicting seizure risk in a clinically relevant manner.

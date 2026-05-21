@@ -1,0 +1,29 @@
+\section{Inclusion Criteria}\label{sec:inclusion-criteria}
+
+For a patient to be included in formal analyses, they needed to have enough \gls{eeg} data and seizures, so the models had enough data to learn patterns for seizure forecasting and for statistical validity of the analysis.
+All of the following criteria had to be met:
+\begin{itemize}
+    \item \textbf{Complete ULTRA2 data availability:} for ULTRA2, only patients who had completed the study (and therefore had their full outpatient recording available) were considered.
+    \item \textbf{Sufficient seizure count:} at least $10$ \emph{valid} seizures.
+    \item \textbf{Sufficient recording coverage:} recording coverage $\geq\SI{60}{\percent}$.
+\end{itemize}
+
+A seizure was considered \emph{valid} if no other seizure occurred within its preictal interval (\cref{subsubsec:interval-types}), i.e., it occurred at least $\sim$\SI{65}{\min} after the previous seizure.
+
+Recording coverage quantifies how much of the total monitoring timespan (from the start of the first recording to the end of the last) contains recorded data:
+\[
+\text{recording coverage} = \frac{\text{total recorded duration}}{\text{total monitoring timespan}}.
+\]
+
+\Cref{tab:patient-inclusion} summarizes which patients met the criteria.
+
+\begin{table}[hptb]
+    \centering
+    \caption[Patient Inclusion]{Patient Inclusion Criteria.\\
+    Next to the valid seizures and recording coverage, it is denoted whether the corresponding criteria were met ($\checkmark$) or not ($\times$). ULTRA2 patients who had not completed the study are omitted.}
+    \label{tab:patient-inclusion}
+    \setlength{\tabcolsep}{9pt}
+    \renewcommand{\arraystretch}{1.15}
+    \rowcolors{6}{white}{gray!10} % Alternating row colors
+    \input{tables/patient_inclusion}
+\end{table}
