@@ -38,9 +38,14 @@ Contrary evidence came from patient U12: here, models performed quite well, espe
 
 \begin{table}[p]
     \centering
-    \caption[Model Evaluation]{\textbf{Model Evaluation Metrics per Patient and Model}\\Thresh.: the optimal threshold, EB sens.: event-based sensitivity, $p_{\mathrm{HM}}$: p-value of the Hanley McNeil test for ROC AUC. \\\textit{All values in percent and rounded}.}
+    \caption[Model Evaluation Metrics per Patient and Model]
+    {\textbf{Model Evaluation Metrics per Patient and Model}\\
+    \textbf{Thresh.}: the optimal threshold, \textbf{EB sens.}: event-based sensitivity. An \enquote{*} next to the \textbf{ROC AUC} indicates a non-significant p-value ($\geq\alpha$) of the Hanley McNeil test.\\
+    \textit{All values in percent and rounded}.}
     \label{tab:model_eval_metrics}
     \setlength{\tabcolsep}{4.5pt}
     \renewcommand{\arraystretch}{1.15}
     \input{tables/model_eval_metrics}
 \end{table}
+
+\FloatBarrier

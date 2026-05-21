@@ -1,8 +1,9 @@
-\begin{tabular}{|l r|r r r|r r r r|}
-\hline
-\rowcolor{gray!25} \multicolumn{2}{|c|}{Patient} & \multicolumn{3}{c|}{Seizures} & \multicolumn{4}{c|}{Timespan (days)} \\
-\rowcolor{gray!25} ID & Incl. & Total & Valid & Met & Monitoring & Recorded & Coverage & Met \\
-\hline
+\begin{tabular}{lr rrr rrrr}
+\toprule
+\multicolumn{2}{c}{Patient} & \multicolumn{3}{c}{Seizures} & \multicolumn{4}{c}{Timespan (days)} \\
+\cmidrule(lr){1-2}            \cmidrule(lr){3-5}             \cmidrule(lr){6-9}
+ID & Incl. & Total & Valid & Met & Monitoring & Recorded & Coverage & Met \\
+\midrule
 C01 & $\checkmark$ & 92 & 58 & $\checkmark$ & 494 & 388 & \SI{78}{\percent} & $\checkmark$ \\
 C02 & $\checkmark$ & 54 & 53 & $\checkmark$ & 537 & 487 & \SI{91}{\percent} & $\checkmark$ \\
 C03 & $\checkmark$ & 63 & 63 & $\checkmark$ & 415 & 394 & \SI{95}{\percent} & $\checkmark$ \\
@@ -25,5 +26,5 @@ U16 & $\checkmark$ & 16 & 16 & $\checkmark$ & 346 & 222 & \SI{64}{\percent} & $\
 U17 & $\checkmark$ & 21 & 21 & $\checkmark$ & 264 & 248 & \SI{94}{\percent} & $\checkmark$ \\
 U18 & $\times$ & 4 & 4 & $\times$ & 210 & 188 & \SI{89}{\percent} & $\checkmark$ \\
 U22 & $\times$ & 3 & 3 & $\times$ & 3 & 3 & \SI{89}{\percent} & $\checkmark$ \\
-\hline
+\bottomrule
 \end{tabular}

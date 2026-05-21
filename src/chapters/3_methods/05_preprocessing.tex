@@ -10,7 +10,7 @@ For such ambiguous timestamps, the correct UTC offset cannot be determined in is
 For the competition patients, this ordered sequence was constructed as follows: all files were first sorted by recording order, and then their start and end times were interleaved in the sequence \textit{file1 start, file1 end, file2 start, file2 end, …}.
 This ordering enabled detection of points where the end time of the preceding file was chronologically later than the start time of the subsequent file, which is indicative of a backward time shift and thus marks the transition from \gls{dst} to standard time.
 In turn, this made it possible to delineate which files were recorded under daylight saving time and to apply the appropriate conversion to standard time.
- 
+
 For ULTRA2 patients, the sequence of recording was not know, but fortunately, the \gls{edf} files additionally contained explicit time zone metadata, which was used directly for the timestamp conversion.
 
 \subsection{EEG Artifact Removal} \label{subsec:eeg-artifact-removal}
@@ -66,9 +66,12 @@ Accordingly, the interval of equal duration that precedes the intervention inter
 Periods far from any seizure are labeled \textit{interictal}.
 In the vicinity of seizures (outside the preictal interval), \gls{eeg} dynamics may deviate from the interictal baseline and transitional phases are expected.
 To capture these effects, additional periictal types are defined: the interval immediately preceding the preictal period (\textit{inter-pre}), the interval immediately following a seizure onset (\textit{postictal})\footnote{Due to the sparse availability of seizure offsets, seizures are treated as single time points in this work, which is why the postictal interval's onset corresponds to the seizures onset. Although seizures have a duration in reality, this is not crucial here, particularly because selected periictal intervals are excluded when necessary.}, and the subsequent recovery period (\textit{inter-post}) (\cref{fig:periictal-intervals}).
-% todo what about consecutive seizures?
 
 These interval definitions follow common conventions in the seizure prediction literature \parencite{brinkmann_crowdsourcing_2016, kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}.
+
+If a seizure occurred $\sim$\SI{65}{\minute} to $\sim$\SI{240}{\minute} after a previous seizure, then the post-seizure intervals (postictal and inter-post) of the former seizure were (partially) overwritten by the pre-seizure intervals (intervention, preictal, and inter-pre) of the latter seizure.
+In other words, segments that fell within the overlapping intervals received the type that corresponded to the latter seizure.
+This was done, as it was the priority to correctly assign preictal---rather than post-seizure---intervals for conflicting interval types, to benefit training and evaluation.
 
 To ensure that labeling boundaries coincide with the segment grid defined below, all interval durations were set to integer multiples of the segment duration (\cref{tab:interval-durations}).
 
@@ -123,10 +126,10 @@ This design also preserved long, uninterrupted recording intervals required for 
 For partitioning, the training set had to include enough examples of each class to learn predictive patterns, and
 the test set had to be large enough for accurate performance estimates and, for cycle evaluation, had to be at least as long as the longest cycle of 50 days.
 
-The two classes considered here are preictal and non-preictal.  
-Because each seizure contributes only $\sim$\SI{1}{\hour} of preictal data and seizures typically occur only every few days or less, the resulting dataset exhibits a pronounced class imbalance, characterized by a scarcity of preictal segments and an abundance of non-preictal segments. 
-Specifically, only \SI{0.76}{\percent} of clips across all patients are labeled as preictal.  
-Consequently, it is essential to account for the number of seizures per partition, in addition to the recording duration, when partitioning the dataset.  
+The two classes considered here are preictal and non-preictal.
+Because each seizure contributes only $\sim$\SI{1}{\hour} of preictal data and seizures typically occur only every few days or less, the resulting dataset exhibits a pronounced class imbalance, characterized by a scarcity of preictal segments and an abundance of non-preictal segments.
+Specifically, only \SI{0.76}{\percent} of clips across all patients are labeled as preictal.
+Consequently, it is essential to account for the number of seizures per partition, in addition to the recording duration, when partitioning the dataset.
 Our objective was therefore to allocate approximately \SI{60}{\percent} of seizures to the training set and approximately \SI{40}{\percent} to the test set.
 These proportions were based on \textcite{yang_seizure_2024} using \SI{60}{\percent} of data for training.
 
@@ -147,42 +150,42 @@ Following the partitioning procedure, the boundary would have fallen slightly be
 This hindered the cycle evaluation; therefore, the boundary was manually set to fall into the gap for this patient.
 
 \subsection{Feature Extraction} \label{subsec:feature-extraction}
-% todo rewrite section for clarity
-% add why the selected features were used in the papers, or something like that.
 \Cref{subsec:background-periictal-intervals-in-eeg-recordings} introduced how signal properties tend to change throughout the various periictal intervals.
 To quantify these changes and use them for prediction and to compute cycles, various hand-crafted features were extracted from the signals per segment (\cref{tab:feature-properties}).
 Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.
-    
+
 \begin{table}[htb]
     \centering
     \setlength{\tabcolsep}{10pt}
     \renewcommand{\arraystretch}{1.15}
-    \rowcolors{2}{gray!10}{white} % Alternating row colors
+    \rowcolors{2}{white}{gray!10} % Alternating row colors
     %! suppress = MissingGlossaryReference
     \begin{tabular}{l r r r r}
-        \rowcolor{gray!25}
+        \toprule
         \textbf{Feature}
-        & \makecell{\textbf{\#Values}\\\textbf{per channel}} 
-        & \textbf{\#Values} 
-        & \makecell{\textbf{Used for}\\\textbf{ensemble}} 
+        & \makecell{\textbf{\#Values}\\\textbf{per channel}}
+        & \textbf{\#Values}
+        & \makecell{\textbf{Used for}\\\textbf{ensemble}}
         \\
-        \hline
+        \midrule
         Correlation coefficient & - &  1 & \checkmark \\
         ACFW                    & 1 &  2 &            \\
         Variance                & 1 &  2 &            \\
         Bandpowers              & 5 & 10 & \checkmark \\
-        \hline
-        \rowcolor{gray!15}
-        Total                   &   & 15 & 
+        \midrule
+        \rowcolor{white}
+        Total                   &   & 15 & \\
+        \bottomrule
     \end{tabular}
     \caption[Features and their properties]{Features and their properties}
     \label{tab:feature-properties}
 \end{table}
 
 The \textbf{spectral band powers} of each channel's signal, and \textbf{Pearson's correlation coefficient} between the two channels were extracted, because they were used in many of the top-performing algorithms in the competitions \parencite{brinkmann_crowdsourcing_2016, muller_coherent_2022, kuhlmann_epilepsyecosystemorg_2018}.
-Additionally, the \textbf{signal variance} and \textbf{\gls{acfw}} were used as markers for \textit{critical slowing} \parencite{maturana_critical_2020}. 
+Additionally, the \textbf{signal variance} and \textbf{\gls{acfw}} were used as markers for \textit{critical slowing} \parencite{maturana_critical_2020}.
 The exact \textit{numeric properties} of these features are essential for usage as model input and cycle extraction, and are therefore discussed below.
-Note that single-channel features are denoted by their full feature name followed by the initial letter of the corresponding channel (\underline{D}istal / \underline{P}roximal).
+
+Note that single-channel features are denoted by their name, followed by the initial letter of the corresponding channel (\textbf{D}istal / \textbf{P}roximal), e.g., \enquote{ACFW (P)}.
 
 \subsubsection{Variance}
 The variance measures the average squared deviation of a signal $s$ from its mean $\bar{s}$ within a segment, and was computed \textit{for each segment and channel}.

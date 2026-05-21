@@ -8,14 +8,14 @@ For the remaining 357 combinations (\SI{99.27}{\percent}), the assumptions did n
 
 \begin{figure}[!hbtp]
     \centering
-    \includegraphics{qualifications_flow_chart}
+    \includegraphics[width=0.9\textwidth]{qualifications_flow_chart}
     \caption{Proportions of Patient-Model-Feature Combinations that Met each Criterion.}
     \label{fig:qualifications_flow_chart}
 \end{figure}
 
 \begin{table}[!htbp]
     \centering
-    \caption{Patient-Model-Feature combinations that meet the criteria. D and P represent the features of the proximal and distal \gls{eeg} channels, respectively.}
+    \caption{Patient-Model-Feature Combinations that Meet the Cycle-Based Qualification Criteria.}
     \label{tab:model-feature-qualifications}
     \renewcommand{\arraystretch}{1.15}
     \input{tables/model_feature_qualifications}
@@ -25,8 +25,26 @@ The patient-model-feature combinations that met the qualification criteria for p
 Although formally qualified, the mean angle difference between seizures and \glspl{fp} is high (Alpha (P): \SI{40}{\degree}, Beta (P): \SI{53}{\degree}).
 
 For the other qualified combination (C02, CNN, ACFW (D)) shown in \cref{fig:appendix-phase-histogram-C02-seizures} and \cref{fig:appendix-phase-histogram-C02-CNN FPs}, the mean angle difference of \SI{131}{\degree} is even higher.
-Although, in this case the $p_{\mathrm{Permutation,BH}}$ of \num{0.101} is also not far above the significance level of \num{0.05}.
+Although, in this case the $q_{\mathrm{Permutation}}$ of \num{0.101} is also not far above the significance level of \num{0.05}.
 % todo discussion: discuss why do these combinations pass the tests? They are not similar at all!
+
+\subsection{Descriptive Results} \label{subsec:descriptive-results}
+Even though only very few patient-model-feature combinations met the formal criteria, there were various observable effects that weren't captured by the statistical tests.
+These are examined in this section.
+
+For patient U01, there was a significant phase preference for seizures (\cref{fig:U01-seizure-phases}), \gls{cnn} \glspl{fp} (\cref{fig:U01-CNN-FP-phases}), and ensemble \glspl{fp} (\cref{fig:appendix-phase-histogram-U01-ensemble FPs}), which is also clearly visible in the figures.
+Additionally, all features were phase-locked or anti-phase locked (\gls{acfw}) with each other, i.e., they all had a similar preferred direction or the opposite direction.
+However, between seizures and \glspl{fp}, there was usually a phase delay, i.e., \glspl{fp} tended to occur later than seizures.
+This delay is also visible when inspecting the filtered signal with seizures and \glspl{fp} (\cref{fig:U01-filtered-var-P}): the \glspl{fp} tended to occur during portions with many seizures, but also frequently thereafter, more so than before, which is consistent with the detected shift of phase preference.
+This strong phase preference, albeit being shifted, was only present for patient U01.
+
+Other patients usually did not exhibit a significant phase preference of events (seizures or \glspl{fp}), or only did so for few combinations of features and event types.
+For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} were never significantly phase locked to features.
+Accordingly, there were few or no combinations of event types and features that exhibited a strong phase preference across patients, except for U01.
+
+Some patients, such as C03, appeared to exhibit a circadian \gls{fp} pattern, indicated by clusters of \glspl{fp} appearing daily (\cref{fig:C03-filtered-Beta-P}).
+
+For further examination, all phase histograms are shown in \cref{ch:phase-histograms} and all filtered feature plots with event occurrences in \cref{ch:filtered-feature-plots}.
 
 \begin{figure}[p]
     \centering
@@ -52,10 +70,6 @@ Although, in this case the $p_{\mathrm{Permutation,BH}}$ of \num{0.101} is also 
     \label{fig:U17-phase-histograms}
 \end{figure}
 
-\subsection{Descriptive Results} \label{subsec:descriptive-results}
-% todo decide whether to show U17 first and move the detailed caption accordingly, as well as adjust figure widths
-Even though only very few patient-model-feature combinations met the formal criteria, there were various observable effects that weren't captured by the statistical tests.
-These are examined in this section.
 
 \begin{figure}[p]
     \centering
@@ -80,23 +94,30 @@ These are examined in this section.
     \label{fig:U01-phase-histograms}
 \end{figure}
 
-% todo mention that all feature are phase-locked or anti-phase locked (acfw)
-For patient U01, there was a significant phase preference for seizures (\cref{fig:U01-seizure-phases}), \gls{cnn} \glspl{fp} (\cref{fig:U01-CNN-FP-phases}), and ensemble \glspl{fp} (\cref{fig:appendix-phase-histogram-U01-ensemble FPs}), which is also clearly visible in the figures.
-However, between seizures and \glspl{fp}, there was usually a phase delay, i.e., \glspl{fp} tended to occur later than seizures.
-This delay is also visible when inspecting the filtered signal with seizures and \glspl{fp} (\cref{fig:U01-filtered-var-P}): the \glspl{fp} tended to occur during portions with many seizures, but also frequently thereafter, more so than before, which is consistent with the detected shift of phase preference.
-This strong phase preference, albeit being shifted, was only present for patient U01.
 
-\begin{figure}[hbtp]
+\begin{figure}[p]
     \centering
-    \includegraphics{U01_filtered_var_P.pdf}
-    \caption{The Original and Filtered Signal of Feature Var. (P) of Patient U01, including the occurrences of seizures and FPs}
-    \label{fig:U01-filtered-var-P}
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics{U01_filtered_var_P}
+        \caption{Patient U01, Feature: Variance (P)}
+        \label{fig:U01-filtered-var-P}
+    \end{subfigure}
+
+    \medskip
+
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{C03_filtered_Beta_D}
+        \caption{Patient C03, Feature: Beta (P)}
+        \label{fig:C03-filtered-Beta-P}
+    \end{subfigure}
+
+    \caption{Original and Multidien (\SIrange{5}{50}{\day}) Filtered Signals Including the Occurrences of Seizures and FPs.}
+    \label{fig:filtered-features-test-set}
 \end{figure}
 
-Other patients usually did not exhibit a significant phase preference of events (seizures or \glspl{fp}), or only did so for few combinations of features and event types.
-For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} were never significantly phase locked to features.
-Accordingly, there were few or no combinations of event types and features that exhibited a strong phase preference across patients, except for U01.
-For further examination, all phase histograms are shown in \cref{ch:phase-histograms} and all filtered feature plots with event occurrences in \cref{ch:filtered-feature-plots}.
 
 \begin{figure}[p]
     \centering
