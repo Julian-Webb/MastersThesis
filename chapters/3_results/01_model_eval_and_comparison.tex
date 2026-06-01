@@ -4,12 +4,11 @@ The resulting \textbf{model evaluation metrics} (\cref{sec:model-evaluation}) ar
 \begin{figure}[htbp]
     \centering
     \includegraphics{model_eval_boxplots}
-    \caption{Model Evaluation Metrics over all Analyzed Patients}
+    \caption{Model evaluation metrics over all analyzed patients}
     \label{fig:model-eval-boxplots}
 \end{figure}
 
-
-On the \textbf{train set}, the models achieved a high \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e.,  high \gls{eb} sensitivity and \gls{eb} specificity (low relative \gls{tifw}).
+On the \textbf{full training set}, rather than the subsampled training set that was used for model training, the models achieved a high \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e.,  high \gls{eb} sensitivity and \gls{eb} specificity (low relative \gls{tifw}).
 
 On the \textbf{test set}, model performance decreased or remained stable in most cases  (mean \gls{roc auc}: \SI{67}{\percent}, mean \gls{eb} score: \SI{67}{\percent}).
 The classifiers did not perform better than chance on the test set for patient U03's ensemble and both models of U04, as measured by the Hanley McNeil test.
@@ -19,12 +18,12 @@ For the training set, the \gls{cnn} performed significantly better for relative 
 On the test set, while performance is much more similar, as measured by the mean per metric across patients (\cref{tab:model_eval_metrics}), the \gls{cnn} still tended to perform better.
 However, for the test set, no model showed statistically significantly higher performance than the other model.
 
-Although the \gls{cnn} still performed better than the ensemble on the test set, the mean \textit{percentage-point decline} in performance from the train to test sets of the \gls{cnn} vs.\ ensemble was higher for \gls{roc auc} (22 vs.\ 12), \gls{eb} specificity (19 vs.\ 9), \gls{eb} sensitivity (16 vs.\ 12), and \gls{eb} score (17 vs.\ 10).
+Although the \gls{cnn} still performed better than the ensemble on the test set, the mean \textit{percentage-point decline} in performance from the training to test sets of the \gls{cnn} vs.\ ensemble was higher for \gls{roc auc} (22 vs.\ 12), \gls{eb} specificity (19 vs.\ 9), \gls{eb} sensitivity (16 vs.\ 12), and \gls{eb} score (17 vs.\ 10).
 
 \begin{table}[p]
     \centering
-    \caption[Model Evaluation Metrics per Patient and Model]
-    {\textbf{Model Evaluation Metrics per Patient and Model}\\
+    \caption[Model evaluation metrics per patient and model]
+    {\textbf{Model evaluation metrics per patient and model}\\
     An \enquote{*} next to the \textbf{ROC AUC} indicates a non-significant q-value ($\geq 0.05$) of the Hanley McNeil test.\\
     \textbf{EB Specificity} $=1-$Relative TIFW\\
     \textit{All table values are in percent and rounded}.}
@@ -37,7 +36,7 @@ Although the \gls{cnn} still performed better than the ensemble on the test set,
 
 \begin{table}[!htb]
     \centering
-    \caption{Model Comparison.\\Results of the Wilcoxon Test between the Evaluation Metrics of the Ensemble and CNN}
+    \caption[Model comparison: results of the Wilcoxon test between the evaluation metrics of the ensemble and CNN]{\textbf{Model comparison:}\\results of the Wilcoxon test between the evaluation metrics of the ensemble and CNN}
     \label{tab:model-comparison}
     \rowcolors{4}{gray!20}{white} % Alternating row colors
     \input{tables/model_comparison}
@@ -48,13 +47,13 @@ The \glspl{cope} for patients and partitions are shown in \cref{fig:copes} and \
 A strong correlation ($>0.5$) was found for most combinations, except for U04-test and for U12 in both partitions.
 Even in these cases, the correlation was substantially positive.
 In many cases, the \gls{cope} was even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
-Unlike model performance, often remained stable, and sometimes even increased, rather than always declining, when moving from the train to test set. 
+Unlike model performance, it often remained stable, and sometimes even increased, rather than always declining, when moving from the training to test set. 
 
 \begin{center}
     \begin{minipage}[t]{0.48\textwidth}
         \centering
         {\captionsetup{hypcap=false}% hypcap doesn't apply to \captionof (non-float)
-        \captionof{figure}{COPE by Patient and Partition}
+        \captionof{figure}{COPE by patient and partition}
         \label{fig:copes}}
         \includegraphics[width=\linewidth]{copes_plot}
     \end{minipage}
@@ -62,7 +61,7 @@ Unlike model performance, often remained stable, and sometimes even increased, r
     \begin{minipage}[t]{0.48\textwidth}
         \centering
         {\captionsetup{hypcap=false}
-        \captionof{table}{Exact COPE Values}
+        \captionof{table}{Exact COPE values}
         \label{tab:copes}}
         \setlength{\tabcolsep}{12pt}
         \rowcolors{2}{gray!20}{white} % Alternating row colors

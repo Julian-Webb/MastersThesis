@@ -1,29 +1,39 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
+\begingroup
+\sisetup{range-phrase = {--}, range-units = single}
+
+
 \paragraph{Objective}
 Patients with pharmacoresistant epilepsy could benefit from reliable seizure prediction devices.
 However, seizure prediction algorithms widely suffer from low specificity, yielding many false alarms (\glspl{fp}).
 This work investigates whether (some) false alarms are truly entirely false, or whether the brain was indeed in a state of increased susceptibility to seizures (a hypothesized \enquote{proictal} state), without the necessary perturbation occurring to provoke neuronal networks into generating an ictal event.
 
-\paragraph{Methods}
-Two predictive models were used per patient: a \gls{cnn} operating on raw EEG signals, and an ensemble of \glspl{mlp} that use hand-crafted features extracted from the signals.
-Strong \textit{co-occurrence of \glspl{fp}} from both models, and a \textit{similar phase preference of \glspl{fp} and seizures} in multi-day (\SIrange{5}{50}{\day}) cycles of seizure occurrence were interpreted as evidence of proictal states and jointly investigated.
 
-The dataset comprised ultra-long-term, subcutaneous, two-channel EEG recordings with annotated seizures being automatically detected and subsequently annotated by epileptologists.
-Twelve patients with a mean monitoring timespan of \num{350}$\pm$\num{115}~days and \num{55}$\pm$\num{49} mean eligible seizures per patient were included.
+\paragraph{Methods}
+The dataset comprised ultra-long-term, subcutaneous, two-channel EEG recordings, where annotated seizures were automatically detected and subsequently reviewed by epileptologists.
+Twelve patients with a mean monitoring timespan of \num{350} (\numrange{132}{538})~days and a mean of \num{55} (\numrange{13}{195}) eligible seizures were included.
+
+One inter- and seven intra-channel seizure-prediction-related features were computed on the signals.
+Two predictive models were used per patient: one operated on selected features; the other on the raw signal.
+Feature cycles were extracted via gap filling, outlier handling, and multi-day bandpass filtering with a \numrange{5}{50} day range.
+Phase locking values with feature cycles were determined for seizures and \glspl{fp}; then, both event types were tested for a preferred phase, which was subsequently compared using a non-parametric permutation test.
+
 
 \paragraph{Results}
-Model performance was comparable to the existing literature for similar settings, with a mean ROC AUC of \num{.68} (\gls{cnn}) and \num{.66} (ensemble).
-While the co-occurrence of \glspl{fp} was high, the phase preferences of \glspl{fp} and seizures were not significantly similar.
+Model performance was comparable to the existing literature for similar settings, with a mean ROC AUC of \SI{65}{\percent} (\SIrange{38}{85}{\percent}).
+Neither model showed a statistically significant improvement over the other.
+
+While the \textit{co-occurrence of \glspl{fp}} per patient was generally \textit{high}, with a mean correlation of prediction errors of \SI{72}{\percent} (\SIrange{35}{90}{\percent}), the \textit{phase preferences of \glspl{fp} and seizures} were \textit{not significantly similar} in almost all cases (\SI{99.27}{\percent}).
+In select cases, the preferred phase of \glspl{fp} was systematically delayed compared to that of seizures.
+Usually, \Glspl{fp} had a similar phase preference between models.
 
 
-\paragraph{Interpretations}
-A possible explanation is that, due to seizure clustering, models learn to predict seizures shortly after a previous seizure, thereby creating a delay in phase preference.
-Alternatively, models and seizures may be phase-locked to shorter-term (e.g., circadian) rhythms, leading to high co-occurrence without multi-day phase locking.
+\paragraph{Discussion}
+While false alarms and seizures did not exhibit the same phase preference on the investigated feature cycles, they revealed a more intricate pattern of association. 
+This relationship may reflect \textit{confounding factors} learned by the models during training, including \textit{seizure clustering}, where the occurrence of one seizure increases the likelihood of a subsequent seizure, thereby introducing a phase delay, or \textit{sleep–wake dynamics}, in which seizure occurrence is driven by faster rhythms such as circadian cycles.
+This relationship could be disentangled by only including the first seizure in a cluster, and by only evaluating \glspl{fp} and seizures with the same multi-day phase together.
 
-\paragraph{Limitations}
-Only a single (rather than multiple) potential phase preference of events was investigated, medication changes throughout the study were not accounted for, and a certain percentage of seizure were likely missed by the automatic classifier.
-
-
+\endgroup
 \glsresetall

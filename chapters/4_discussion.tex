@@ -13,7 +13,7 @@ Features (variance, \gls{acfw}, inter-channel correlation, and band powers) were
 
 A \gls{cnn} operating on raw segments was compared with an ensemble of \glspl{fb-mlp}, trained on temporally earlier data and tested on later, unseen data using a per-patient chronological split (targeting $\sim$\SI{60}{\percent} of seizures for training and $\sim$\SI{40}{\percent} for testing).
 Performance was summarized with clip-based \gls{roc auc} and \gls{eb} measures, including \gls{eb} sensitivity, relative \gls{tifw} and the \gls{eb} score as the harmonic mean thereof.
-Across patients, mean \gls{eb} score decreased from 81 (training) to 67 (test), mean \gls{roc auc} decreased from 83 (training) to 67 (test), and the \gls{cnn} performed better than the ensemble for most patients, albeit having a larger decline of train vs.\ test performance.
+Across patients, mean \gls{eb} score decreased from 81 (training) to 67 (test), mean \gls{roc auc} decreased from 83 (training) to 67 (test), and the \gls{cnn} performed better than the ensemble for most patients, albeit having a larger decline in training vs.\ test performance.
 
 To probe cyclical structure, multidien components were extracted from feature time series and phase relationships were quantified using circular statistics (e.g., \glspl{plv} and the Rayleigh test), followed by a permutation test comparing the phase distributions of seizures and model \glspl{fp}.
 While all combinations with phase-locked seizures and acceptable model performance showed significant phase locking of \glspl{fp}, only \SI{0.83}{\percent} of patient--model--feature combinations met the full qualification criteria and exhibited \gls{fp} phase preferences significantly similar to seizures.
@@ -59,14 +59,14 @@ Overall, the study provides a joint evaluation of predictive performance and cyc
 
 
 The predictive performance obtained here is broadly consistent with prior seizure prediction studies, while reflecting the particular challenges posed by ultra-long-term \gls{sqeeg} recordings.
-Across patients, the test-set \gls{roc auc}\footnote{The \gls{roc auc} is primarily compared in this section because it is widely reported across studies, whereas \gls{eb} measures are often not.} (\gls{cnn}: \num{0.68}, ensemble: \num{0.66}) falls within the range typically reported in the literature; however, earlier work predominantly relied datasets with intracranial recordings with more \gls{eeg} channels and shorter monitoring timespans.
+Across patients, the test-set \gls{roc auc}\footnote{The \gls{roc auc} is primarily compared in this section because it is widely reported across studies, whereas \gls{eb} measures are often not.} (\gls{cnn}: \num{0.68}, ensemble: \num{0.66}) falls within the range typically reported in the literature; however, earlier work predominantly relied on datasets with intracranial recordings with more \gls{eeg} channels and shorter monitoring timespans.
 
 In particular, \textcite{muller_coherent_2022} is of special interest because it evaluated the same two model families, with only minor technical adjustments to the \gls{cnn} and a reduced feature set for the ensemble.
 The performance reported there is remarkably similar to what was achieved here.
 Their mean \gls{roc auc} across patients for the \gls{cnn} is equal (\num{0.68}), whereas their ensemble performed better (\num{0.79}), likely attributable to their retrospective feature selection using the test set.
 
 Another study of special interest is \textcite{viana_seizure_2023}, because the dataset configuration was similar to this work: it used the same two-channel \gls{sqeeg} device and ultra-long-term monitoring timespans in the range of 46--230 days (mean: 99 days)\footnote{Their monitoring timespan is still much shorter than in this work (132--537 days, mean: 350 days).} with a cohort of six patients. 
-They used three different models with \gls{lstm} architectures, with their best model, based on \gls{roc auc}, being the \enquote{BiLSTM}.
+They used three different models with \gls{lstm} architectures, with their best model, based on \gls{roc auc}, being the \enquote{BiLSTM.}
 Its performance is highly similar to the \gls{cnn} and ensemble models used here (\cref{tab:comparison_to_viana_2023}).
 
 \begin{table}[h]
@@ -93,7 +93,7 @@ Its performance is highly similar to the \gls{cnn} and ensemble models used here
     \end{tabular}
 
 
-    \caption{Performance Comparison across Patients of the BiLSTM Model from \textcite{viana_seizure_2023} with the \gls{cnn} and Ensemble Models Used in this Work.}
+    \caption{Performance comparison across patients of the BiLSTM model from \textcite{viana_seizure_2023} with the \gls{cnn} and ensemble models used in this work.}
     \label{tab:comparison_to_viana_2023}
 \end{table}
 
@@ -102,17 +102,17 @@ Overall, the close agreement with similar studies suggests that the observed per
 Relative to the top-performing approaches in seizure prediction competitions (\textcite{brinkmann_crowdsourcing_2016}: \num{0.82}; \textcite{kuhlmann_seizure_2018}: \num{0.81}), performance is lower.
 However, this difference should be interpreted cautiously because those studies primarily used \gls{ieeg} with many more electrodes (often 16 channels), which tends to provide higher signal-to-noise ratio and richer spatial information than subcutaneous recordings, which can facilitate the detection of prediction-related patterns.
 
-A key strength of the present setting is \textit{ultra-long-term monitoring}, which increases the amount of training data per patient and the increased number of samples can thereby improve the model's learning of preictal signatures.
-Conversely, longer observation windows also make the prediction task more demanding, because temporal separation between earlier train and later test data makes non-stationarities in the signal more likely to accumulate (e.g., electrode-tissue interface changes, medication adjustments, or evolving seizure dynamics).
+A key strength of the present setting is \textit{ultra-long-term monitoring}, which increases the amount of training data per patient, and the increased number of samples can thereby improve the model's learning of preictal signatures.
+Conversely, longer observation windows also make the prediction task more demanding, because temporal separation between earlier training and later test data makes non-stationarities in the signal more likely to accumulate (e.g., electrode-tissue interface changes, medication adjustments, or evolving seizure dynamics).
 Hence, ultra-long-term recordings create a trade-off for the measured model performance: they provide more data, but they also expose the models to stronger distribution shift over time.
 This tension between increased sample size and increased temporal drift may explain why performance does not exceed that reported in shorter or more controlled studies.
 
 \subsection{Comparison of Partitions}
-The reduction in test performance relative to training is consistent with a combination of model overfitting to the train set and signal non-stationarities between the earlier (train) and later (test) recordings.
+The reduction in test performance relative to training is consistent with a combination of model overfitting to the training set and signal non-stationarities between the earlier (training) and later (test) recordings.
 The time-series format naturally permits the underlying data-generating process to change over time, which can render learned decision rules less transferable, thereby reducing performance (concept drift).
 
-To better separate overfitting from distribution shift, future work could partition the dataset into small, contiguous blocks where non-stationarities are minimal (e.g., spanning just seconds, minutes, or hours) and randomly assign such blocks to train and test sets.
-Although such a design is no longer pseudo-prospective and therefore less representative of clinical performance, it would better control for temporal drift when comparing train and test metrics.
+To better separate overfitting from distribution shift, future work could partition the dataset into small, contiguous blocks where non-stationarities are minimal (e.g., spanning just seconds, minutes, or hours) and randomly assign such blocks to training and test sets.
+Although such a design is no longer pseudo-prospective and therefore less representative of clinical performance, it would better control for temporal drift when comparing training and test metrics.
 Since both partitions' distributions would be highly similar, persistently lower performance under this block-randomized scheme would be more indicative of overfitting, rather than issues with concept drift or signal non-stationarities.
 
 Overall, the results suggest that prediction performance in this ultra-long-term \gls{eeg} setting is constrained by both the scarcity of robust seizure-related patterns and the instability of these patterns over time.
@@ -121,7 +121,7 @@ Overall, the results suggest that prediction performance in this ultra-long-term
 The \gls{cnn} outperformed the ensemble significantly on the training set, while no statistically significant difference was observed on the test set.
 This pattern is consistent with either stronger overfitting of the \gls{cnn} or greater sensitivity of the \gls{cnn} to temporal distribution shift.
 By construction, the ensemble aggregates \textit{multiple simpler base learners}, which can only represent patterns of more \textit{limited complexity}.
-This typically reduces variance and can mitigate overfitting through averaging: even when some of the base-learners do overfit to certain patterns, other may not be sensitive to the same patterns, which reduces the ensemble's overfitting potential.
+This typically reduces variance and can mitigate overfitting through averaging; even when some of the base-learners do overfit to certain patterns, other may not be sensitive to the same patterns, which reduces the ensemble's overfitting potential.
 
 The slightly inferior test performance of the \textit{ensemble compared with the \gls{cnn}} is also in line with \textcite{eberlein_evaluation_2019, muller_coherent_2022}, who expected the ensemble to perform worse without retrospective selection of the best features from the test set, which was intentionally avoided here.
 
@@ -142,16 +142,17 @@ At the same time, these results might imply that future improvements may depend 
 
 
 \subsection{Cycle-Based Evaluation}
-When seizures and \glspl{fp} were both phase locked with features and model performance was acceptable, only a small fraction (\SI{4}{\percent}) of patient-model-feature combinations exhibited \glspl{fp} phase preferences significantly similar to seizures (\cref{fig:qualifications_flow_chart}), as tested with the permutation test.
+When seizures and \glspl{fp} were both phase locked with features and model performance was acceptable, only a small fraction (\SI{4}{\percent}) of patient-model-feature combinations exhibited \gls{fp} phase preferences significantly similar to seizures (\cref{fig:qualifications_flow_chart}), as tested with the permutation test.
 Since seizures and \glspl{fp} were not shown to have a tendency to occur in the same phases under these conditions, these results \textit{do \textbf{not} indicate that \glspl{fp} represent a phase-dependent propensity for seizures}.
 
 However, when seizures were phased locked and model performance acceptable, \SI{100}{\percent} of combinations exhibited significant phase-locking for \glspl{fp}.
 It appears paradoxical that seizures and \glspl{fp} both had a significant preferred phase, but this phase was not sufficiently similar between the two classes of events.
 Potential reasons are discussed in the following section.
 
-Interestingly, regardless of whether seizures exhibit phase-locking with features, \glspl{fp} tend to have a similar, or opposite, preferred phase for many features (e.g., patient C02 \gls{cnn} \glspl{fp}: \cref{fig:appendix-phase-histogram-C02-CNN FPs}), which is indirect evidence that features themselves are often phase locked with each other.
+Interestingly, regardless of whether seizures exhibit phase-locking with features, \glspl{fp} tend to have a similar, or opposite, preferred phase for many features (e.g., patient C02 \gls{cnn} \glspl{fp}: \cref{fig:appendix-phase-histogram-C02-CNN FPs}), which is indirect evidence that features themselves are often phase locked or anti-phase locked with each other.
 
-Further, for most features, \glspl{fp} from both classifiers tend to have a similar phase preference for all features; e.g., for patient U05, the mean angle of the \gls{cnn} \glspl{fp} (\cref{fig:appendix-phase-histogram-U05-CNN FPs}) is similar compared to ensemble \glspl{fp} \cref{fig:appendix-phase-histogram-U05-ensemble FPs} for all features.
+Furthermore, \glspl{fp} from both classifiers often had a similar phase preference for many features.
+For example, with patient U05, the mean angles of the model's \glspl{fp} were similar for the \gls{cnn} (\cref{fig:appendix-phase-histogram-U05-CNN FPs}) and ensemble (\cref{fig:appendix-phase-histogram-U05-ensemble FPs}) for all features.
 This is consistent with the high co-occurrence of \glspl{fp} (\gls{cope}) seen across patients, discussed further below.
 
 
@@ -165,23 +166,23 @@ It is thus puzzling why the \glspl{cope} were high when \glspl{fp} do not exhibi
 One possibility is that there are are \textbf{confounding patterns} in the data that the models learn, but do that not represent an increased propensity in reality.
 
 
-\subsubsection{Post-Seizure Contamination}
+\subsubsection{Post-seizure contamination}
 One confounder could arise as follows.
 When a consecutive seizure occurs after a lead seizure, the consecutive seizure's preictal interval falls within post-seizure period of the lead seizure.
 In this section, \enquote{post-seizure} period does not refer to the strict $\sim$\SI{60}{\minute} postictal interval after seizure onset (\cref{subsubsec:interval-types}), but rather to the duration that the brain's state is detectably altered due to the seizure.
 This duration may vary heavily from mere seconds, to potentially days, weeks, or months \parencite{fisher_definition_2010}. 
 
 Especially because seizures often occur in clusters, many seizures fall within a period affected by a previous seizure.
-Therefore, to a degree, the classifiers likely learn to predict another incoming seizure when they detect post-seizure patterns.
-Since this means that \textit{after} seizures, models are more likely to raise an alarm, it could also explain why a delay in the phase preference of seizures and \glspl{fp} was observed in patient U01 (\cref{fig:appendix-phase-histogram-U01-seizures}, \cref{fig:appendix-phase-histogram-U01-CNN FPs}, \cref{fig:appendix-phase-histogram-U01-ensemble FPs}), and potentially other patients.
+Therefore, to a degree, the classifiers likely learn to predict another incoming seizure when they detect post-seizure alterations.
+Since this means that, \textit{after} seizures, models are more likely to raise an alarm, it could also explain why a delay in the phase preference of seizures and \glspl{fp} was observed in patient U01 (\cref{fig:appendix-phase-histogram-U01-seizures}, \cref{fig:appendix-phase-histogram-U01-CNN FPs}, \cref{fig:appendix-phase-histogram-U01-ensemble FPs}), and potentially other patients.
 
 Future research could thus investigate whether there is a systematic phase delay between occurrences of seizures and \glspl{fp} and whether this changes when entirely excluding non-lead seizures in model training.
-For such work, the definition of a lead seizure could also be extended to a duration where post-seizure effects can be assumed to be minimal (e.g., multiple days), although with the amounts of data currently available, this will likely reduce the number of valid seizure so much that analyses become statistically insignificant, therefore, this approach would likely require even longer monitoring timespans than the current study.
-It would also be worth re-computing the cycle-based evaluation under the exclusion of non-lead seizures for training, as the phase preferences of seizures and \glspl{fp} might be more similar then.
+For such work, the definition of a lead seizure could also be extended to a duration where post-seizure effects can be assumed to be minimal (e.g., multiple days), although with the amounts of data currently available, this will likely reduce the number of valid seizure so much that analyses become statistically insignificant; therefore, this approach would likely require even longer monitoring timespans than the current study.
+It would also be worth re-computing the cycle-based evaluation under the exclusion of non-lead seizures for training, as the phase preferences of seizures and \glspl{fp} might then be more similar.
 
 
-\subsubsection{Short-Term Rhythms}
-Another confounding variable could be cyclical patterns that occur on a different time scale other than the \SIrange{5}{50}{\day} used as the bounds of the multidien filter.
+\subsubsection{Short-term rhythms}
+Another confounding variable could be cyclical patterns that occur on a time scale other than the \SIrange{5}{50}{\day} used as the bounds of the multidien filter.
 
 A likely possibility is that models are learning to predict shorter-term (e.g., circadian) patterns, as is probably the case for patient C03 (\cref{fig:C03-filtered-Beta-P}).
 For example, if a patient primarily experienced seizures during sleep, models could learn to predict seizures when sleep-related \gls{eeg} spectral band powers (delta and theta) are high---a phase relationship that the multidien filter would not be able to capture.
@@ -190,12 +191,12 @@ On the other hand, the possibility that they are learning patterns that extend p
 While they do receive training data from over 100 days, they have no apparent way to tell which part of a cycle a segment would belong to from its mere $\sim$\SI{15}{\sec} signal window.
 
 Conclusively, a possible explanation of the high co-occurrence of false predictions is that there is a shorter-term cyclical component to seizures which is not captured by the temporal range of cycles analyzed here, but the models are able to capture.
-These shorter-term components are likely infeasible to analyze with the dataset at hand (see \cref{para:shorter-term-cyclical-patterns-and-data-gaps}).
+Analyzing these shorter-term components with the dataset at hand is likely infeasible (see \cref{para:shorter-term-cyclical-patterns-and-data-gaps}).
 
 \subsubsection{Interpretations}
-In summary, it is likely that a combination of confounding variables, such as biases introduced by seizures clustering, short-term rhythms, and further unknown variables, are causing the apparent conflict of the high \glspl{cope}, with seemingly contradictory findings from the cycle-based evaluation.
+In summary, it is likely that a combination of confounding variables, such as biases introduced by seizures clustering, short-term rhythms, and further unknown variables, are causing the apparent conflict between the high \glspl{cope} and the seemingly contradictory findings from the cycle-based evaluation.
 
-Future research could implement phase-matched training where models receive preictal and interictal segments only from data that occurs during the same phase.
+Future research could implement phase-matched training, in which models are trained using preictal and interictal segments drawn only from data occurring within the same phase. 
 This way, one could rule out the possibility that short-term prediction classifiers capture or only identify slow multidien components.
 Alternatively, one could consider using a high-pass filter on the features and retrain using the whole training timespan.
 
@@ -218,7 +219,7 @@ However, since continuous data was needed for the cycle extraction, and gap fill
 
 \subsection{Missing Seizures in Annotations}
 Since an imperfect, automated classifier was used to detect potential seizures outside the \gls{emu} (\cref{sec:dataset-description}) and the raw \gls{eeg} data was not further investigated for seizures, we can assume that some seizures were not detected, and thus occurred in the \gls{eeg} data without being annotated.
-Regarding the automated classifier, \textcite{furbass_automatic_2017} reported a sensitivity of \SI{84}{\percent} for a \gls{eeg} montage with 22 electrodes, \SI{79}{\percent} for an 8-electrode forehead montage, and \SI{68}{\percent} 7-electrode posterior montage.
+Regarding the automated classifier, \textcite{furbass_automatic_2017} reported a sensitivity of \SI{84}{\percent} for a \gls{eeg} montage with 22 electrodes, \SI{79}{\percent} for an 8-electrode forehead montage, and \SI{68}{\percent} for a 7-electrode posterior montage.
 This indicates that performance decreases with fewer electrodes, which is concerning for the 3-electrode montage used here.
 However, \textcite{furbass_automatic_2017} used scalp \gls{eeg}; the situationally higher recording quality of the \gls{sqeeg} used here might (partially) counteract the reduced number of \gls{eeg} channels. 
 The exact \textbf{sensitivity} of the \textbf{seizure annotations} is thus \textbf{hard to estimate}, but we can safely assume that a certain percentage of seizures were not detected.
@@ -226,14 +227,14 @@ The exact \textbf{sensitivity} of the \textbf{seizure annotations} is thus \text
 When seizures were missing, the segments and clips received the wrong labels, which would affect various parts of the pipeline:
 \begin{itemize}
     \item Missing seizures would have worsened the \textbf{models' learning}, as the gradient calculated based on the prediction error during training would have pointed in the wrong direction.
-    Fortunately, deep learning models are robust to limited sample-class mislabeling.
-    Depending on the extent of missing seizures, we can thus expect the impairment to learning ranging from negligible up to moderate.
+    Fortunately, deep learning models are robust with respect to limited sample-class mislabeling.
+    Depending on the extent of missing seizures, we can thus expect the impairment to learning to range from negligible to moderate.
 
-    \item Regarding \textbf{model evaluation}, class mislabeling due to missing seizures would have distorted the \gls{roc auc} and \gls{tifw}, as thus the \gls{eb} score.
-    The mechanism being that when a model raised an alarm during supposed interictal periods, it could have been because it detected real preictal patterns from a missing seizure, but this would have been counted as a \gls{fp}, thus distorting the mentioned metrics.
+    \item Regarding \textbf{model evaluation}, class mislabeling due to missing seizures would have distorted the \gls{roc auc} and \gls{tifw}, and thus the \gls{eb} score;
+    the mechanism being that when a model raised an alarm during supposed interictal periods, it could have been because it detected real preictal patterns from a missing seizure, but this would have been counted as an \gls{fp}, thus distorting the mentioned metrics.
 
     \item Missing seizures would have only distorted the seizure and \gls{fp} \textbf{cycles}, if missing seizures themselves exhibit a phase preference.
-    As was demonstrated in the current work, model predictions do exhibit a phase preference in some cases, but that does not necessarily indicate that the same was true for the model used to detect seizures.
+    As has been demonstrated in the current work, model predictions do exhibit a phase preference in some cases, but that does not necessarily indicate that the same was true for the model used to detect seizures.
 \end{itemize}
 
 \subsection{Multi-Modality of Phase Distributions}
@@ -263,9 +264,9 @@ Practically, this would help distinguish true uniformity from structured but mul
 
 
 \section{Limitations}\label{sec:limitations}
-\paragraph{Shorter-Term Cyclical Patterns and Data Gaps}\label{para:shorter-term-cyclical-patterns-and-data-gaps}
+\paragraph{Shorter-term cyclical patterns and data gaps}\label{para:shorter-term-cyclical-patterns-and-data-gaps}
 The analysis of cyclical patterns in this work was restricted to multidien periods ranging from 5 to 50 days, which precluded the investigation of shorter-term cycles, including circadian rhythms.
-While the models may have learned to exploit such shorter-term patterns (as evidenced by the high co-occurrence of false predictions), these cycles could not be reliably analyzed due to the frequent daily recording gaps inherent to the device.
+While the models may have learned to exploit such shorter-term patterns (as evidenced by the high co-occurrence of false predictions), these cycles could not be reliably filtered and analyzed due to the frequent daily recording gaps inherent to the device.
 
 Circadian variations in seizure propensity are well-documented in the literature \parencite{karoly_cycles_2021}, and their detection would require nearly continuous data spanning multiple 24-hour periods to adequately characterize phase relationships.
 The intermittent recording gaps interrupted the continuity required for accurate phase estimation at these shorter timescales, making it impossible to determine whether models were capturing genuine circadian signatures or noise.
@@ -273,12 +274,12 @@ The intermittent recording gaps interrupted the continuity required for accurate
 Future work employing devices with improved recording continuity or post-processing methods designed to mitigate the effects of data gaps would be necessary to properly investigate sub-5-day cyclical components in seizure propensity.
 
 
-\paragraph{Number of Seizures}
-Due to the low number of seizures for some included patients (min.\ \num{13} seizures), the seizures of both the train and test set were used to increase statistical power for the cycle-based evaluation under the assumption that the seizures' \glspl{plv} remain constant (\cref{subsec:qualification-criteria}).
-However, it is unclear to which degree this assumption holds, due to changes in the patient's brains throughout the monitoring timespan in the range of \num{132} to \num{537} days.
+\paragraph{Number of seizures}
+Due to the low number of seizures for some included patients (min.\ \num{13} seizures), the seizures of both the training and test sets were used to increase statistical power for the cycle-based evaluation under the assumption that the seizures' \glspl{plv} remain constant (\cref{subsec:qualification-criteria}).
+However, it is unclear to what degree this assumption holds, due to changes in the patient's brains throughout the monitoring timespan in the range of \num{132} to \num{537} days.
 
 
-\paragraph{Medication Changes}
+\paragraph{Medication changes}
 Further, changes in \glspl{asm} throughout the duration of the study could not be accounted for, because these data were not available.
 However, \glspl{asm} influence the occurrence and frequency of \glspl{ied} and seizures, and can thus alter epileptic cycles \parencite{reynolds_early_2025}, and thereby the phase relationship of seizures, features, and potentially \glspl{fp}.
 This could have introduced an unknown bias into the calculation of \glspl{plv}.

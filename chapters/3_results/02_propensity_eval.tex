@@ -9,13 +9,13 @@ For the remaining 357 combinations (\SI{99.27}{\percent}), the assumptions did n
 \begin{figure}[!hbtp]
     \centering
     \includegraphics[width=0.75\textwidth]{qualifications_flow_chart}
-    \caption{Proportions of Patient-Model-Feature Combinations that Met each Criterion.}
+    \caption{Proportions of patient-model-feature combinations that met each criterion.}
     \label{fig:qualifications_flow_chart}
 \end{figure}
 
 \begin{table}[!htbp]
     \centering
-    \caption{Patient-Model-Feature Combinations that Met the Cycle-Based Qualification Criteria.}
+    \caption{Patient-model-feature combinations that met the cycle-based qualification criteria.}
     \label{tab:model-feature-qualifications}
     \renewcommand{\arraystretch}{1.15}
     \input{tables/model_feature_qualifications}
@@ -35,13 +35,13 @@ For patient U01, there was a significant phase preference for seizures (\cref{fi
 Additionally, all features were phase-locked or anti-phase locked (\gls{acfw}) with each other, i.e., they all had a similar preferred direction or the opposite direction.
 However, between seizures and \glspl{fp}, there was usually a phase delay, i.e., \glspl{fp} tended to occur later than seizures.
 This delay is also visible when inspecting the filtered signal with seizures and \glspl{fp} (\cref{fig:U01-filtered-var-P}): the \glspl{fp} tended to occur during portions with many seizures, but also frequently thereafter, more so than before, which is consistent with the detected shift of phase preference.
-This strong phase preference, albeit being shifted, was only present for patient U01.
+This strong phase preference, despite being shifted, was only present for patient U01.
 
 Other patients usually did not exhibit a significant phase preference of events (seizures or \glspl{fp}), or only did so for few combinations of features and event types.
 For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} (\cref{fig:appendix-phase-histogram-C03-CNN FPs}) were never significantly phase locked to features.
 Accordingly, there were few or no combinations of event types and features that exhibited a strong phase preference across patients, except for U01.
 
-These were the phase preference on the multidien (\SIrange{5}{50}{\day}) scale used here for formal analysis.
+These were the phase preferences on the multidien (\SIrange{5}{50}{\day}) scale used here for formal analysis.
 However, some patients, such as C03, appeared to exhibit a circadian \gls{fp} pattern, indicated by clusters of \glspl{fp} appearing daily (\cref{fig:C03-filtered-Beta-P}).
 
 For further examination, all phase histograms are shown in \cref{ch:phase-histograms} and all filtered feature plots with event occurrences in \cref{ch:filtered-feature-plots}.
@@ -65,7 +65,7 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
         \label{fig:U17-ensemble-FP-phases}
     \end{subfigure}
 
-    \caption[Phase Histograms per Feature of Patient U17 for seizures and ensemble FPs]{Phase Histograms per Feature and for seizures and ensemble \glspl{fp} of \textbf{Patient U17}.\\
+    \caption[Patient U17: phase histograms per feature for seizures and ensemble FPs.]{\textbf{Patient U17}: phase histograms per feature for seizures and ensemble FPs.\\
     The \textit{number of events per bin} is displayed on the polar y-axis. The \textit{mean phase angle} is denoted next to the feature name and shown as a red arrow. The arrow's length represents the \textit{\gls{plv}}.}
     \label{fig:U17-phase-histograms}
 \end{figure}
@@ -90,7 +90,7 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
         \label{fig:U01-CNN-FP-phases}
     \end{subfigure}
 
-    \caption[Phase Histograms per Feature of Patient U01 for seizures and CNN FPs]{Phase Histograms per Feature and for seizures and \gls{cnn} \glspl{fp} of \textbf{Patient U01}.}
+    \caption[Patient U01: phase histograms per feature for seizures and CNN FPs.]{\textbf{Patient U01}: phase histograms per feature for seizures and CNN FPs.}
     \label{fig:U01-phase-histograms}
 \end{figure}
 
@@ -114,7 +114,7 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
         \label{fig:C03-filtered-Beta-P}
     \end{subfigure}
 
-    \caption{Original and Multidien (\SIrange{5}{50}{\day}) Filtered Signals with Annotated Occurrences of Seizures and FPs.}
+    \caption{Original and multidien (\SIrange{5}{50}{\day}) filtered signals with annotated occurrences of seizures and FPs.}
     \label{fig:filtered-features-test-set}
 \end{figure}
 
@@ -138,6 +138,6 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
         \label{fig:C03-ensemble-FP-phases}
     \end{subfigure}
 
-    \caption[Phase Histograms per Feature of Patient C03 for seizures and ensemble FPs]{Phase Histograms per Feature and for seizures and ensemble \glspl{fp} of \textbf{Patient C03}.}
+    \caption[Patient C03: phase histograms per feature for seizures and ensemble FPs.]{\textbf{Patient C03}: phase histograms per feature for seizures and ensemble FPs.}
     \label{fig:C03-phase-histograms}
 \end{figure}

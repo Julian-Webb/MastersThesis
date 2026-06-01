@@ -32,7 +32,7 @@ Thus, the \gls{tifw} was calculated as follows:
     \item The \textbf{relative \gls{tifw}} was obtained by normalizing absolute \gls{tifw} by the maximum possible warning time, which was the sum of the non-overlapping \gls{sph} intervals from \textbf{all} non-preictal clips.
 \end{enumerate}
 Relative \gls{tifw} is the event-based equivalent to the \textbf{\gls{fpr}}, i.e., the inverse of \textbf{specificity}.
-That is to say it is minimized when non-preictal \textbf{(false) samples} are \textbf{correctly classified} as such.
+That is to say, it is minimized when non-preictal \textbf{(false) samples} are \textbf{correctly classified} as such.
 It is a metric bounded in [0, 1], enabling comparable interpretation across patients and consistent with the guidelines in \textcite{mormann_seizure_2007}.
 
 
@@ -54,6 +54,6 @@ To take both the \gls{eb} specificity (1 - rel. \gls{tifw}) and the \gls{eb} sen
 \end{equation}
 The threshold that \textbf{maximized this \gls{eb} score} was set as the \textbf{best threshold} and used to determine binary clip predictions in further steps.
 
-The metrics were calculated independently on the train and test set.
+The metrics were calculated independently on the training and test sets.
 In causal, \mbox{(pseudo-)prospective} study designs, classification thresholds should be determined exclusively using the training set.
-However, as this work prioritizes the cycle-based evaluation over a realistic measure of performance, the threshold was individually optimized for the train and test set, which boosted performance on the test set.
+However, as this work prioritizes the cycle-based evaluation over a realistic measure of performance, the threshold was individually optimized for the training and test sets, which boosted performance on the test set.

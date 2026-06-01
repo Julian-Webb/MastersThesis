@@ -34,7 +34,7 @@ Subsequent to clipping, all features were standardized via z-score normalization
 
 \subsection{Filtering} \label{subsec:cycle-filtering}
 A non-causal, multidien filter was applied to each continuous feature chunk to isolate slow oscillatory components.
-Specifically, a zero-phase 10th order Butterworth bandpass filter in \gls{sos} form was used with a period range of 5--50 days, and a sampling frequency corresponding to the segment duration.
+Specifically, a zero-phase 10th-order Butterworth bandpass filter in \gls{sos} form was used with a period range of 5--50 days, and a sampling frequency corresponding to the segment duration.
 This process extracted multidien dynamics while removing short-term fluctuations.
 
 \subsection{Phase Locking} \label{subsec:phase-locking}
@@ -44,30 +44,30 @@ This is a standard tool in circular statistics and neuroscience for quantifying 
 
 \paragraph{Computation of PLV}
 \begin{enumerate}
-    \item \textbf{Analytic Signal:} Given a real-valued time series $x(t)$ (e.g., a filtered feature), the analytic signal $z(t)$ is computed using the Hilbert transform:
+    \item \textbf{Analytic signal:} Given a real-valued time series $x(t)$ (e.g., a filtered feature), the analytic signal $z(t)$ is computed using the Hilbert transform:
     \begin{equation} \label{eq:analytic-signal}
         z(t) = x(t) + i \cdot \mathcal{H}[x(t)]
     \end{equation}
     where $\mathcal{H}[x(t)]$ is the Hilbert transform of $x(t)$.
 
-    \item \textbf{Event Phase Extraction:}
+    \item \textbf{Event phase extraction:}
     The instantaneous phase is then:
     \begin{equation} \label{eq:instantaneous-phase}
         \phi(t) = \arg(z(t)).
     \end{equation}
-    For each event (e.g., a seizure / \gls{fp}), extract the instantaneous phase at the event times where $N$ is the number of events: $\{\phi_{e_1}, \phi_{e_2}, \ldots, \phi_{e_N}\}$.
+    For each event (e.g., a seizure / \gls{fp}), extract the instantaneous phase at the event times, where $N$ is the number of events: $\{\phi_{e_1}, \phi_{e_2}, \ldots, \phi_{e_N}\}$.
 
-    \item \textbf{Mean Resultant Vector:} The mean resultant vector is
+    \item \textbf{Mean resultant vector:} The mean resultant vector is
     \begin{equation} \label{eq:mean-resultant-vector}
         R = \frac{1}{N} \sum_{k=1}^N e^{i \phi_{e_k}}.
     \end{equation}
 
-    \item \textbf{PLV Calculation:} The \gls{plv} is the magnitude of the mean resultant vector:
+    \item \textbf{PLV calculation:} The \gls{plv} is the magnitude of the mean resultant vector:
     \begin{equation} \label{eq:plv}
         \mathrm{PLV} = |R| = \left| \frac{1}{N} \sum_{k=1}^N e^{i \phi_{e_k}} \right|
     \end{equation}
 
-    \item \textbf{Mean Angle:} The argument of $R$ gives the preferred phase:
+    \item \textbf{Mean angle:} The argument of $R$ gives the preferred phase:
     \begin{equation} \label{eq:plv-mean-angle}
         \mu = \arg(R)
     \end{equation}
@@ -81,9 +81,9 @@ To determine whether two groups of circular data, i.e., event phases from two ev
 This is appropriate for circular data, where standard linear tests are not valid due to the periodic nature of the data.
 The null hypothesis that both samples are drawn from populations with the same mean direction was tested.
 
-Let $\{\phi_1^{(1)}, \ldots, \phi_{n_1}^{(1)}\}$ and $\{\phi_1^{(2)}, \ldots, \phi_{n_2}^{(2)}\}$ be the two samples of event phases (in radians), with sample sizes $n_1$ and $n_2$.
+Let $\{\phi_1^{(1)},\ \ldots\ , \phi_{n_1}^{(1)}\}$ and $\{\phi_1^{(2)},\ \ldots\ , \phi_{n_2}^{(2)}\}$ be the two samples of event phases (in radians), with sample sizes $n_1$ and $n_2$.
 
-\paragraph{Observed Statistic:}
+\paragraph{Observed statistic:}
 First, compute the circular mean for each group:
 \begin{equation} \label{eq:circ-mean}
     \bar{\phi}^{(j)} = \arg\left( \sum_{k=1}^{n_j} e^{i \phi_k^{(j)}} \right), \quad j=1,2
@@ -94,7 +94,7 @@ The observed difference in mean direction is then
 \end{equation}
 where $\mathrm{wrap}(\cdot)$ denotes wrapping the angle to the interval $[-\pi, \pi)$.
 
-\paragraph{Variance and Test Statistic:}
+\paragraph{Variance and test statistic:}
 To account for the concentration of the data (i.e., how tightly phases are clustered; similar to variance in non-circular statistics), the test uses an estimate of variance based on the mean resultant length $R_j$ for each group:
 \begin{equation} \label{eq:mean-resultant-length}
     R_j = \frac{1}{n_j} \left| \sum_{k=1}^{n_j} e^{i \phi_k^{(j)}} \right|
@@ -110,19 +110,19 @@ The test statistic is then
 \end{equation}
 This statistic is analogous to a Welch's t-test, but adapted for circular data.
 
-\paragraph{Permutation Procedure:}
+\paragraph{Permutation procedure:}
 To generate the null distribution, the two samples were pooled and randomly reassigned into two groups of sizes $n_1$ and $n_2$, without regard to their original labels.
 For each permutation, the difference in circular means and the corresponding test statistic $T_{\text{perm}}$ were computed as above.
 This process was repeated a large number of times ($N_{perm}=5000$), yielding a distribution of $T_{\text{perm}}$ under the null hypothesis.
 
-\paragraph{P-value Calculation:}
+\paragraph{P-value calculation:}
 The two-sided p-value was calculated as the proportion of permutations where the permuted test statistic exceeded or equaled the observed test statistic:
 \begin{equation} \label{eq:circ-pval}
     p = \frac{1 + \sum_{i=1}^{N_{\text{perm}}} \mathbb{I}(T_{\text{perm},i} \geq T_{\text{obs}})}{1 + N_{\text{perm}}}
 \end{equation}
 where $\mathbb{I}(\cdot)$ is the indicator function and $N_{\text{perm}}$ is the number of permutations.
 
-\paragraph{Bootstrap Confidence Intervals:}
+\paragraph{Bootstrap confidence intervals:}
 In addition to the permutation test, bootstrap resampling was used to estimate confidence intervals for the mean directions and their difference.
 This involved repeatedly resampling each group with replacement, recalculating the circular means, and determining the empirical percentiles of the resulting distributions.
 

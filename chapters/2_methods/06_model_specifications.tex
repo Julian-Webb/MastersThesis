@@ -20,7 +20,7 @@ There are two distinct types of convolutional blocks (\cref{fig:special-cnn-bloc
 All convolution layers use L1 and L2 regularization with a penalty of $10^{-9}$.
 
 First, four conv1 blocks are used to reduce the tensor height while increasing the \gls{cnn} channels (encoding).
-These are followed by three conv2 blocks decrease the tensor height further while also decreasing the number of \gls{cnn} channels (decoding).
+These are followed by three conv2 blocks decreasing the tensor height further while also decreasing the number of \gls{cnn} channels (decoding).
 Ultimately, the sample dimension (height) is reduced to 1 with 32 features per \gls{eeg} channel.
 Only then are the per-channel features combined (flattened).
 These pass through two final dense layers to create the output logit, which is then bounded between 0 and 1 with the sigmoid function, to create the final output.
@@ -31,7 +31,7 @@ These pass through two final dense layers to create the output logit, which is t
     \begin{subfigure}[t]{\textwidth}
         \centering
         \includegraphics{conv_blocks}
-        \caption{Special CNN Blocks}
+        \caption{Special CNN blocks}
         \label{fig:special-cnn-blocks}
     \end{subfigure}
 
@@ -40,11 +40,11 @@ These pass through two final dense layers to create the output logit, which is t
     \begin{subfigure}[t]{\textwidth}
         \centering
         \includegraphics[width=\linewidth]{CNN_architecture}
-        \caption{Full CNN Architecture}
+        \caption{Full CNN architecture}
         \label{fig:full-cnn-architecture}
     \end{subfigure}
 
-    \caption[CNN Architecture]{CNN Architecture.\\
+    \caption[CNN architecture]{\textbf{CNN architecture}.\\
     A segment's EEG data is processed from left to right. The volumes represent the input tensor and the outputs of layers. In between the volumes, the network's layer's properties are shown.\\
     \textit{k}: kernel size, \textit{f}: \#filters, \textit{p}: pool size.}
     \label{fig:cnn-architecture}
@@ -66,7 +66,7 @@ This minor change was enough to fully accommodate the sampling frequency differe
 
 \subsection{Ensemble of Feature-Based Multilayer Perceptrons}\label{subsec:ensemble-architecture}
 The second model was as an ensemble using \glspl{fb-mlp} as base learners, also adapted from \textcite{muller_coherent_2022}, where it had shown strong performance.
-In contrast to architectures operating directly on the raw signal, this model relied the hand-crafted features.
+In contrast to architectures operating directly on the raw signal, this model relied on the hand-crafted features.
 The input feature set comprised the spectral band powers and the correlation coefficient (\cref{subsec:feature-extraction}), which have previously been shown to possess forecasting utility in a cycle-based framework \parencite{yang_seizure_2024}.
 This design enabled the model to incorporate both channel-wise feature characteristics and their inter-channel statistical dependencies.
 
@@ -81,7 +81,7 @@ The output layer comprised a single unit with a sigmoid activation function to p
     \begin{subfigure}[t]{\textwidth}
         \centering
         \includegraphics[width=\linewidth]{FB_MLP}
-        \caption{Ensemble \textbf{Input Layer} and a Single \textbf{\gls{fb-mlp}} with Layers and their Corresponding Number of Nodes.}
+        \caption{Ensemble \textbf{input layer} and a single \textbf{\gls{fb-mlp}} with layers and their corresponding number of nodes.}
         \label{fig:fb-mlp}
     \end{subfigure}
 
@@ -96,7 +96,7 @@ The output layer comprised a single unit with a sigmoid activation function to p
 
     \vspace{0.4cm}
     
-    \caption[Architecture of the Ensemble of FB-MLPs]{Architecture of the Ensemble of FB-MLPs.\\
+    \caption[Architecture of the ensemble of FB-MLPs]{Architecture of the ensemble of FB-MLPs.\\
     A segment's correlation coefficient and bandpowers are processed from left to right.}
     \label{fig:ensemble}
 \end{figure}
@@ -124,7 +124,7 @@ For a given patient, all models received the same subsampled segments for traini
 
 As in \textcite{eberlein_convolutional_2018}, the \textbf{\glspl{cnn}} were trained for \textit{50 epochs} with \textit{ADAM optimization}, a \textit{learning rate of \num{0.001}}, and \textit{binary cross-entropy} as a loss function.
 
-To train the \textbf{\glspl{fb-mlp}}, before subsampling, a \textit{z-score normalizer} was fit to the features of the entire train set.
+To train the \textbf{\glspl{fb-mlp}}, before subsampling, a \textit{z-score normalizer} was fit to the features of the entire training set.
 This same scaling was then always applied when this model was later used, including for the test set.
 The \glspl{fb-mlp} were then trained for \textit{200 epochs} using \textit{stochastic gradient descent} for optimization, a \textit{learning rate of \num{0.0001}}, and \textit{binary cross-entropy} as a loss function.
 Even though \textcite{muller_coherent_2022} used 500 epochs for training, here, the performance could not be seen to improve after 200 epochs, which is likely also due to the smaller input dimension, requiring less fitting.

@@ -11,18 +11,18 @@ For the competition patients, this ordered sequence was constructed as follows: 
 This ordering enabled detection of points where the end time of the preceding file was chronologically later than the start time of the subsequent file, which is indicative of a backward time shift and thus marks the transition from \gls{dst} to standard time.
 In turn, this made it possible to delineate which files were recorded under \gls{dst} and to apply the appropriate conversion to standard time.
 
-For ULTRA2 patients, the sequence of recording was not know, but fortunately, the \gls{edf} files additionally contained explicit time zone metadata, which was used directly for the timestamp conversion.
+For ULTRA2 patients, the sequence of recording was not known, but fortunately, the \gls{edf} files additionally contained explicit time zone metadata, which was used directly for the timestamp conversion.
 
 \subsection{EEG Artifact Removal} \label{subsec:eeg-artifact-removal}
 Two recurrent artifact morphologies were observed in the \gls{eeg} recordings.
-These events exhibited extreme amplitudes relative to the physiological background and could have bias downstream processing (e.g., model training and cycle extraction), thus motivating their detection and removal.
+These events exhibited extreme amplitudes relative to the physiological background and could have biased downstream processing (e.g., model training and cycle extraction), thus motivating their detection and removal.
 As shown in \cref{fig:artifact-examples}, these artifacts typically occurred concurrently in both channels.
 The affected samples reached the minimum representable amplitude of \SI{-1374.21}{\micro\volt}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics{artifact_examples}
-    \caption[Typical \gls{eeg} Artifacts]{Typical \gls{eeg} artifacts. Excluded intervals are highlighted in red. Left: brief saturation (single-sample clipping). Right: prolonged artifact with clipping followed by high-frequency oscillations and \gls{dc} drift.}
+    \caption[Typical \gls{eeg} artifacts]{\textbf{Typical \gls{eeg} artifacts.}\\Excluded intervals are highlighted in red. Left: brief saturation (single-sample clipping). Right: prolonged artifact with clipping followed by high-frequency oscillations and \gls{dc} drift.}
     \label{fig:artifact-examples}
 \end{figure}
 
@@ -47,7 +47,7 @@ In addition, each segment was assigned a seizure-relative \textit{interval type}
 This section defines the interval types and then describes the construction and labeling of segments and clips.
 
 
-\subsubsection{Interval Types} \label{subsubsec:interval-types}
+\subsubsection{Interval types} \label{subsubsec:interval-types}
 For seizure prediction to be clinically actionable, a minimum intervention interval is required between the time a warning is issued and seizure onset.
 This interval provides time for countermeasures (e.g., administration of an inhibitory medication) or for the patient to take precautionary actions.
 
@@ -65,7 +65,7 @@ To capture these effects, additional periictal types are defined: the interval i
     \begin{subfigure}[t]{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{intervals_around_seizure}
-        \caption[Seizure-Related Intervals]{\textbf{Seizure-Related Intervals} with their \textit{Approximate} Durations and Time Points Relative to Seizure Onset.}
+        \caption[Seizure-related intervals]{\textbf{Seizure-related intervals} with their \textit{Approximate} Durations and Time Points Relative to Seizure Onset.}
         \label{fig:seizure-related-intervals}
     \end{subfigure}
     
@@ -74,7 +74,7 @@ To capture these effects, additional periictal types are defined: the interval i
     \begin{subfigure}[t]{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{intervals_around_seizure_overlapping}
-        \caption[Type Assignment for Overlapping Intervals]{\textbf{Type Assignment for Overlapping Intervals}.\\
+        \caption[Type assignment for overlapping intervals]{\textbf{Type assignment for overlapping intervals}.\\
         In this example, seizure B occurs \SI{107}{\minute} after seizure A. The figure shows how the intervals are merged (center row) by (partially) overwriting the post-seizure intervals (postictal and inter-post) with the preictal, intervention, postictal, and inter-post intervals of the latter seizure B.}
         \label{fig:overlapping-periictal-intervals}
     \end{subfigure}
@@ -84,12 +84,12 @@ To capture these effects, additional periictal types are defined: the interval i
     \begin{subfigure}[t]{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{clip_generation}
-        \caption[Clip Generation Procedure]{\textbf{Clip Generation Procedure}.\\
+        \caption[Clip generation procedure]{\textbf{Clip generation procedure}.\\
         Clips were generated in the reverse direction by using the ends of preictal intervals (and the end of the last valid recording interval) as \enquote{seeds} and going backwards from there, until a previous seed (or the start of the patient's first valid recording interval) was reached. This usually produced a shortened clip to the right of each seed because the duration between segments containing seizures (in this case \SI{107}{\minute}) was rarely divisible by the clip duration (\SI{10}{\minute}).}
         \label{fig:clip-generation}
     \end{subfigure}
 
-    \caption[Seizure-Related Intervals and Clip Generation Procedure]{\textbf{Seizure-Related Intervals and Clip Generation Procedure.}\\
+    \caption[Seizure-related intervals and clip generation procedure]{\textbf{Seizure-related intervals and clip generation procedure.}\\
     In reality, the intervals could be shifted backwards in time (left) relative to the seizure for up to one segment duration ($\sim$\SI{15}{\sec}), because interval types are assigned based on segment ends.\\
     \textit{Durations and time points in these figures are rounded.}}
     \label{fig:intervals-main-fig}
@@ -109,7 +109,7 @@ To ensure that labeling boundaries coincide with the segment grid defined below,
 
 \begin{table}[!htbp]
     \centering
-    \caption[Interval Durations]{The approximate and exact durations of the defined intervals, as multiples of segments.}
+    \caption[Interval durations]{The approximate and exact durations of the defined intervals, as multiples of segments.}
     \label{tab:interval-durations}
     \input{tables/interval_durations}
 \end{table}
@@ -151,12 +151,11 @@ Clips failing either criterion were marked invalid and excluded from subsequent 
 
 \subsection{Dataset Partitioning} \label{subsec:dataset-partitioning}
 In machine learning, models are trained on a subset of data and their performance evaluated on unseen data.
-Accordingly, the data was partitioned into a train and test set.
+Accordingly, the data were partitioned into training and test sets.
 Since predictive models must use past data to predict future events, the time series was split at a certain time point, rather than allocating individual clips to the sets.
 This design also preserved long, uninterrupted recording intervals required for evaluating the multidien cycles.
 
-For partitioning, the training set had to include enough examples of each class to learn predictive patterns, and
-the test set had to be large enough for accurate performance estimates and, for cycle evaluation, had to be at least as long as the longest cycle of 50 days, but optimally containing multiple such cycles.
+For partitioning, the training set had to include enough examples of each class to learn predictive patterns, and the test set had to be large enough for accurate performance estimates and, for cycle evaluation, had to be at least as long as the longest cycle of 50 days, but optimally contain multiple such cycles.
 
 The two classes considered here are preictal and non-preictal.
 Because each seizure contributes only $\sim$\SI{1}{\hour} of preictal data and seizures typically occur only every few days or less, the resulting dataset exhibits a pronounced class imbalance (often 100:1 \parencite{brinkmann_crowdsourcing_2016}), characterized by a scarcity of preictal segments and an abundance of non-preictal segments.
@@ -173,7 +172,7 @@ The partition boundary was determined per patient as a timestamp on the clip gri
     \item 
     This timestamp was then aligned to the clip representation by \textit{snapping it to a clip start}.
     \item
-    Next, the split was constrained using valid clips to ensure adequate \gls{eeg} data in both partitions: the train partition had to contain between \SI{40}{\percent} and \SI{70}{\percent} of valid clips.
+    Next, the split was constrained using valid clips to ensure adequate \gls{eeg} data in both partitions: the training partition had to contain between \SI{40}{\percent} and \SI{70}{\percent} of valid clips.
     If the snapped split violated these bounds, the split position was shifted in clip-index space to the nearest admissible bound.
     \item
     Finally, the boundary was required to start at an \textit{interictal clip}; if necessary, the closest interictal clip was selected (searching forward or backward depending on which bound adjustment was needed).
@@ -214,7 +213,7 @@ Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evalua
         Total                   &   & 15 & \\
         \bottomrule
     \end{tabular}
-    \caption[Features and their properties]{Features and their properties}
+    \caption{Hand-crafted features and their properties}
     \label{tab:feature-properties}
 \end{table}
 
@@ -232,7 +231,7 @@ The variance measures the average squared deviation of a signal $s$ from its mea
     \operatorname{Var}_s = \frac{1}{T} \sum_{t=1}^{T} \left(s_t-\bar{s}\right)^2
 \end{equation}
 
-\subsubsection{Pearson Correlation Coefficient}
+\subsubsection{Pearson correlation coefficient}
 Pearson's correlation coefficient (bounded in [\num{-1}, \num{1}]) was the only cross-channel feature used here.
 It quantifies how the two channel signals $s$ and $r$ vary together within a segment and is defined as the normalized linear covariance:
 
@@ -245,7 +244,7 @@ It quantifies how the two channel signals $s$ and $r$ vary together within a seg
 
 where $\bar{s}$ and $\bar{r}$ are the signal means over the $T$ samples of the segment.
 
-\subsubsection{Autocorrelation Function Width}
+\subsubsection{Autocorrelation function width}
 The \gls{acf} (bounded in [\num{-1}, \num{1}]) represents the correlation of a signal $s$ with itself shifted by a lag value $\lambda$, which corresponds to a number of samples:
 
 \begin{equation}
@@ -260,7 +259,7 @@ The \textbf{\gls{acfw}} is then defined as the \textbf{lag $\lambda$} where the 
 It can be interpreted as a measure of temporal persistence: it quantifies how quickly a signal decorrelates over time.
 This measure was calculated \textit{for each segment and channel}.
 
-\subsubsection{Spectral Band Powers}
+\subsubsection{Spectral band powers}
 {\sisetup{range-phrase = {--}, range-units = single}
 Lastly, the spectral band powers were extracted for the delta (\SIrange{0.5}{4}{\hertz}), theta (\SIrange{4}{8}{\hertz}), alpha (\SIrange{8}{12}{\hertz}), beta (\SIrange{12}{35}{\hertz}), and gamma (\SIrange{35}{100}{\hertz}) bands.
 They were computed \textit{for each segment and channel} as follows:}

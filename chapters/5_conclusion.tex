@@ -2,7 +2,7 @@
 
 
 
-\paragraph{Evaluation of Proictal States}
+\paragraph{Evaluation of proictal states}
 The primary goal of this work was to provide a joint evaluation of an hypothesized proictal state which arose in the literature for two distinct reasons: cycles in frequency of seizure occurrences, and co-occurrence of false prediction from different models.
 
 This work hypothesized that a high co-occurrence of false predictions would coincide with false predictions primarily occurring during periods of elevated seizure risk, where the risk is determined by the cyclical evaluation of seizure occurrence.
@@ -11,7 +11,7 @@ In other words, patients with high co-occurrence were expected to also show fals
 The results did not confirm this hypothesis. 
 While the co-occurrence of false predictions, as measured by the \gls{cope}, was positive for all patients and high for the majority, with the methodology used in this work, the phase preference of seizures and false predictions was not found to be significantly similar.
 
-\paragraph{Possible Explanations}
+\paragraph{Possible explanations}
 This could be for a number of reasons:
 \begin{itemize}
     \item
@@ -19,30 +19,29 @@ This could be for a number of reasons:
     Thus, situations in which seizures or false predictions clustered within multiple, distinct parts of a cycle were not detected by this approach, and, when plotting the data, such patterns did appear to occur in some instances, although these were not statistically validated in this work.
 
     \item
-    % I think this paragraph must be added to discussion and another paragraph in discussion must be adjusted.
     In the cases where seizure showed significant phase-locking and model performance was acceptable, false predictions were always phase-locked to features. 
     It is unexpected that a model's false predictions would have a preferred phase that does not coincide with the seizure's preferred phase.
     It is possible that there is merely a \textbf{delay in the phase preference} of false positives and seizures, as observed in patient U01.
     If this observation holds true, one possible explanation is that because seizures tend to occur in clusters, models tend to predict more incoming seizures after a seizure, hence giving rise to phase delay.
 
     \item 
-    Another plausible factor, is that false predictions and seizures may exhibit \textbf{shorter-term} (e.g., circadian) \textbf{cycles} that were not included in the multidien (\SIrange{5}{50}{\day}) range used here.
-    This could be a primary factor why they tend to co-occur without the measured multidien preference being similar, and could mean that the preferred phase would be significantly similar when investigating shorter-term cycles.
+    Another plausible factor, is that false predictions and seizures may exhibit stronger, \textbf{shorter-term} (e.g., circadian) \textbf{cycles} that were not included in the multidien (\SIrange{5}{50}{\day}) range used here.
+    This could be a primary factor in why they tend to co-occur without the measured multidien preference being similar, and could mean that the preferred phase would be significantly similar when investigating shorter-term cycles.
 \end{itemize}
 
 
 \paragraph{Limitations}
-It is possible that seizures did not show a statistically significant phase preference due to their limited number for patient, but would have, if the patient had been monitored over a longer timespan, thus increasing the seizure count.
-Further, the automated seizure detection algorithm likely missed a percentage of seizure, and changes in patient's medication could not be accounted for.
+It is possible that seizures did not exhibit statistically significant phase-locking due to their limited number per patient, but would have, if the patient had been monitored over a longer timespan, thus increasing the seizure count, with the assumption of stable phase locking over time.
+Further, the automated seizure detection algorithm likely missed a percentage of seizures, and changes in patient's medication could not be accounted for.
 
 
-\paragraph{Evaluation of Model Performance.} 
+\paragraph{Evaluation of model performance} 
 The secondary goal of this work was the investigation of model performance for the \gls{cnn} and \gls{fb-mlp} model families in the ultra-long-term setting with two-channel subcutaneous \gls{eeg}.
 It was shown that model performance remained stable even when reducing the number of \gls{eeg} channels (16 vs.\ 2) compared to \textcite{muller_coherent_2022} for the same model families, and, that the performance is comparable to other prime models, such as \glspl{lstm} \parencite{viana_seizure_2023}, in the same ultra-long-term two-channel setting.
-Additionally, it was shown that the \gls{cnn} surpassed the ensemble of \glspl{fb-mlp} in both performance, as well as computational efficiency, making it the superior model in this setting. 
+Additionally, it was shown that the \gls{cnn} surpassed the ensemble of \glspl{fb-mlp} in both performance as well as computational efficiency, making it the superior model in this setting. 
 
 
-\paragraph{Future Research.} 
+\paragraph{Future research} 
 Future research could thus:
 \begin{itemize}
     \item extend the methodology to accommodate multiple phase preferences, 

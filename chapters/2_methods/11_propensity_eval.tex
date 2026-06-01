@@ -7,24 +7,24 @@ These criteria ensured that only meaningful model-feature relationships were int
 For a given patient, feature, and model, the following conditions must be satisfied for significance level $\alpha = 0.05$:
 
 \begin{enumerate}
-    \item \textbf{Seizure-Feature Phase Locking:} The patient's seizures must exhibit significant phase locking to the feature, as determined by the Rayleigh test with Benjamini-Hochberg \gls{fdr} correction ($q_{\mathrm{Rayleigh}} < \alpha$). This criterion ensures that the feature is even relevant to the patient's seizure timing.\\
+    \item \textbf{Seizure-feature phase locking:} The patient's seizures must exhibit significant phase locking to the feature, as determined by the Rayleigh test with Benjamini-Hochberg \gls{fdr} correction ($q_{\mathrm{Rayleigh}} < \alpha$). This criterion ensures that the feature is even relevant to the patient's seizure timing.\\
     \textit{Again, due to limited seizure counts, seizures from both training and test sets are included, under the assumption that phase locking remains stable across the dataset.}
-    \item \textbf{Model Predictive Performance:} The model must achieve a test set \gls{roc auc} $\geq 0.75$ and $q_{\mathrm{HanleyMcNeil}}<\alpha$.
+    \item \textbf{Model predictive performance:} The model must achieve a test set \gls{roc auc} $\geq 0.75$ and $q_{\mathrm{HanleyMcNeil}}<\alpha$.
     This empirically chosen threshold ensures that only models with acceptable predictive accuracy are considered.
-    \item \textbf{\gls{fp}-Feature Phase Locking:} The model's \glspl{fp} must also be significantly phase locked to the feature ($q_{\mathrm{Rayleigh}} < \alpha$). This indicates that \glspl{fp} are not randomly distributed in phase.
-    \item \textbf{Distributional Similarity:} If the above criteria are met, the phase distributions of \glspl{fp} and seizures are compared using the non-parametric permutation test (\cref{subsec:circular-comparison}). A non-significant result ($q_{\mathrm{Permutation}} \geq \alpha$) indicates that \glspl{fp} and seizures may arise from the same phase-dependent process (null hypothesis).
+    \item \textbf{\gls{fp}-feature phase locking:} The model's \glspl{fp} must also be significantly phase locked to the feature ($q_{\mathrm{Rayleigh}} < \alpha$). This indicates that \glspl{fp} are not randomly distributed in phase.
+    \item \textbf{Distributional similarity:} If the above criteria are met, the phase distributions of \glspl{fp} and seizures are compared using the non-parametric permutation test (\cref{subsec:circular-comparison}). A non-significant result ($q_{\mathrm{Permutation}} \geq \alpha$) indicates that \glspl{fp} and seizures may arise from the same phase-dependent process (null hypothesis).
 \end{enumerate}
 
 \subsection{Interpretation of Outcomes} \label{subsec:interpretation-of-outcomes}
 
-\paragraph{Ideal Case: Strong Evidence for Phase-Dependent Propensity}
+\paragraph{Ideal case: strong evidence for phase-dependent propensity}
 \begin{itemize}
     \item Both seizures and \glspl{fp}: $q_{\mathrm{Rayleigh}} < \alpha$
     \item Permutation test: $q_{\mathrm{Permutation}} \geq \alpha$
 \end{itemize}
 \textit{Interpretation:} \Glspl{fp} occur at similar preferred phases as seizures, suggesting the model captures phase-dependent seizure propensity.
 
-\paragraph{Contrary Cases}
+\paragraph{Contrary cases}
 \begin{itemize}
     \item For seizures, $q_{\mathrm{Rayleigh}} \geq \alpha$: seizures are not significantly phase-locked to the feature.
     Hence, any phase locking of \glspl{fp} cannot be interpreted as a meaningful proxy for propensity.
