@@ -9,15 +9,19 @@
 % Development switch 
 \newif\ifprintfull
 % Set to \printfullfalse to speed up compilation by excluding front matter and appendices.
-% \printfulltrue
-\printfullfalse
+\printfulltrue
+% \printfullfalse
 
 % Load settings
 \input{settings/packages}
 \input{settings/variables}
 \input{settings/glossaries}
+% Config
 \graphicspath{{figures/}}
 \addbibresource{references.bib}
+% Increase the reserved number with for List of Figures, because there are >100
+\DeclareTOCStyleEntry[numwidth=3em]{tocline}{figure}
+
 
 % =================================
 % Main Document
@@ -34,17 +38,16 @@
 
     % Chapters
     \input{chapters/1_introduction}
-    \input{chapters/2_theoretical_background}
-    \input{chapters/3_methods}
-    \input{chapters/4_results}
-    \input{chapters/5_discussion}
-    \input{chapters/6_conclusion}
+    \input{chapters/2_methods}
+    \input{chapters/3_results}
+    \input{chapters/4_discussion}
+    \input{chapters/5_conclusion}
 
     % Back Matter
     \ifprintfull
-        \listoffigures
-        \listoftables
         \printnoidxglossary[type=\acronymtype,sort=def] % sort=def: Print acronyms in the order they are defined 
+        \listoftables
+        \listoffigures
     \fi
     
     % Appendices
@@ -58,6 +61,6 @@
     \fi
 
     % Bibliography
-    \printbibliography[heading=bibintoc]
+    \printbibliography[heading=bibintoc, title=References]
 
 \end{document}

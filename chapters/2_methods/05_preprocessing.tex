@@ -1,21 +1,23 @@
 \section{Preprocessing} \label{sec:preprocessing}
 
 \subsection{Timestamp Localization} \label{subsec:timestamp-localization}
-\Gls{edf} files encode their recording onset as a naive timestamp, i.e., without any associated time zone information. The presence of \gls{dst} transitions caused timestamps within a single patient’s recordings to correspond to different UTC offsets.
-To resolve this, all timestamps for a given patient were converted to that patient’s standard time—hereafter referred to as their “main” time zone—based on their locale.
+The \gls{edf} files---which contain the \gls{eeg} data---encode their recording onset as a naive timestamp, i.e., without any associated time zone information. The presence of \gls{dst} transitions caused timestamps within a single patient’s recordings to correspond to different UTC offsets.
+To resolve this, all timestamps for a given patient were converted to that patient’s standard (\enquote{winter}) time based on their locale (Germany/United Kingdom).
 
 A key difficulty in this procedure arises from the backward time shift in autumn, which generates ambiguous local times during the one-hour interval that occurs twice.
 For such ambiguous timestamps, the correct UTC offset cannot be determined in isolation; it can only be inferred from an ordered sequence of timestamps in which the local time monotonically increases until a discontinuous one-hour backward jump occurs.
 
 For the competition patients, this ordered sequence was constructed as follows: all files were first sorted by recording order, and then their start and end times were interleaved in the sequence \textit{file1 start, file1 end, file2 start, file2 end, …}.
 This ordering enabled detection of points where the end time of the preceding file was chronologically later than the start time of the subsequent file, which is indicative of a backward time shift and thus marks the transition from \gls{dst} to standard time.
-In turn, this made it possible to delineate which files were recorded under daylight saving time and to apply the appropriate conversion to standard time.
+In turn, this made it possible to delineate which files were recorded under \gls{dst} and to apply the appropriate conversion to standard time.
 
 For ULTRA2 patients, the sequence of recording was not know, but fortunately, the \gls{edf} files additionally contained explicit time zone metadata, which was used directly for the timestamp conversion.
 
 \subsection{EEG Artifact Removal} \label{subsec:eeg-artifact-removal}
 Two recurrent artifact morphologies were observed in the \gls{eeg} recordings.
-These events exhibit extreme amplitudes relative to the physiological background and can bias downstream processing (e.g., model training and cycle extraction), thus motivating their detection and removal.
+These events exhibited extreme amplitudes relative to the physiological background and could have bias downstream processing (e.g., model training and cycle extraction), thus motivating their detection and removal.
+As shown in \cref{fig:artifact-examples}, these artifacts typically occurred concurrently in both channels.
+The affected samples reached the minimum representable amplitude of \SI{-1374.21}{\micro\volt}.
 
 \begin{figure}[htb]
     \centering
@@ -24,22 +26,19 @@ These events exhibit extreme amplitudes relative to the physiological background
     \label{fig:artifact-examples}
 \end{figure}
 
-As shown in \cref{fig:artifact-examples}, these artifacts typically occur concurrently in both channels.
-The affected samples reach the minimum representable amplitude of \SI{-1374.21}{\micro\volt}.
-
-In the first morphology, the signal saturates (clips) at the measurement limit for one or more samples (left panel of \cref{fig:artifact-examples}).
+In the first morphology, the signal saturates (\enquote{clips}) at the measurement limit for one or more samples (left panel of \cref{fig:artifact-examples}).
 In the second morphology, the clipped segment is followed by rapid oscillations and a subsequent baseline shift (\gls{dc} drift) before returning to nominal activity (right panel of \cref{fig:artifact-examples}).
 
 To detect these artifacts, all signals were first scanned for clipped intervals, defined as samples within \SI{0.1}{\micro\volt} of the saturation levels on either channel.
 After the end of each clipped interval, the variance was computed in sliding windows of \SI{2}{\sec} with a step size of \SI{0.5}{\sec}.
 Consecutive windows were excluded while their variance remained above a fixed threshold.
-This high-variance criterion captures both the oscillatory component and the associated \gls{dc} drift.
-Several variance thresholds were evaluated empirically; a threshold of \SI{20000}{\micro\volt} reliably detected these artifacts without excessive rejection of valid data.
-Threshold selection was constrained to avoid over-removal, because elevated variance also occurs during periictal periods, which are central to the subsequent analysis.
+This high-variance criterion captured both the oscillatory component and the associated \gls{dc} drift.
+Several variance thresholds were evaluated empirically; a threshold of \SI{20000}{\micro\volt\squared} reliably detected these artifacts without excessive rejection of valid data.
+Threshold selection was constrained to avoid over-removal, because elevated variance also frequently occurs during periictal periods, which are central to the subsequent analysis.
 Detected invalid intervals were symmetrically padded by \SI{0.25}{\sec} to remove potentially contaminated, adjacent samples.
-Finally, invalid intervals separated by less than one segment's duration were merged, as the segment is the shortest analysis window used in this work.
+Finally, invalid intervals separated by less than one segment's duration were merged, as the segment was the shortest analysis window used in this work.
 
-This procedure yielded a set of invalid recording intervals that were excluded from subsequent analyses, and complementary valid intervals that were retained.
+This procedure yielded a set of \textbf{invalid recording intervals} that were excluded from subsequent analyses, and complementary \textbf{valid intervals} that were retained.
 
 
 \subsection{Windowing and Labeling} \label{subsec:windowing}
@@ -54,24 +53,57 @@ This interval provides time for countermeasures (e.g., administration of an inhi
 
 Moreover, a warning is only informative if seizure onset occurs within a predefined time horizon after the intervention interval.
 This horizon is referred to as the \textit{\gls{sph}}.
-Accordingly, the interval of equal duration that precedes the intervention interval---during which a warning should be raised---is labeled \textit{preictal} (\cref{fig:periictal-intervals}).
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=\linewidth]{intervals_around_seizure}
-    \caption[Periictal Intervals]{Periictal Intervals with their \textit{approximate} durations and relative time points. \textit{Not to scale.}}
-    \label{fig:periictal-intervals}
-\end{figure}
+Accordingly, the interval of equal duration that precedes the intervention interval---during which a warning should be raised---is labeled \textit{preictal} (\cref{fig:seizure-related-intervals}).
 
 Periods far from any seizure are labeled \textit{interictal}.
 In the vicinity of seizures (outside the preictal interval), \gls{eeg} dynamics may deviate from the interictal baseline and transitional phases are expected.
-To capture these effects, additional periictal types are defined: the interval immediately preceding the preictal period (\textit{inter-pre}), the interval immediately following a seizure onset (\textit{postictal})\footnote{Due to the sparse availability of seizure offsets, seizures are treated as single time points in this work, which is why the postictal interval's onset corresponds to the seizures onset. Although seizures have a duration in reality, this is not crucial here, particularly because selected periictal intervals are excluded when necessary.}, and the subsequent recovery period (\textit{inter-post}) (\cref{fig:periictal-intervals}).
+To capture these effects, additional periictal types are defined: the interval immediately preceding the preictal period (\textit{inter-pre}), the interval immediately following a seizure onset (\textit{postictal})\footnote{Due to the sparse availability of seizure offsets, seizures are treated as single time points in this work, which is why the postictal interval's onset corresponds to the seizures onset. Although seizures have a duration in reality, this is not crucial here, particularly because selected periictal intervals are excluded when necessary.}, and the subsequent recovery period (\textit{inter-post}) (\cref{fig:seizure-related-intervals}).
+
+\begin{figure}[htbp]
+    \centering
+
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{intervals_around_seizure}
+        \caption[Seizure-Related Intervals]{\textbf{Seizure-Related Intervals} with their \textit{Approximate} Durations and Time Points Relative to Seizure Onset.}
+        \label{fig:seizure-related-intervals}
+    \end{subfigure}
+    
+    \vspace{2em}
+
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{intervals_around_seizure_overlapping}
+        \caption[Type Assignment for Overlapping Intervals]{\textbf{Type Assignment for Overlapping Intervals}.\\
+        In this example, seizure B occurs \SI{107}{\minute} after seizure A. The figure shows how the intervals are merged (center row) by (partially) overwriting the post-seizure intervals (postictal and inter-post) with the preictal, intervention, postictal, and inter-post intervals of the latter seizure B.}
+        \label{fig:overlapping-periictal-intervals}
+    \end{subfigure}
+
+    \vspace{2em}
+
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{clip_generation}
+        \caption[Clip Generation Procedure]{\textbf{Clip Generation Procedure}.\\
+        Clips were generated in the reverse direction by using the ends of preictal intervals (and the end of the last valid recording interval) as \enquote{seeds} and going backwards from there, until a previous seed (or the start of the patient's first valid recording interval) was reached. This usually produced a shortened clip to the right of each seed because the duration between segments containing seizures (in this case \SI{107}{\minute}) was rarely divisible by the clip duration (\SI{10}{\minute}).}
+        \label{fig:clip-generation}
+    \end{subfigure}
+
+    \caption[Seizure-Related Intervals and Clip Generation Procedure]{\textbf{Seizure-Related Intervals and Clip Generation Procedure.}\\
+    In reality, the intervals could be shifted backwards in time (left) relative to the seizure for up to one segment duration ($\sim$\SI{15}{\sec}), because interval types are assigned based on segment ends.\\
+    \textit{Durations and time points in these figures are rounded.}}
+    \label{fig:intervals-main-fig}
+\end{figure}
 
 These interval definitions follow common conventions in the seizure prediction literature \parencite{brinkmann_crowdsourcing_2016, kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}.
 
-If a seizure occurred $\sim$\SI{65}{\minute} to $\sim$\SI{240}{\minute} after a previous seizure, then the post-seizure intervals (postictal and inter-post) of the former seizure were (partially) overwritten by the pre-seizure intervals (intervention, preictal, and inter-pre) of the latter seizure.
-In other words, segments that fell within the overlapping intervals received the type that corresponded to the latter seizure.
-This was done, as it was the priority to correctly assign preictal---rather than post-seizure---intervals for conflicting interval types, to benefit training and evaluation.
+It is possible for seizures to occur in close succession, such that some of their \textbf{intervals overlap}.
+As mentioned (\cref{sec:inclusion-criteria}), for a seizure to be valid, and thus eligible for further processing, it must have occurred at least $\sim$\SI{65}{\minute} after the previous seizure, so that its full preictal and intervention intervals did not contain the previous seizure.
+This condition guaranteed that full preictal intervals were available for every seizure.
+However, if a seizure occurred up to $\sim$\SI{8}{\hour} after a previous seizure, intervals still overlapped.
+In this case, the latter seizure's preictal, intervention, postictal, and inter-pre intervals (partially) overwrote the prior seizure's postictal and inter-post intervals (\cref{fig:overlapping-periictal-intervals}).
+This was done because it was the priority to correctly assign preictal---rather than post-seizure---intervals for conflicting interval types, to benefit training and evaluation.
+
 
 To ensure that labeling boundaries coincide with the segment grid defined below, all interval durations were set to integer multiples of the segment duration (\cref{tab:interval-durations}).
 
@@ -83,35 +115,35 @@ To ensure that labeling boundaries coincide with the segment grid defined below,
 \end{table}
 
 \subsubsection{Segments}
-Segments are the shortest analysis windows used in this work. Following \textcite{muller_coherent_2022, yang_seizure_2024}, their target duration is approximately \SI{15}{\sec}.
-However, the recordings were sampled at an unusual frequency of \SI{207.0310546581987}{\hertz}, for which a \SI{15}{\sec} window would correspond to a fractional number of samples.
+Segments are the shortest analysis windows used in this work. 
+Following \textcite{muller_coherent_2022, yang_seizure_2024}, their target duration was \SI{15}{\sec}.
+However, the UNEEG recordings were sampled at an unusual frequency of \SI{207.0310546581987}{\hertz}, for which a \SI{15}{\sec} window would correspond to a fractional number of samples.
 The segment duration was therefore adjusted to the nearest value yielding an integer sample count: \SI{14.99775}{\sec} (exactly \SI{3105}{samples}).
 
-The time span from the start of the first valid recording interval to the end of the last was partitioned into contiguous, non-overlapping segments, yielding a gap-free segment grid.
+To create segments, the time span from the start of the first valid recording interval to the end of the last was partitioned into contiguous, non-overlapping segments, yielding a gap-free segment grid.
 Segments fully contained within valid recording intervals were labeled as \textit{existing}; segments that were only partially contained (or lay outside) were treated as \textit{non-existing} and were excluded from subsequent analyses.
 
-Each existing segment was assigned an interval type indicating its position relative to nearby seizures.
-The type was determined based on the segment's end time, reflecting that predictions can be issued at the end of a clip, which is aligned to segment endpoints.
+Each existing segment was assigned an \textbf{interval type} indicating its position relative to nearby seizures (\cref{fig:seizure-related-intervals}).
+The type was determined based on the segment's \textit{end time}, reflecting that predictions could be issued at the end of a clip, which was aligned to segment endpoints.
 
 \subsubsection{Clips}
-Non-overlapping clips of approximately \SI{10}{\min} were constructed on the segment grid.
+Next, non-overlapping clips of approximately \SI{10}{\min} were constructed on the segment grid.
 A clip typically spanned 40 consecutive segments, irrespective of whether individual segments were existing.
 As above, the exact clip duration was chosen as an integer multiple of the segment duration (\cref{tab:interval-durations}).
 
-The use of fixed-length clips follows prior work \parencite{brinkmann_crowdsourcing_2016, kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}.
-In contrast to these studies, clips were not separated by \SI{10}{\sec} gaps, because the subsequent cycle extraction required continuous data.
+The use of fixed-length clips followed prior work \parencite{brinkmann_crowdsourcing_2016, kuhlmann_epilepsyecosystemorg_2018, muller_coherent_2022}, but, in contrast to these studies, clips were not separated by \SI{10}{\sec} gaps, because the subsequent cycle extraction required continuous data.
 
 Clips inherited their interval-type composition from the segments they contained and could therefore span multiple interval types.
-Because clips were used for later evaluation, they should not mix preictal and non-preictal segments, as such clips cannot be assigned an unambiguous class label.
-To prevent this, clips were anchored at preictal interval ends: one clip terminated at each preictal boundary, and additional clips were generated by stepping backward on the segment grid.\footnote{Since this anchoring strategy is applied to the test set, the evaluation is not purely pseudo-prospective in the sense of entirely forward-generated windows.}
-Consequently, each preictal interval was covered by six clips.
-In addition to preictal boundaries, the end of the last valid recording interval was used as a seed to generate clips for the recordings after the last seizure.
+Because clips were used for later evaluation, they should not mix preictal and non-preictal segments, as such clips could not have been assigned an unambiguous class label.
+To prevent this, clips were anchored at preictal interval ends: one clip terminated at each preictal boundary (\enquote{seed}), and additional clips were generated by stepping backward on the segment grid\footnote{This anchoring strategy being applied to the test set was one of the reasons the evaluation cannot be considered purely pseudo-prospective in the sense of entirely forward-generated windows.} (\cref{fig:clip-generation}).
+Consequently, each \textbf{preictal interval} was fully covered by exactly \textbf{six clips}, due to all interval durations being defined as multiples of segments.
+In addition to preictal boundaries, the end of the last valid recording interval was used as a seed to generate clips for the recordings after the last recorded seizure.
 
-Because the duration between seizures is usually not an integer multiple of the clip length, the number of segments between consecutive preictal interval ends is typically not divisible by 40.
-Consequently, when generating clips backwards, the final clip before the next preictal interval will usually contain fewer than 40 segments.
+Because the duration between segments containing seizures was usually not an integer multiple of the clip length, the number of segments between consecutive preictal interval ends was typically not divisible by 40.
+Consequently, when generating clips backwards, the final clip before the next preictal interval usually contained fewer than 40 segments.
 
-Two clip-level inclusion criteria were applied.
-First, a clip had to span the full set of 40 segment slots (existing or not) to be considered structurally valid.
+Thus, two clip-level \textbf{inclusion criteria} were applied.
+First, shortened clips that did not contain the the full set of 40 segment slots (existing or not) were not considered structurally valid and therefore excluded.
 Second, at least 35 of these segments had to be existing, ensuring that the clip lay predominantly within valid recording time.
 This allowed short artifacts or minor edge truncation while excluding clips with substantial missing portions.
 Clips failing either criterion were marked invalid and excluded from subsequent steps as appropriate.
@@ -121,16 +153,16 @@ Clips failing either criterion were marked invalid and excluded from subsequent 
 In machine learning, models are trained on a subset of data and their performance evaluated on unseen data.
 Accordingly, the data was partitioned into a train and test set.
 Since predictive models must use past data to predict future events, the time series was split at a certain time point, rather than allocating individual clips to the sets.
-This design also preserved long, uninterrupted recording intervals required for evaluating cycles with periods up to 50 days.
+This design also preserved long, uninterrupted recording intervals required for evaluating the multidien cycles.
 
 For partitioning, the training set had to include enough examples of each class to learn predictive patterns, and
-the test set had to be large enough for accurate performance estimates and, for cycle evaluation, had to be at least as long as the longest cycle of 50 days.
+the test set had to be large enough for accurate performance estimates and, for cycle evaluation, had to be at least as long as the longest cycle of 50 days, but optimally containing multiple such cycles.
 
 The two classes considered here are preictal and non-preictal.
-Because each seizure contributes only $\sim$\SI{1}{\hour} of preictal data and seizures typically occur only every few days or less, the resulting dataset exhibits a pronounced class imbalance, characterized by a scarcity of preictal segments and an abundance of non-preictal segments.
-Specifically, only \SI{0.76}{\percent} of clips across all patients are labeled as preictal.
-Consequently, it is essential to account for the number of seizures per partition, in addition to the recording duration, when partitioning the dataset.
-Our objective was therefore to allocate approximately \SI{60}{\percent} of seizures to the training set and approximately \SI{40}{\percent} to the test set.
+Because each seizure contributes only $\sim$\SI{1}{\hour} of preictal data and seizures typically occur only every few days or less, the resulting dataset exhibits a pronounced class imbalance (often 100:1 \parencite{brinkmann_crowdsourcing_2016}), characterized by a scarcity of preictal segments and an abundance of non-preictal segments.
+Specifically, only \SI{0.76}{\percent} of clips across all patients were labeled as preictal.
+Consequently, it was essential to account for the number of seizures, and thus preictal samples, per partition, in addition to the recording duration, when partitioning the dataset.
+The objective was therefore to allocate approximately \SI{60}{\percent} of seizures to the training set and approximately \SI{40}{\percent} to the test set.
 These proportions were based on \textcite{yang_seizure_2024} using \SI{60}{\percent} of data for training.
 
 The partition boundary was determined per patient as a timestamp on the clip grid:
@@ -142,7 +174,7 @@ The partition boundary was determined per patient as a timestamp on the clip gri
     This timestamp was then aligned to the clip representation by \textit{snapping it to a clip start}.
     \item
     Next, the split was constrained using valid clips to ensure adequate \gls{eeg} data in both partitions: the train partition had to contain between \SI{40}{\percent} and \SI{70}{\percent} of valid clips.
-    If the snapped split violated these bounds, the \textit{split position was shifted} in clip-index space to the \textit{nearest admissible bound}.
+    If the snapped split violated these bounds, the split position was shifted in clip-index space to the nearest admissible bound.
     \item
     Finally, the boundary was required to start at an \textit{interictal clip}; if necessary, the closest interictal clip was selected (searching forward or backward depending on which bound adjustment was needed).
     The start time of this clip was used as the final boundary.
@@ -150,12 +182,12 @@ The partition boundary was determined per patient as a timestamp on the clip gri
 
 As previously mentioned, patient U03 had a large missing recording period in the middle of his monitoring timespan.
 Following the partitioning procedure, the boundary would have fallen slightly before this gap, creating a very short portion of data, followed by a large gap.
-This hindered the cycle evaluation; therefore, the boundary was manually set to fall into the gap for this patient.
+This hindered the cycle evaluation; therefore, the boundary was manually nudged to fall into the gap for this patient.
 
 
 \subsection{Feature Extraction} \label{subsec:feature-extraction}
 
-\Cref{subsec:background-periictal-intervals-in-eeg-recordings} introduced how signal properties tend to change throughout the various periictal intervals.
+\Cref{subsec:background-periictal-intervals-in-eeg-recordings} introduced how signal properties tend to change throughout the various seizure-related intervals.
 To quantify these changes and use them for prediction and to compute cycles, various hand-crafted features were extracted from the signals per segment (\cref{tab:feature-properties}).
 Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evaluation of cycles.
 
@@ -163,7 +195,7 @@ Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evalua
     \centering
     \setlength{\tabcolsep}{10pt}
     \renewcommand{\arraystretch}{1.15}
-    \rowcolors{2}{white}{gray!10} % Alternating row colors
+    \rowcolors{2}{white}{gray!20} % Alternating row colors
     %! suppress = MissingGlossaryReference
     \begin{tabular}{l r r r r}
         \toprule
@@ -188,9 +220,9 @@ Some were used as inputs to the \glspl{fb-mlp}, and all were used for the evalua
 
 The \textbf{spectral band powers} of each channel's signal, and \textbf{Pearson's correlation coefficient} between the two channels were extracted, because they were used in many of the top-performing algorithms in the competitions \parencite{brinkmann_crowdsourcing_2016, muller_coherent_2022, kuhlmann_epilepsyecosystemorg_2018}.
 Additionally, the \textbf{signal variance} and \textbf{\gls{acfw}} were used as markers for \textit{critical slowing} \parencite{maturana_critical_2020}.
-The exact \textit{numeric properties} of these features are essential for usage as model input and cycle extraction, and are therefore discussed below.
+The exact \textit{numeric properties} of these features were essential for usage as model input and cycle extraction, and are therefore discussed below.
 
-Note that single-channel features are denoted by their name, followed by the initial letter of the corresponding channel (\textbf{D}istal / \textbf{P}roximal), e.g., \enquote{ACFW (P)}.
+Note that single-channel features are subsequently denoted by their name, followed by the initial letter of the corresponding channel (\textbf{D}istal / \textbf{P}roximal), e.g., \enquote{ACFW (P)}.
 
 \subsubsection{Variance}
 The variance measures the average squared deviation of a signal $s$ from its mean $\bar{s}$ within a segment, and was computed \textit{for each segment and channel}.
@@ -201,7 +233,7 @@ The variance measures the average squared deviation of a signal $s$ from its mea
 \end{equation}
 
 \subsubsection{Pearson Correlation Coefficient}
-Pearson's correlation coefficient (bounded in [\num{-1}, \num{1}]) is the only cross-channel feature used here.
+Pearson's correlation coefficient (bounded in [\num{-1}, \num{1}]) was the only cross-channel feature used here.
 It quantifies how the two channel signals $s$ and $r$ vary together within a segment and is defined as the normalized linear covariance:
 
 \begin{equation}
@@ -224,14 +256,14 @@ The \gls{acf} (bounded in [\num{-1}, \num{1}]) represents the correlation of a s
 
 where $\bar{s}$ is the signal mean, and $T$ is the number of total samples.
 
-The \textbf{\gls{acfw}} is then defined as the \textbf{lag $\lambda$} where the \gls{acf} reaches its half-maximum value of $0.5$.
-It is can thus range from 1 to 3105 (the number of samples in a segment).
+The \textbf{\gls{acfw}} is then defined as the \textbf{lag $\lambda$} where the \gls{acf} reaches its half-maximum value of $0.5$ and can thus range from 1 to 3105 (the number of samples in a segment).
 It can be interpreted as a measure of temporal persistence: it quantifies how quickly a signal decorrelates over time.
 This measure was calculated \textit{for each segment and channel}.
 
 \subsubsection{Spectral Band Powers}
-Lastly, the spectral band powers were extracted for the delta (0.5–\SI{4}{\Hz}), theta (4–\SI{8}{\Hz}), alpha (8–\SI{12}{\Hz}), beta (12–\SI{35}{\Hz}), and gamma (35–\SI{100}{\Hz}) bands.
-They were computed \textit{for each segment and channel} as follows:
+{\sisetup{range-phrase = {--}, range-units = single}
+Lastly, the spectral band powers were extracted for the delta (\SIrange{0.5}{4}{\hertz}), theta (\SIrange{4}{8}{\hertz}), alpha (\SIrange{8}{12}{\hertz}), beta (\SIrange{12}{35}{\hertz}), and gamma (\SIrange{35}{100}{\hertz}) bands.
+They were computed \textit{for each segment and channel} as follows:}
 
 \begin{enumerate}
     \item The \gls{psd} was estimated using Welch’s method by splitting the signal into Hann-windowed subwindows of length $2/f_{\min}$ (with $f_{\min}=\SI{0.5}{\Hz}$), using \SI{50}{\percent} overlap, detrending by subtracting the mean, and density scaling (unit $\si{\volt}^2 / r\si{\Hz}$).
@@ -239,4 +271,4 @@ They were computed \textit{for each segment and channel} as follows:
     \item The absolute (rather than relative) band powers were used to maintain comparability between segments.
 \end{enumerate}
 
-The result was one scalar band-power value per band and per channel (10 values total for two channels and five bands).
+The result was one scalar band-power value \textit{per band and per channel} (ten values total for two channels and five bands).

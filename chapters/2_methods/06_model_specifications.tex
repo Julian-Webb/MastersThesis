@@ -1,22 +1,26 @@
 \section{Model Architectures}\label{sec:model-architectures}
-In this project, a \gls{cnn} and an ensemble of \glspl{fb-mlp} were trained per patient to predict seizures.
+In this project, a \gls{cnn} and an ensemble of \glspl{fb-mlp} with single-segment inputs were trained per patient to predict seizures.
 This section discusses their exact specifications.
 
 \subsection{Convolutional Neural Network}\label{subsec:cnn-architecture}
-In this project, the architecture of the \gls{cnn} was adapted from \textcite{muller_coherent_2022}, which used the nv1x16 topology originally proposed in \textcite{eberlein_convolutional_2018}.
-It analyzes a segment and uses the raw \gls{eeg} signals per \gls{eeg} channel as inputs.
+The architecture of the \gls{cnn} was adapted from \textcite{muller_coherent_2022}, which used the \textit{nv1x16} topology originally proposed in \textcite{eberlein_convolutional_2018}.
+It uses the raw \gls{eeg} signals per \gls{eeg} channel from a segment as inputs.
 Until the final stages, it treats \gls{eeg} channels separately, computing features per channel.
 Only at the end are the per-channel features combined to output a final score.
 
-In the following, \gls{eeg} channels refer to electrode-derived input signals, whereas \gls{cnn} channels refer to convolutional feature maps (tensor depth).
+Note that in the following, \gls{eeg} channels refer to electrode-derived input signals, whereas \gls{cnn} channels refer to convolutional feature maps (tensor depth).
 
 \Cref{fig:cnn-architecture} shows the exact architecture.
 The inputs are passed through a combination of convolutional and pooling layers.
-There are two distinct types of convolutional blocks: conv1 and conv2.
-Conv1 uses a convolutional layer, followed by a pooling layer with a relatively large kernel size, reducing the height (\#samples) rapidly.
+There are two distinct types of convolutional blocks (\cref{fig:special-cnn-blocks}):
+\begin{itemize}
+    \item \textbf{conv1} uses a convolutional layer, followed by a pooling layer with a relatively large kernel size, reducing the height (number of \gls{eeg} samples) rapidly.
+    \item \textbf{conv2} blocks further reduce the height by using valid padding for \textit{two} convolutional layers and pooling again.
+\end{itemize}
 All convolution layers use L1 and L2 regularization with a penalty of $10^{-9}$.
-Four conv1 blocks are followed by three conv2 blocks.
-These further reduce the height by using valid padding for two convolutional layers and pooling again.
+
+First, four conv1 blocks are used to reduce the tensor height while increasing the \gls{cnn} channels (encoding).
+These are followed by three conv2 blocks decrease the tensor height further while also decreasing the number of \gls{cnn} channels (decoding).
 Ultimately, the sample dimension (height) is reduced to 1 with 32 features per \gls{eeg} channel.
 Only then are the per-channel features combined (flattened).
 These pass through two final dense layers to create the output logit, which is then bounded between 0 and 1 with the sigmoid function, to create the final output.
@@ -61,9 +65,9 @@ For this reason, the pool padding of the second conv2 layer was changed from sam
 This minor change was enough to fully accommodate the sampling frequency difference.
 
 \subsection{Ensemble of Feature-Based Multilayer Perceptrons}\label{subsec:ensemble-architecture}
-The second model was implemented as an ensemble of \glspl{fb-mlp}, also adapted from \textcite{muller_coherent_2022}, where it had shown strong performance.
+The second model was as an ensemble using \glspl{fb-mlp} as base learners, also adapted from \textcite{muller_coherent_2022}, where it had shown strong performance.
 In contrast to architectures operating directly on the raw signal, this model relied the hand-crafted features.
-The input feature set comprised the band power spectrum and the correlation coefficient defined in \cref{subsec:feature-extraction}, which have previously been shown to possess forecasting utility in a cycle-based framework \parencite{yang_seizure_2024}.
+The input feature set comprised the spectral band powers and the correlation coefficient (\cref{subsec:feature-extraction}), which have previously been shown to possess forecasting utility in a cycle-based framework \parencite{yang_seizure_2024}.
 This design enabled the model to incorporate both channel-wise feature characteristics and their inter-channel statistical dependencies.
 
 Each individual \textbf{\gls{fb-mlp}} (\cref{fig:fb-mlp}) received z-score normalized features as input.
@@ -101,26 +105,26 @@ The \textbf{ensemble} (\cref{fig:ensemble-architecture}) consisted of 50 \glspl{
 The final prediction was obtained by averaging the scalar outputs of the individual ensemble members.
 While \textcite{muller_coherent_2022} employed an ensemble size of 100, their study considered
  a substantially more diverse set of input features, which allowed for greater heterogeneity among ensemble members.
-Given the more constrained feature space in the present work, a smaller ensemble size of 50 was selected as a trade-off to limit computational and memory requirements during training, while retaining the benefits of ensembling.
+Given the more constrained feature space in the present work, a smaller ensemble size of 50 base learners was selected as a trade-off to limit computational and memory requirements during training, while retaining the benefits of ensembling.
 
 
 \subsection{Model Training} \label{subsec:model-training}
-For model training, only preictal and interictal segments were included. 
-Inter-pre and intervention segments were excluded because they occur immediately prior to seizure onset and may therefore share electro-physiological characteristics with preictal segments. 
+For model training, only \textbf{preictal} and \textbf{interictal} segments were included. 
+
+\textbf{Inter-pre} and \textbf{intervention} segments were excluded because they occur immediately prior to seizure onset and may therefore share electro-physiological characteristics with preictal segments. 
 If included, these segments—while still annotated with the label 0 (non-preictal)—could induce the model to learn misleading patterns.
 
-Similarly, postictal and inter-post segments were omitted, as they may fall within the preictal window of seizures that did not meet the validity criteria and could consequently contain preictal-like features. 
+Similarly, \textbf{postictal} and \textbf{inter-post} segments were omitted, as they may fall within the preictal window of seizures that did not meet the validity criteria and could consequently contain preictal-like features. 
 Moreover, the postictal period is characterized by substantial alterations in brain state, leading to marked changes in signal dynamics that may confound model learning and degrade performance \parencite{muller_coherent_2022}.
 
 As mentioned in \cref{subsec:dataset-partitioning}, there was a large class imbalance with scarcity of preictal segments.
-To avoid wasting resources training on more interictal segments than necessary, the number of interictal segments was subsampled to a maximum of 20 times the number of preictal ones.
-The class weights were adjusted to the final ratio of preictal vs.\ interictal segments, so that the models were not biased towards focusing mostly on learning to predict interictal segments.
-All models received the same subsampled segments for training, so that results were more comparable.
+To avoid wasting resources training on more interictal segments than necessary, the number of interictal segments was subsampled to a maximum of 20 times the number of preictal segments.
+The class weights were adjusted to the final ratio of preictal vs.\ interictal segments, so that the models were not biased towards focusing mostly on learning to predict the majority (interictal) class.
+For a given patient, all models received the same subsampled segments for training, so that results were more comparable.
 
-As in \textcite{eberlein_convolutional_2018}, the \glspl{cnn} were trained for 50 epochs with ADAM optimization, a learning rate of \num{0.001}, and binary cross-entropy as a loss function.
+As in \textcite{eberlein_convolutional_2018}, the \textbf{\glspl{cnn}} were trained for \textit{50 epochs} with \textit{ADAM optimization}, a \textit{learning rate of \num{0.001}}, and \textit{binary cross-entropy} as a loss function.
 
-To train the \glspl{fb-mlp}, before subsampling, a z-score normalizer was fit to the features of the entire train set.
+To train the \textbf{\glspl{fb-mlp}}, before subsampling, a \textit{z-score normalizer} was fit to the features of the entire train set.
 This same scaling was then always applied when this model was later used, including for the test set.
-The \glspl{fb-mlp} were then trained for \textbf{200 epochs} using \textbf{stochastic gradient descent} for optimization, a \textbf{learning rate} of \num{0.0001}, and binary cross-entropy as a loss function.
-\Textcite{muller_coherent_2022} used 500 epochs for training.
-However, here the performance could not be seen to improve after 200 epochs, which is likely also due to the smaller input dimension, requiring less fitting.
+The \glspl{fb-mlp} were then trained for \textit{200 epochs} using \textit{stochastic gradient descent} for optimization, a \textit{learning rate of \num{0.0001}}, and \textit{binary cross-entropy} as a loss function.
+Even though \textcite{muller_coherent_2022} used 500 epochs for training, here, the performance could not be seen to improve after 200 epochs, which is likely also due to the smaller input dimension, requiring less fitting.

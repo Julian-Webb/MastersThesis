@@ -1,21 +1,21 @@
 \section{Propensity Evaluation}\label{sec:propensity-evaluation}
 
 \subsection{Statistical Results} \label{subsec:statistical-results}
-From the twelve included patients, two models per patient, and 15 features, there were a total of 360 patient-model-feature combinations.
-\Cref{fig:qualifications_flow_chart} shows where combinations were excluded based on the criteria from \cref{sec:propensity-eval}.
+The twelve included patients, two models per patient, and 15 features, resulted in a total of 360 patient-model-feature combinations.
+\Cref{fig:qualifications_flow_chart} shows where combinations were excluded based on the qualification criteria (\cref{sec:propensity-eval}).
 Only the three combinations (\SI{0.83}{\percent}) shown in \Cref{tab:model-feature-qualifications} met all criteria.
 For the remaining 357 combinations (\SI{99.27}{\percent}), the assumptions did not hold, implying that either the seizures or \glspl{fp} were not phase locked to the features, the model's performance was too poor, or the phase distributions of seizures and \glspl{fp} were not similar enough.
 
 \begin{figure}[!hbtp]
     \centering
-    \includegraphics[width=0.9\textwidth]{qualifications_flow_chart}
+    \includegraphics[width=0.75\textwidth]{qualifications_flow_chart}
     \caption{Proportions of Patient-Model-Feature Combinations that Met each Criterion.}
     \label{fig:qualifications_flow_chart}
 \end{figure}
 
 \begin{table}[!htbp]
     \centering
-    \caption{Patient-Model-Feature Combinations that Meet the Cycle-Based Qualification Criteria.}
+    \caption{Patient-Model-Feature Combinations that Met the Cycle-Based Qualification Criteria.}
     \label{tab:model-feature-qualifications}
     \renewcommand{\arraystretch}{1.15}
     \input{tables/model_feature_qualifications}
@@ -38,10 +38,11 @@ This delay is also visible when inspecting the filtered signal with seizures and
 This strong phase preference, albeit being shifted, was only present for patient U01.
 
 Other patients usually did not exhibit a significant phase preference of events (seizures or \glspl{fp}), or only did so for few combinations of features and event types.
-For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} were never significantly phase locked to features.
+For example, for patient C03, seizures were only significantly phase locked to some or no features (\cref{fig:C03-seizure-phases}), and ensemble \glspl{fp} (\cref{fig:C03-ensemble-FP-phases}) and \gls{cnn} \glspl{fp} (\cref{fig:appendix-phase-histogram-C03-CNN FPs}) were never significantly phase locked to features.
 Accordingly, there were few or no combinations of event types and features that exhibited a strong phase preference across patients, except for U01.
 
-Some patients, such as C03, appeared to exhibit a circadian \gls{fp} pattern, indicated by clusters of \glspl{fp} appearing daily (\cref{fig:C03-filtered-Beta-P}).
+These were the phase preference on the multidien (\SIrange{5}{50}{\day}) scale used here for formal analysis.
+However, some patients, such as C03, appeared to exhibit a circadian \gls{fp} pattern, indicated by clusters of \glspl{fp} appearing daily (\cref{fig:C03-filtered-Beta-P}).
 
 For further examination, all phase histograms are shown in \cref{ch:phase-histograms} and all filtered feature plots with event occurrences in \cref{ch:filtered-feature-plots}.
 
@@ -65,7 +66,7 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
     \end{subfigure}
 
     \caption[Phase Histograms per Feature of Patient U17 for seizures and ensemble FPs]{Phase Histograms per Feature and for seizures and ensemble \glspl{fp} of \textbf{Patient U17}.\\
-    The number of events per bin is displayed on the polar y-axis. The mean phase angle is denoted next to the feature name and shown as a red arrow. The arrow's length represents the \gls{plv}.}
+    The \textit{number of events per bin} is displayed on the polar y-axis. The \textit{mean phase angle} is denoted next to the feature name and shown as a red arrow. The arrow's length represents the \textit{\gls{plv}}.}
     \label{fig:U17-phase-histograms}
 \end{figure}
 
@@ -113,7 +114,7 @@ For further examination, all phase histograms are shown in \cref{ch:phase-histog
         \label{fig:C03-filtered-Beta-P}
     \end{subfigure}
 
-    \caption{Original and Multidien (\SIrange{5}{50}{\day}) Filtered Signals Including the Occurrences of Seizures and FPs.}
+    \caption{Original and Multidien (\SIrange{5}{50}{\day}) Filtered Signals with Annotated Occurrences of Seizures and FPs.}
     \label{fig:filtered-features-test-set}
 \end{figure}
 

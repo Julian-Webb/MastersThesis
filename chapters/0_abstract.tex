@@ -1,3 +1,29 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
+\paragraph{Objective}
+Patients with pharmacoresistant epilepsy could benefit from reliable seizure prediction devices.
+However, seizure prediction algorithms widely suffer from low specificity, yielding many false alarms (\glspl{fp}).
+This work investigates whether (some) false alarms are truly entirely false, or whether the brain was indeed in a state of increased susceptibility to seizures (a hypothesized \enquote{proictal} state), without the necessary perturbation occurring to provoke neuronal networks into generating an ictal event.
+
+\paragraph{Methods}
+Two predictive models were used per patient: a \gls{cnn} operating on raw EEG signals, and an ensemble of \glspl{mlp} that use hand-crafted features extracted from the signals.
+Strong \textit{co-occurrence of \glspl{fp}} from both models, and a \textit{similar phase preference of \glspl{fp} and seizures} in multi-day (\SIrange{5}{50}{\day}) cycles of seizure occurrence were interpreted as evidence of proictal states and jointly investigated.
+
+The dataset comprised ultra-long-term, subcutaneous, two-channel EEG recordings with annotated seizures being automatically detected and subsequently annotated by epileptologists.
+Twelve patients with a mean monitoring timespan of \num{350}$\pm$\num{115}~days and \num{55}$\pm$\num{49} mean eligible seizures per patient were included.
+
+\paragraph{Results}
+Model performance was comparable to the existing literature for similar settings, with a mean ROC AUC of \num{.68} (\gls{cnn}) and \num{.66} (ensemble).
+While the co-occurrence of \glspl{fp} was high, the phase preferences of \glspl{fp} and seizures were not significantly similar.
+
+
+\paragraph{Interpretations}
+A possible explanation is that, due to seizure clustering, models learn to predict seizures shortly after a previous seizure, thereby creating a delay in phase preference.
+Alternatively, models and seizures may be phase-locked to shorter-term (e.g., circadian) rhythms, leading to high co-occurrence without multi-day phase locking.
+
+\paragraph{Limitations}
+Only a single (rather than multiple) potential phase preference of events was investigated, medication changes throughout the study were not accounted for, and a certain percentage of seizure were likely missed by the automatic classifier.
+
+
+\glsresetall

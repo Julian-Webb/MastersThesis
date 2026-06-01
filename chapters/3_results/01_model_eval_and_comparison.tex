@@ -1,0 +1,82 @@
+\section{Model Evaluation and Comparison} \label{sec:model-eval-and-comparison}
+The resulting \textbf{model evaluation metrics} (\cref{sec:model-evaluation}) are shown in \cref{fig:model-eval-boxplots} and \cref{tab:model_eval_metrics}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{model_eval_boxplots}
+    \caption{Model Evaluation Metrics over all Analyzed Patients}
+    \label{fig:model-eval-boxplots}
+\end{figure}
+
+
+On the \textbf{train set}, the models achieved a high \gls{roc auc} (\SIrange{66}{97}{\percent}, mean: \SI{83}{\percent}) and \gls{eb} score (\SIrange{64}{98}{\percent}, mean: \SI{81}{\percent}), i.e.,  high \gls{eb} sensitivity and \gls{eb} specificity (low relative \gls{tifw}).
+
+On the \textbf{test set}, model performance decreased or remained stable in most cases  (mean \gls{roc auc}: \SI{67}{\percent}, mean \gls{eb} score: \SI{67}{\percent}).
+The classifiers did not perform better than chance on the test set for patient U03's ensemble and both models of U04, as measured by the Hanley McNeil test.
+
+For the majority of patients and metrics, the \gls{cnn} performed better than the ensemble.
+For the training set, the \gls{cnn} performed significantly better for relative \gls{tifw} (\gls{eb} specificity), \gls{eb} score, and \gls{roc auc}, but not for \gls{eb} sensitivity, as measured by the Wilcoxon test (\cref{tab:model-comparison}).
+On the test set, while performance is much more similar, as measured by the mean per metric across patients (\cref{tab:model_eval_metrics}), the \gls{cnn} still tended to perform better.
+However, for the test set, no model showed statistically significantly higher performance than the other model.
+
+Although the \gls{cnn} still performed better than the ensemble on the test set, the mean \textit{percentage-point decline} in performance from the train to test sets of the \gls{cnn} vs.\ ensemble was higher for \gls{roc auc} (22 vs.\ 12), \gls{eb} specificity (19 vs.\ 9), \gls{eb} sensitivity (16 vs.\ 12), and \gls{eb} score (17 vs.\ 10).
+
+\begin{table}[p]
+    \centering
+    \caption[Model Evaluation Metrics per Patient and Model]
+    {\textbf{Model Evaluation Metrics per Patient and Model}\\
+    An \enquote{*} next to the \textbf{ROC AUC} indicates a non-significant q-value ($\geq 0.05$) of the Hanley McNeil test.\\
+    \textbf{EB Specificity} $=1-$Relative TIFW\\
+    \textit{All table values are in percent and rounded}.}
+    \label{tab:model_eval_metrics}
+    \setlength{\tabcolsep}{4.5pt}
+    \renewcommand{\arraystretch}{1.15}
+    \input{tables/model_eval_metrics}
+\end{table}
+
+
+\begin{table}[!htb]
+    \centering
+    \caption{Model Comparison.\\Results of the Wilcoxon Test between the Evaluation Metrics of the Ensemble and CNN}
+    \label{tab:model-comparison}
+    \rowcolors{4}{gray!20}{white} % Alternating row colors
+    \input{tables/model_comparison}
+\end{table}
+
+\section{Co-Occurrence of Prediction Errors}\label{sec:results-co-occurrence-of-prediction-errors}
+The \glspl{cope} for patients and partitions are shown in \cref{fig:copes} and \cref{tab:copes}.
+A strong correlation ($>0.5$) was found for most combinations, except for U04-test and for U12 in both partitions.
+Even in these cases, the correlation was substantially positive.
+In many cases, the \gls{cope} was even above \num{0.8}, indicating a very strong correlation of \glspl{fp}.
+Unlike model performance, often remained stable, and sometimes even increased, rather than always declining, when moving from the train to test set. 
+
+\begin{center}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        {\captionsetup{hypcap=false}% hypcap doesn't apply to \captionof (non-float)
+        \captionof{figure}{COPE by Patient and Partition}
+        \label{fig:copes}}
+        \includegraphics[width=\linewidth]{copes_plot}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        {\captionsetup{hypcap=false}
+        \captionof{table}{Exact COPE Values}
+        \label{tab:copes}}
+        \setlength{\tabcolsep}{12pt}
+        \rowcolors{2}{gray!20}{white} % Alternating row colors
+        \input{tables/copes_table}
+    \end{minipage}
+\end{center}
+
+In some cases, the \gls{cope} was lower where models performed poorly, such as for patients U03-test and U04-test, which were also the cases where models were not shown to perform better than chance.
+However, the same could not be said about their training sets, since models performed acceptably (\gls{roc auc}$\approx$\SI{66}{\percent}) to very well (\gls{roc auc}$\approx$\SI{90}{\percent}) there.
+However, patient U12 showed contrary findings: here, models performed quite well, especially for the training set, yet this patient had the lowest \gls{cope} scores.
+
+To investigate whether \gls{cope} between the two classifiers was indeed associated with model performance, a multiple linear regression analysis was conducted. The dependent target variable was the Fisher's z-transformed \gls{cope}, as a measure to achieve a normal distribution and stabilize variance. The independent variables were the patient-wise difference between the classifiers’ \glspl{roc auc} after logit transformation, as well as their average \gls{roc auc} score. 
+
+Although the regression model explained approximately 42.8\% of the variance in the transformed \gls{cope} (\(R^2 = 0.428\)), it did not reach statistical significance (\(p = 0.081\)). This is likely attributable to the small sample size used in the present analysis. The average model performance was positively associated with higher \gls{cope} (\(\beta = 0.328\), \(p = 0.070\)), indicating a strong statistical trend. In contrast, a larger performance difference between the two classifiers was negatively associated with \gls{cope} (\(\beta = -0.468\), \(p = 0.245\)).
+
+
+\FloatBarrier

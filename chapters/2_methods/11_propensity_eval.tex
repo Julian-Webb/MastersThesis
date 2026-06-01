@@ -7,7 +7,7 @@ These criteria ensured that only meaningful model-feature relationships were int
 For a given patient, feature, and model, the following conditions must be satisfied for significance level $\alpha = 0.05$:
 
 \begin{enumerate}
-    \item \textbf{Seizure-Feature Phase Locking:} The patient's seizures must exhibit significant phase locking to the feature, as determined by the Rayleigh test with \gls{bh} \gls{fdr} correction ($q_{\mathrm{Rayleigh}} < \alpha$). This criterion ensures that the feature is even relevant to the patient's seizure timing.\\
+    \item \textbf{Seizure-Feature Phase Locking:} The patient's seizures must exhibit significant phase locking to the feature, as determined by the Rayleigh test with Benjamini-Hochberg \gls{fdr} correction ($q_{\mathrm{Rayleigh}} < \alpha$). This criterion ensures that the feature is even relevant to the patient's seizure timing.\\
     \textit{Again, due to limited seizure counts, seizures from both training and test sets are included, under the assumption that phase locking remains stable across the dataset.}
     \item \textbf{Model Predictive Performance:} The model must achieve a test set \gls{roc auc} $\geq 0.75$ and $q_{\mathrm{HanleyMcNeil}}<\alpha$.
     This empirically chosen threshold ensures that only models with acceptable predictive accuracy are considered.

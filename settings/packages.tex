@@ -5,6 +5,7 @@
 \usepackage{amstext}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{mathtools} % extends amsmath (e.g., \shortintertext)
 \usepackage{amsfonts}
 \usepackage{placeins}
 \usepackage{csquotes}
@@ -32,4 +33,12 @@
 % Cross-references & links
 \usepackage[hidelinks]{hyperref}
 \usepackage[nameinlink]{cleveref}
-\usepackage[backend=biber, style=authoryear, giveninits=true, uniquename=init]{biblatex}
+\usepackage[
+  backend=biber,
+  style=authoryear,
+  giveninits=true,
+  uniquename=init,
+  uniquelist=false,
+  maxcitenames=1,
+  mincitenames=1
+]{biblatex}

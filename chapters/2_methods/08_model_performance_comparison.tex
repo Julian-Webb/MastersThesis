@@ -1,0 +1,11 @@
+\section{Model Performance Comparison}\label{sec:model-performance-comparison}
+For a statistical comparison of the performance of the \gls{cnn} and ensemble across patients, each patient was treated as a paired observation, and it was evaluated whether significant outperformance was achieved by one model over the other.
+
+Because both models were tested on the same set of patients, their performance metrics (e.g., ROC AUC or \gls{eb} score) were not independent but paired.
+Additionally, a normal distribution of performance metric across patients was not guaranteed, and the sample size was limited (n~=~12 patients).
+Therefore, a non-parametric paired test, namely the Wilcoxon signed-rank test, was used.
+Unlike parametric alternatives (e.g., paired t-test), greater robustness to outliers and skewed distributions was offered by this test, making it a safer and more reliable choice in this setting.
+
+By applying this test separately to the relative \gls{tifw}, \gls{eb} sensitivity, \gls{eb} score, and \gls{roc auc}, it was assessed whether the median difference in performance between the two models deviated significantly from zero, thereby providing evidence for systematic superiority of one model over the other.
+
+Now, with trained and evaluated models, the two pillars of evidence for seizure propensity are detailed in the following sections.

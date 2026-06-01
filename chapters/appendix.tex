@@ -1,6 +1,9 @@
+\chapter{Source Code}\label{ch:source-code}
+The source code of this project is publicly available at \url{https://github.com/Julian-Webb/SeizurePredictionThesis}.
+
 \chapter{Phase Histograms}\label{ch:phase-histograms}
 
-This section shows the circular phase histograms per feature for all patients and event types (seizures, \gls{cnn} \glspl{fp}, ensemble \glspl{fp}), based on \cref{sec:cycle-extraction}
+This section contains the circular phase histograms per feature for all patients and event types (seizures, \gls{cnn} \glspl{fp}, ensemble \glspl{fp}), based on \cref{sec:cycle-extraction}
 
 The number of events per bin is displayed on the polar y-axis.
 The phase angle is displayed around the circle.
@@ -11,8 +14,7 @@ The angles indicate the following:
     \item 180°: a phase trough,
     \item 270°: the phase is rising.
 \end{itemize}
-
-The mean angle denoted after the feature name and also shown as a red arrow.
+The mean angle is denoted after the feature name and also shown as a red arrow.
 The relative distance from the plot's center to the arrow's tip represents represents the \gls{plv}.
 
 \foreach \ptnt in \patientList{
@@ -20,7 +22,7 @@ The relative distance from the plot's center to the arrow's tip represents repre
         \begin{figure}[!ht]
             \centering
             \includegraphics{phase_histograms/\ptnt/\eventType}
-            \captionsetup{list=no}
+            % \captionsetup{list=no}
             \caption{Patient \ptnt\ – \eventType}
             \label{fig:appendix-phase-histogram-\ptnt-\eventType}
         \end{figure}
@@ -29,7 +31,7 @@ The relative distance from the plot's center to the arrow's tip represents repre
 
 \chapter{Filtered Feature Plots} \label{ch:filtered-feature-plots}
 This section contains the filtered features plots per patient and feature.
-For each feature, we can see the original feature over time (original signal) and the filtered signal, after using the non-causal filter, as explained in \cref{subsec:cycle-filtering}.
+For each feature, the plot shows the original feature over time (original signal) and the filtered signal, after using the non-causal multidien filter (\cref{subsec:cycle-filtering}).
 The \glspl{fp} are shown just for the test set, while the seizures are shown for the entire dataset.
 
 \foreach \ptnt in \patientList{
@@ -38,7 +40,7 @@ The \glspl{fp} are shown just for the test set, while the seizures are shown for
         \begin{figure}[!ht]
             \centering
             \includegraphics{figures/filtered_feature_plots/\ptnt/\feature}
-            \captionsetup{list=no}
+            % \captionsetup{list=no}
             \caption{Patient \ptnt\ -- \feature}
             \label{fig:appendix-filtered-feature-\ptnt-\feature}
         \end{figure}
